@@ -6,7 +6,10 @@ Voice rules for LLM copy token generation. British English throughout.
 
 - **Specific over generic** — reference the creator's actual work, location, or specialty.
 - **Short headlines** — 3–8 words for H1; 1–2 sentences for subtitles.
-- **No filler** — ban "Welcome to my website", "Your journey starts here", "Passionate about…".
+- **No filler** — ban "Welcome to my website", "Your journey starts here", "Passionate about…", "Unlock", "Elevate", "Dive in", "Game-changer", "Crafted with care".
+- **No em dashes or en dashes** — use commas or full stops.
+- **No exclamation marks in headlines**.
+- **Max two CTAs per page** — one hero action, one contact/footer at most.
 - **Eyebrows carry context** — location · specialty · availability (not "Hello, I'm…").
 - **CTAs are action verbs** — "Book a session", "View portfolio", "Get the recipe".
 

@@ -1,5 +1,7 @@
 import type { GenerateInput } from "./types";
 import { quizContextForPrompt } from "./quiz";
+import { getCompositionGuide } from "./element-library";
+import { sanitizeStructuredCopy } from "./sanitize-copy";
 
 /** Copy-only JSON from OpenAI — never HTML/CSS. */
 export interface StructuredSiteCopy {
@@ -78,6 +80,33 @@ const COPY_SCHEMA = {
   },
 } as const;
 
+const ANTI_SLOP_RULES = `
+## Anti-slop rules (strict)
+
+- British English spelling (colour, organise, favourite).
+- Short sentences. Plain, human tone. No corporate jargon.
+- Never use em dashes (—) or en dashes (–). Use commas or full stops.
+- No exclamation marks in headlines or eyebrows.
+- One CTA phrase only (ctaText field). Never suggest more than two actions on the page.
+- Return JSON only. Never HTML, CSS, or markdown.
+
+## Banned phrases (never use)
+
+welcome to my website, unlock, elevate, dive in, game-changer, crafted with care,
+your journey starts here, passionate about, synergy, leverage, cutting-edge,
+world-class solutions, empowering you, take it to the next level.
+
+## Word limits
+
+- heroTitle: 3–8 words total (split across lines if array)
+- heroSubtitle: max 35 words
+- heroEyebrow: max 8 words
+- aboutBody: max 80 words
+- ctaText: 2–4 words, action verb (e.g. "Book a call")
+- service titles: max 5 words each
+- service descriptions: max 25 words each
+`.trim();
+
 function normalizeHeroTitle(value: string | string[]): string[] {
   if (Array.isArray(value)) return value.filter(Boolean).slice(0, 3);
   const words = value.trim().split(/\s+/).filter(Boolean);
@@ -94,13 +123,27 @@ export function applyStructuredCopy<T extends Record<string, unknown>>(
   base: T,
   copy: StructuredSiteCopy
 ): T & StructuredSiteCopy & { heroTitle: string[]; contactTitle?: string } {
-  const heroTitle = normalizeHeroTitle(copy.heroTitle);
+  const sanitized = sanitizeStructuredCopy(copy);
+  const heroTitle = normalizeHeroTitle(sanitized.heroTitle);
   return {
     ...base,
-    ...copy,
+    ...sanitized,
     heroTitle,
-    contactTitle: copy.ctaText ?? (base.contactTitle as string | undefined),
+    contactTitle: sanitized.ctaText ?? (base.contactTitle as string | undefined),
   };
+}
+
+function buildSystemPrompt(): string {
+  const guide = getCompositionGuide();
+  return [
+    "You write premium website copy for creators. Return JSON only — never HTML, CSS, or markdown.",
+    "Match the creator's Instagram voice and niche. Be specific, not generic.",
+    "Layout and design come from a pre-built element library — you only fill copy tokens.",
+    ANTI_SLOP_RULES,
+    guide.copyTone ? `\n## Niche tone guide\n${guide.copyTone}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 /** Request structured copy from OpenAI (JSON schema only, no HTML). */
@@ -129,6 +172,7 @@ export async function generateStructuredCopy(
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
+        temperature: 0.6,
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -140,13 +184,12 @@ export async function generateStructuredCopy(
         messages: [
           {
             role: "system",
-            content:
-              "You write premium website copy for creators. Return JSON only — never HTML, CSS, or markdown. Match the creator's Instagram voice and niche. Be specific, not generic.",
+            content: buildSystemPrompt(),
           },
           {
             role: "user",
             content: JSON.stringify({
-              task: "Write website copy tokens for a pre-built layout",
+              task: "Write website copy tokens for a pre-built layout. Improve the seed copy — do not repeat it verbatim.",
               niche: input.niche,
               layoutHint: input.layoutHint,
               quizContext: quizContextForPrompt(input.quizAnswers),
@@ -171,7 +214,8 @@ export async function generateStructuredCopy(
     };
     const raw = data.choices?.[0]?.message?.content;
     if (!raw) return null;
-    return JSON.parse(raw) as StructuredSiteCopy;
+    const parsed = JSON.parse(raw) as StructuredSiteCopy;
+    return sanitizeStructuredCopy(parsed);
   } catch (err) {
     console.error("[llm] generateStructuredCopy failed", err);
     return null;

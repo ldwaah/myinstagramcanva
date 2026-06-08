@@ -217,9 +217,10 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     const js = await readTemplateFile("js/main.js");
     const html = renderSiteHtml(content, siteId, env.appUrl, {
       useElementLibrary: true,
-      layoutId: suggestLayoutForNiche(content.niche, quizData.layoutHint),
+      layoutId: suggestLayoutForNiche(content.niche, quizData.layoutHint, quizData.quizAnswers),
       layoutHint: quizData.layoutHint,
       quizAnswers: quizData.quizAnswers,
+      sparseLayout: true,
     });
     const siteJson = JSON.stringify(content, null, 2);
 

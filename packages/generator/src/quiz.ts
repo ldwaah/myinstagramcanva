@@ -44,6 +44,8 @@ export function nicheFromQuizAnswers(answers: QuizAnswers | null | undefined): N
 
 /** Layout hint for suggestLayoutForNiche when niche is OTHER or for fine-tuning */
 export function layoutHintFromQuiz(answers: QuizAnswers | null | undefined): NicheLayoutHint {
+  if (answers?.visualStyle === "minimal") return "creator";
+
   if (!answers?.brandType) return "creator";
 
   const brand = answers.brandType.toLowerCase();

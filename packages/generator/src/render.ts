@@ -27,6 +27,8 @@ export interface RenderSiteOptions {
   layoutId?: string;
   layoutHint?: string;
   quizAnswers?: Record<string, string>;
+  /** Squarespace-style sparse sections (default true) */
+  sparseLayout?: boolean;
 }
 
 /** Build placeholder tokens from IG-derived content for library hydration */
@@ -76,9 +78,9 @@ export function buildElementTokens(
     .join("\n  ");
 
   const testimonialItems = [
-    { quote: "Genuinely transformative — clear, practical, and encouraging.", name: "Client" },
-    { quote: "Exactly what I needed to move forward with confidence.", name: "Coaching client" },
-    { quote: "Professional, warm, and brilliantly organised.", name: "Workshop attendee" },
+    { quote: "Clear, practical, and easy to work with.", name: "Client" },
+    { quote: "Exactly what I needed to move forward.", name: "Coaching client" },
+    { quote: "Professional, warm, and well organised.", name: "Workshop attendee" },
   ]
     .map(
       (t) =>
@@ -245,9 +247,11 @@ export function renderSiteHtmlFromLibrary(
 ): string | undefined {
   const layoutId =
     options.layoutId ??
-    suggestLayoutForNiche(content.niche, options.layoutHint ?? options.quizAnswers?.layoutHint);
+    suggestLayoutForNiche(content.niche, options.layoutHint ?? options.quizAnswers?.layoutHint, options.quizAnswers);
   const tokens = buildElementTokens(content, siteId, options.quizAnswers);
-  const composed = composeFromLayout(layoutId, tokens);
+  const composed = composeFromLayout(layoutId, tokens, {
+    sparse: options.sparseLayout !== false,
+  });
   if (!composed) return undefined;
 
   const theme = content.theme;

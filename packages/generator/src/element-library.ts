@@ -1,6 +1,11 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  limitLayoutCtas,
+  SPARSE_LAYOUT_ELEMENTS,
+  SPARSE_SKIP_ELEMENTS,
+} from "./layout-cta-limit";
 
 /** Root of the ai-extractor library (sibling to src/) */
 export const AI_EXTRACTOR_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "ai-extractor");
@@ -44,6 +49,8 @@ export interface LayoutRecipe {
 export interface ElementLibraryOptions {
   /** Override library root (for tests) */
   root?: string;
+  /** Squarespace-style sparse layout — fewer sections and CTAs */
+  sparse?: boolean;
 }
 
 let cachedElements: LibraryElement[] | null = null;
@@ -175,6 +182,24 @@ export function hydrateTokens(template: string, tokens: ElementTokenMap): string
  * 2. LLM writes copy only → mapped to token keys (HERO_TITLE, ABOUT_BODY, etc.).
  * 3. This function stitches pre-built snippets → minimal tokens spent.
  */
+function resolveSparseElements(
+  layoutId: string,
+  elements: LibraryElement[],
+  sparse: boolean,
+  options: ElementLibraryOptions = {},
+): LibraryElement[] {
+  if (!sparse) return elements;
+
+  const overrideIds = SPARSE_LAYOUT_ELEMENTS[layoutId];
+  if (overrideIds) {
+    return overrideIds
+      .map((id) => getElementById(id, options))
+      .filter((el): el is LibraryElement => el !== undefined);
+  }
+
+  return elements.filter((el) => !SPARSE_SKIP_ELEMENTS.has(el.id));
+}
+
 export function composeFromLayout(
   layoutId: string,
   tokens: ElementTokenMap,
@@ -183,7 +208,9 @@ export function composeFromLayout(
   const resolved = resolveLayout(layoutId, options);
   if (!resolved) return undefined;
 
-  const { layout, elements, palette } = resolved;
+  const { layout, palette } = resolved;
+  const sparse = options.sparse !== false;
+  const elements = resolveSparseElements(layoutId, resolved.elements, sparse, options);
   const cssParts: string[] = [];
   const htmlParts: string[] = [];
   const ds = getDesignSystem(options);
@@ -205,8 +232,10 @@ export function composeFromLayout(
     htmlParts.push(hydrateTokens(el.html, tokens));
   }
 
+  const html = limitLayoutCtas(htmlParts.join("\n\n"));
+
   return {
-    html: htmlParts.join("\n\n"),
+    html,
     css: cssParts.join("\n\n"),
     layout,
     elementIds: elements.map((e) => e.id),
@@ -237,23 +266,62 @@ const NICHE_ENUM_LAYOUT: Record<string, string> = {
   OTHER: "profile-minimal",
 };
 
+const MINIMAL_VISUAL_LAYOUT: Record<string, string> = {
+  MUSICIAN: "profile-minimal",
+  INFLUENCER: "lifestyle-minimal",
+  PHOTOGRAPHER: "lifestyle-minimal",
+  COACH: "profile-minimal",
+  TRAINER: "profile-minimal",
+  ACTOR: "profile-minimal",
+  OTHER: "lifestyle-minimal",
+};
+
+const MINIMAL_LAYOUT_OVERRIDES: Record<string, string> = {
+  "coach-services": "profile-minimal",
+  "influencer-shop": "lifestyle-minimal",
+  "photographer-dark": "lifestyle-minimal",
+  "musician-promo": "profile-minimal",
+  "fitness-coach": "profile-minimal",
+  "business-consultant": "profile-minimal",
+  "studio-agency": "lifestyle-minimal",
+};
+
 /** Suggest a layout id from a niche string (primary heuristic entry point) */
-export function suggestLayoutForNiche(niche: string, layoutHint?: string): string {
+export function suggestLayoutForNiche(
+  niche: string,
+  layoutHint?: string,
+  quizAnswers?: Record<string, string>,
+): string {
   const upper = niche.toUpperCase();
+  let layoutId: string;
+
   if (NICHE_ENUM_LAYOUT[upper] && upper !== "OTHER") {
-    return NICHE_ENUM_LAYOUT[upper];
+    layoutId = NICHE_ENUM_LAYOUT[upper];
+  } else {
+    const hint = (layoutHint ?? niche).toLowerCase();
+    layoutId = "profile-minimal";
+    for (const { keywords, id } of NICHE_LAYOUT_MAP.map((x) => ({ ...x, id: x.layoutId }))) {
+      if (keywords.some((k) => hint.includes(k))) {
+        layoutId = id;
+        break;
+      }
+    }
+    if (layoutId === "profile-minimal") {
+      const n = niche.toLowerCase();
+      for (const { keywords, layoutId: id } of NICHE_LAYOUT_MAP) {
+        if (keywords.some((k) => n.includes(k))) {
+          layoutId = id;
+          break;
+        }
+      }
+    }
   }
 
-  const hint = (layoutHint ?? niche).toLowerCase();
-  for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
-    if (keywords.some((k) => hint.includes(k))) return layoutId;
+  if (quizAnswers?.visualStyle === "minimal") {
+    return MINIMAL_LAYOUT_OVERRIDES[layoutId] ?? MINIMAL_VISUAL_LAYOUT[upper] ?? "lifestyle-minimal";
   }
 
-  const n = niche.toLowerCase();
-  for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
-    if (keywords.some((k) => n.includes(k))) return layoutId;
-  }
-  return "profile-minimal";
+  return layoutId;
 }
 
 /** Suggest a layout id from niche/tags heuristics (no LLM required) */
