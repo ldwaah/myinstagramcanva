@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ok: true, userId: user.id });
   } catch (err) {
+    console.error("[auth/register]", err instanceof Error ? err.message : err);
     const message = sanitizeAuthError(err, "Could not create account");
     const status = err instanceof z.ZodError ? 400 : 400;
     return NextResponse.json({ error: message }, { status });

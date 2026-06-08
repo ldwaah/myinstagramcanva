@@ -27,6 +27,13 @@ export function sanitizeAuthError(err: unknown, fallback: string): string {
   }
 
   if (
+    msg.includes("Server database is not configured") ||
+    msg.includes("Set a PostgreSQL DATABASE_URL")
+  ) {
+    return FRIENDLY_UNAVAILABLE;
+  }
+
+  if (
     msg.includes("Can't reach database server") ||
     msg.includes("Connection refused") ||
     msg.includes("P1001") ||
@@ -34,6 +41,14 @@ export function sanitizeAuthError(err: unknown, fallback: string): string {
     msg.includes("P1017")
   ) {
     return "Cannot reach the database right now. Please try again in a moment.";
+  }
+
+  if (
+    msg.includes("PrismaClientInitializationError") ||
+    msg.includes("could not locate the Query Engine") ||
+    msg.includes("rhel-openssl-3.0.x")
+  ) {
+    return FRIENDLY_UNAVAILABLE;
   }
 
   if (msg.includes("Invalid `prisma.") || msg.includes("PrismaClient")) {

@@ -22,8 +22,20 @@ const isDeployBuild =
   Boolean(process.env.CI) ||
   process.env.NODE_ENV === "production";
 
-// Netlify/Vercel builds often lack DATABASE_URL at build time; still generate a Postgres client.
-const usePostgres = isPostgresUrl || (isDeployBuild && !isSqliteUrl);
+// Serverless deploys require PostgreSQL. SQLite file URLs are local-only and must not
+// drive the generated client on Netlify/Vercel (even if misconfigured in env).
+const isServerless =
+  Boolean(process.env.NETLIFY) || Boolean(process.env.VERCEL);
+const usePostgres =
+  isPostgresUrl ||
+  isServerless ||
+  (isDeployBuild && !isSqliteUrl);
+
+if (isServerless && isSqliteUrl) {
+  console.warn(
+    "[prepare-schema] Ignoring SQLite DATABASE_URL on serverless deploy; generating PostgreSQL client."
+  );
+}
 
 const provider = usePostgres ? "postgresql" : "sqlite";
 

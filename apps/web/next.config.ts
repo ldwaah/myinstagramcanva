@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import path from "path";
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 
 const packagesRoot = path.join(__dirname, "../../packages");
 
@@ -28,7 +29,10 @@ const nextConfig: NextConfig = {
       "@mic/instagram": path.join(packagesRoot, "instagram/src"),
     },
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins = [...config.plugins, new PrismaPlugin()];
+    }
     config.resolve.alias = {
       ...config.resolve.alias,
       "@mic/db": path.join(packagesRoot, "db/src"),
