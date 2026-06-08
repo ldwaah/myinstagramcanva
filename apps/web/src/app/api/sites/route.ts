@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import { z } from "zod";
 import { prisma, Niche } from "@mic/db";
 import { getSession } from "@/lib/auth";
@@ -40,7 +41,11 @@ export async function POST(req: Request) {
       },
     });
 
-    runSiteGeneration(site.id, session.id).catch(console.error);
+    waitUntil(
+      runSiteGeneration(site.id, session.id).catch((err) => {
+        console.error("[generation]", site.id, err);
+      })
+    );
 
     return NextResponse.json({ siteId: site.id, username: site.username });
   } catch (err) {
