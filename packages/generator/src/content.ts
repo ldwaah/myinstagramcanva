@@ -1,5 +1,5 @@
 import type { GenerateInput, Niche, SiteContentData, SiteThemeVars } from "./types";
-import { quizContextForPrompt } from "./quiz";
+import { applyStructuredCopy, generateStructuredCopy, type StructuredSiteCopy } from "./llm";
 import {
   accentFromUsername,
   fontPairForUsername,
@@ -105,6 +105,8 @@ export async function buildThemedInput(input: GenerateInput): Promise<GenerateIn
   return { ...input, accentColor: theme.accent, theme };
 }
 
+export type { StructuredSiteCopy } from "./llm";
+
 export async function generateSiteContentWithAI(
   input: GenerateInput,
   apiKey: string
@@ -112,61 +114,24 @@ export async function generateSiteContentWithAI(
   const themed = await buildThemedInput(input);
   const base = generateSiteContent(themed);
 
-  try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        response_format: { type: "json_object" },
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a premium copywriter for creator websites. Each site must feel unique to that creator's Instagram voice and niche. Return JSON only. Keep tone elevated, specific, and never generic.",
-          },
-          {
-            role: "user",
-            content: JSON.stringify({
-              task: "Enhance website copy from real Instagram data",
-              niche: input.niche,
-              quizAnswers: input.quizAnswers,
-              layoutHint: input.layoutHint,
-              quizContext: quizContextForPrompt(input.quizAnswers),
-              username: input.username,
-              biography: input.profile?.biography,
-              followers: input.profile?.followers,
-              accentColor: themed.accentColor,
-              tagline: input.tagline,
-              fields: {
-                heroEyebrow: base.heroEyebrow,
-                heroTitle: base.heroTitle,
-                heroSubtitle: base.heroSubtitle,
-                aboutBody: base.aboutBody,
-                aboutBullets: base.aboutBullets,
-                services: base.services,
-                contactSubtitle: base.contactSubtitle,
-                metaDescription: base.metaDescription,
-                marqueeText: base.marqueeText,
-              },
-            }),
-          },
-        ],
-      }),
-    });
+  const structured = await generateStructuredCopy(input, apiKey, {
+    heroEyebrow: base.heroEyebrow,
+    heroTitle: base.heroTitle,
+    heroSubtitle: base.heroSubtitle,
+    aboutBody: base.aboutBody,
+    aboutBullets: base.aboutBullets,
+    services: base.services,
+    contactSubtitle: base.contactSubtitle,
+    metaDescription: base.metaDescription,
+    marqueeText: base.marqueeText,
+    servicesTitle: base.servicesTitle,
+  });
 
-    if (!res.ok) return base;
-    const data = (await res.json()) as {
-      choices: { message: { content: string } }[];
-    };
-    const enhanced = JSON.parse(data.choices[0].message.content) as Partial<SiteContentData>;
-    return { ...base, ...enhanced };
-  } catch {
-    return base;
-  }
+  if (!structured) return base;
+  return applyStructuredCopy(
+    base as Record<string, unknown> & typeof base,
+    structured,
+  ) as unknown as SiteContentData;
 }
 
 function buildMyPosts(input: GenerateInput): SiteContentData["myPosts"] {
