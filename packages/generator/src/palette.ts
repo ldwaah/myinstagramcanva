@@ -1,12 +1,12 @@
 import { accentFromUsername, hashString } from "./theme";
 
-type SharpModule = typeof import("sharp");
-let sharpLoader: Promise<SharpModule["default"] | null> | undefined;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let sharpLoader: Promise<any> | undefined;
 
 async function loadSharp() {
   if (!sharpLoader) {
     sharpLoader = import("sharp")
-      .then((mod) => mod.default)
+      .then((mod) => ("default" in mod ? mod.default : mod))
       .catch(() => null);
   }
   return sharpLoader;
