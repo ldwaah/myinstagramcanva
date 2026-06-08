@@ -11,6 +11,7 @@ function igHeaders(username: string): Record<string, string> {
     "User-Agent":
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
     "X-IG-App-ID": "936619743392459",
+    "X-ASBD-ID": "129477",
     Accept: "*/*",
     "Accept-Language": "en-US,en;q=0.9",
     Referer: `https://www.instagram.com/${username}/`,
@@ -19,6 +20,17 @@ function igHeaders(username: string): Record<string, string> {
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
   };
+}
+
+async function igFetch(url: string, username: string, init?: RequestInit): Promise<Response> {
+  const proxy = process.env.INSTAGRAM_PROXY_URL?.trim();
+  const target = proxy
+    ? `${proxy}${proxy.includes("?") ? "&" : "?"}url=${encodeURIComponent(url)}`
+    : url;
+  return fetch(target, {
+    ...init,
+    headers: { ...igHeaders(username), ...(init?.headers || {}) },
+  });
 }
 
 const GRAPHQL_DOC_ID = "7950224923793128298";
@@ -39,7 +51,7 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
   let lastError: Error | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await fetch(url, { headers: igHeaders(clean) });
+      const res = await igFetch(url, clean);
       if (res.status === 429 || res.status >= 500) {
         lastError = new Error(`Instagram rate limited or unavailable (${res.status})`);
         await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
@@ -141,6 +153,57 @@ async function parseProfileResponse(
   };
 }
 
+/** Rehydrate a profile from a cached web_profile_info payload (no pagination). */
+export function profileFromRawPayload(raw: unknown, username: string): InstagramProfile | null {
+  try {
+    const data = raw as Parameters<typeof parseProfileResponse>[0];
+    if (!data?.data?.user) return null;
+    const user = data.data.user;
+    const timeline = user.edge_owner_to_timeline_media;
+    const allEdges = [...(timeline?.edges ?? [])];
+    const mediaItems: InstagramMediaItem[] = [];
+    const posts: InstagramPost[] = [];
+    const reels: InstagramReel[] = [];
+    const seen = new Set<string>();
+
+    for (const edge of allEdges) {
+      if (mediaItems.length >= MAX_MEDIA_ITEMS) break;
+      const item = mediaItemFromNode(edge.node);
+      if (!item || seen.has(item.shortcode)) continue;
+      seen.add(item.shortcode);
+      mediaItems.push(item);
+      if (item.type === "video" && item.videoUrl) {
+        reels.push({
+          id: item.shortcode,
+          shortcode: item.shortcode,
+          videoUrl: item.videoUrl,
+          caption: item.caption,
+          posterUrl: item.posterUrl || item.imageUrl,
+        });
+      }
+      collectImagePosts(item, posts);
+    }
+
+    return {
+      username: user.username || username.replace(/^@/, "").trim().toLowerCase(),
+      fullName: user.full_name || user.username,
+      biography: user.biography || "",
+      profilePicUrl: user.profile_pic_url_hd || user.profile_pic_url || "",
+      followers: user.edge_followed_by?.count ?? 0,
+      postCount: timeline?.count ?? allEdges.length,
+      businessEmail: user.business_email,
+      businessPhone: user.business_phone_number,
+      userId: user.id,
+      mediaItems,
+      posts: pickVariedPosts(posts, 12),
+      reels: reels.slice(0, MAX_REELS),
+      raw: data,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function fetchTimelinePage(userId: string, username: string, cursor?: string) {
   const variables = JSON.stringify({
     id: userId,
@@ -148,7 +211,7 @@ async function fetchTimelinePage(userId: string, username: string, cursor?: stri
     after: cursor ?? null,
   });
   const gqlUrl = `https://www.instagram.com/graphql/query/?doc_id=${GRAPHQL_DOC_ID}&variables=${encodeURIComponent(variables)}`;
-  const res = await fetch(gqlUrl, { headers: igHeaders(username) });
+  const res = await igFetch(gqlUrl, username);
   if (!res.ok) throw new Error(`Instagram pagination failed (${res.status})`);
   return res.json() as Promise<{
     data?: { user?: { edge_owner_to_timeline_media?: TimelineBundle } };

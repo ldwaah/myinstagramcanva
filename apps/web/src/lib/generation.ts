@@ -1,5 +1,5 @@
 import { prisma, SiteStatus, SiteTier, JobStatus, MediaType, type Niche } from "@mic/db";
-import { fetchInstagramProfile, type InstagramMediaItem, type InstagramProfile } from "@mic/instagram";
+import { fetchInstagramProfile, profileFromRawPayload, type InstagramMediaItem, type InstagramProfile } from "@mic/instagram";
 import {
   generateSiteContent,
   generateSiteContentWithAI,
@@ -117,10 +117,12 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     }
 
     let profile: InstagramProfile | ReturnType<typeof emptyProfile> | undefined;
+    let igFetchSucceeded = false;
     let igFetchError: unknown;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         profile = await fetchInstagramProfile(site.username);
+        igFetchSucceeded = true;
         igFetchError = undefined;
         break;
       } catch (err) {
@@ -131,53 +133,74 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
         }
       }
     }
-    if (!profile) {
-      console.error(`[generation] IG fetch failed for @${site.username}, using empty profile`, igFetchError);
-      profile = emptyProfile(site.username, site.tagline);
+    if (!igFetchSucceeded) {
+      if (site.instagramProfile?.rawPayload) {
+        try {
+          const cached = profileFromRawPayload(
+            JSON.parse(site.instagramProfile.rawPayload),
+            site.username,
+          );
+          if (cached && (cached.mediaItems.length > 0 || cached.profilePicUrl)) {
+            profile = cached;
+            console.warn(`[generation] Using cached IG profile for @${site.username}`);
+          }
+        } catch {
+          /* ignore corrupt cache */
+        }
+      }
+      if (!profile) {
+        console.error(`[generation] IG fetch failed for @${site.username}, using empty profile`, igFetchError);
+        profile = emptyProfile(site.username, site.tagline);
+      }
     }
 
-    await prisma.instagramProfile.upsert({
-      where: { siteId },
-      create: {
-        siteId,
-        username: profile.username,
-        fullName: profile.fullName,
-        biography: profile.biography,
-        profilePicUrl: profile.profilePicUrl,
-        followers: profile.followers,
-        rawPayload: JSON.stringify(profile.raw),
-      },
-      update: {
-        fullName: profile.fullName,
-        biography: profile.biography,
-        profilePicUrl: profile.profilePicUrl,
-        followers: profile.followers,
-        rawPayload: JSON.stringify(profile.raw),
-        lastSyncedAt: new Date(),
-      },
-    });
+    const resolvedProfile =
+      profile ?? emptyProfile(site.username, site.tagline);
 
-    await prisma.mediaAsset.deleteMany({ where: { siteId } });
+    if (igFetchSucceeded) {
+      await prisma.instagramProfile.upsert({
+        where: { siteId },
+        create: {
+          siteId,
+          username: resolvedProfile.username,
+          fullName: resolvedProfile.fullName,
+          biography: resolvedProfile.biography,
+          profilePicUrl: resolvedProfile.profilePicUrl,
+          followers: resolvedProfile.followers,
+          rawPayload: JSON.stringify(resolvedProfile.raw),
+        },
+        update: {
+          fullName: resolvedProfile.fullName,
+          biography: resolvedProfile.biography,
+          profilePicUrl: resolvedProfile.profilePicUrl,
+          followers: resolvedProfile.followers,
+          rawPayload: JSON.stringify(resolvedProfile.raw),
+          lastSyncedAt: new Date(),
+        },
+      });
+
+      await prisma.mediaAsset.deleteMany({ where: { siteId } });
+    }
 
     const bundleAssets: Record<string, string> = {};
-    let profilePicUrl = profile.profilePicUrl;
+    let profilePicUrl = resolvedProfile.profilePicUrl;
 
-    if (profile.profilePicUrl) {
+    if (resolvedProfile.profilePicUrl) {
       const bundled = await resolveAssetUrl(
         site.username,
         siteId,
-        profile.profilePicUrl,
+        resolvedProfile.profilePicUrl,
         `assets/profile.jpg`,
         "image/jpeg",
         bundleAssets,
-        { type: MediaType.IMAGE, alt: profile.fullName, sortOrder: -1, instagramId: "profile" }
+        { type: MediaType.IMAGE, alt: resolvedProfile.fullName, sortOrder: -1, instagramId: "profile" }
       );
       if (bundled) profilePicUrl = bundled;
     }
 
-    const mediaItems = await processMediaItems(site.username, siteId, profile.mediaItems, bundleAssets);
-    const postsWithUrls = await processImagePosts(site.username, siteId, profile.posts, bundleAssets);
-    const reelsWithUrls = await processReels(site.username, siteId, profile.reels, bundleAssets);
+    const mediaItems = await processMediaItems(site.username, siteId, resolvedProfile.mediaItems, bundleAssets);
+    const postsWithUrls = await processImagePosts(site.username, siteId, resolvedProfile.posts, bundleAssets);
+    const reelsWithUrls = await processReels(site.username, siteId, resolvedProfile.reels, bundleAssets);
 
     const quizData = await resolveQuizContext(siteId, site.isPreview, site.quizAnswers, site.niche);
 
@@ -189,13 +212,13 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       tagline: site.tagline || undefined,
       accentColor: undefined,
       profile: {
-        fullName: profile.fullName,
-        biography: profile.biography,
+        fullName: resolvedProfile.fullName,
+        biography: resolvedProfile.biography,
         profilePicUrl,
-        followers: profile.followers,
-        postCount: profile.postCount || mediaItems.length,
-        businessEmail: profile.businessEmail,
-        businessPhone: profile.businessPhone,
+        followers: resolvedProfile.followers,
+        postCount: resolvedProfile.postCount || mediaItems.length,
+        businessEmail: resolvedProfile.businessEmail,
+        businessPhone: resolvedProfile.businessPhone,
       },
       posts: postsWithUrls.map((p) => ({
         imageUrl: p.imageUrl,
