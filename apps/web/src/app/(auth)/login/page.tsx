@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { AuthLayout } from "@/components/AuthLayout";
 import { MicButton } from "@/components/MicButton";
 import { parseJsonError } from "@/lib/db-errors";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+  const affiliateRedirect = redirect === "/dashboard/affiliates";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +39,10 @@ export default function LoginPage() {
         setError(parseJsonError(data, "Invalid email or password."));
         return;
       }
+      if (redirect?.startsWith("/") && !redirect.startsWith("//")) {
+        router.push(redirect);
+        return;
+      }
       const sessionRes = await fetch("/api/auth/session");
       const session = (await sessionRes.json()) as { hasSites?: boolean };
       router.push(session.hasSites ? "/dashboard" : "/onboarding");
@@ -47,7 +54,14 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthLayout title="Welcome back" subtitle="Log in to manage your sites.">
+    <AuthLayout
+      title="Welcome back"
+      subtitle={
+        affiliateRedirect
+          ? "Log in to open your affiliate dashboard and copy your referral link."
+          : "Log in to manage your sites."
+      }
+    >
       <form onSubmit={onSubmit} className="auth-form">
         <div>
           <label className="mic-label">Email</label>
@@ -63,8 +77,17 @@ export default function LoginPage() {
         </MicButton>
       </form>
       <p className="auth-form__footer">
-        No account? <Link href="/signup">Sign up</Link>
+        No account?{" "}
+        <Link href={affiliateRedirect ? "/signup?intent=affiliate" : "/signup"}>Sign up</Link>
       </p>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -12,6 +12,7 @@ export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const siteId = searchParams.get("siteId");
+  const affiliateIntent = searchParams.get("intent") === "affiliate";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -49,6 +50,8 @@ export function SignupForm() {
           body: JSON.stringify({ siteId }),
         });
         router.push(`/dashboard?siteId=${siteId}&goLive=pending`);
+      } else if (affiliateIntent) {
+        router.push("/dashboard/affiliates");
       } else {
         router.push("/onboarding?welcome=1");
       }
@@ -62,7 +65,11 @@ export function SignupForm() {
   return (
     <AuthLayout
       title="Create your account"
-      subtitle={`${TRIAL_DAYS}-day free trial. No credit card.`}
+      subtitle={
+        affiliateIntent
+          ? "Create a free account to get your referral link and start sharing."
+          : `${TRIAL_DAYS}-day free trial. No credit card.`
+      }
     >
       <form onSubmit={onSubmit} className="auth-form">
         <div>
@@ -97,7 +104,10 @@ export function SignupForm() {
         </MicButton>
       </form>
       <p className="auth-form__footer">
-        Already have an account? <Link href="/login">Log in</Link>
+        Already have an account?{" "}
+        <Link href={affiliateIntent ? "/login?redirect=%2Fdashboard%2Faffiliates" : "/login"}>
+          Log in
+        </Link>
       </p>
     </AuthLayout>
   );

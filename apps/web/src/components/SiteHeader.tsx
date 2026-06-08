@@ -34,8 +34,6 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
     }
   }
 
-  const showPricing = variant === "landing";
-
   return (
     <header className={`landing-header${variant === "minimal" ? " landing-header--minimal" : ""}`}>
       <div className="mic-container landing-header__inner">
@@ -44,19 +42,17 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
           Instagram Canva
         </Link>
         <nav className={`landing-nav${variant === "minimal" ? " landing-nav--minimal" : ""}`}>
-          {showPricing && (
-            <>
-              <Link href="/pricing" className="landing-nav__pricing">
-                Pricing
-              </Link>
-              <Link href="/affiliates" className="landing-nav__affiliates">
-                Affiliates
-              </Link>
-            </>
-          )}
+          <Link href="/pricing" className="landing-nav__pricing">
+            Pricing
+          </Link>
+          <Link href="/affiliates" className="landing-nav__affiliates">
+            Affiliates
+          </Link>
           {session.loggedIn ? (
             <>
-              <Link href="/dashboard">My account</Link>
+              <Link href="/dashboard" className="landing-nav__login">
+                My account
+              </Link>
               <button
                 type="button"
                 className="landing-nav__signout"
@@ -71,7 +67,9 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
             </>
           ) : (
             <>
-              <Link href="/login">Log in</Link>
+              <Link href="/login" className="landing-nav__login">
+                Log in
+              </Link>
               <Link href="/signup" className="landing-nav__cta landing-cta-shimmer">
                 <span className="landing-nav__cta-text">Start free trial</span>
               </Link>

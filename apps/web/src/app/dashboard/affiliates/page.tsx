@@ -22,6 +22,12 @@ interface AffiliateData {
   };
 }
 
+const shareTips = [
+  "Add your link to your Instagram bio or link-in-bio tool.",
+  "Mention it when you recommend a website builder to creator friends.",
+  "Drop it in newsletters, DMs or community posts where referrals are welcome.",
+];
+
 export default function AffiliatesDashboardPage() {
   const router = useRouter();
   const [data, setData] = useState<AffiliateData | null>(null);
@@ -40,7 +46,7 @@ export default function AffiliatesDashboardPage() {
   async function load() {
     const res = await fetch("/api/affiliates");
     if (res.status === 401) {
-      window.location.href = "/login";
+      window.location.href = "/login?redirect=%2Fdashboard%2Faffiliates";
       return;
     }
     setData(await res.json());
@@ -79,7 +85,7 @@ export default function AffiliatesDashboardPage() {
   return (
     <AppShell
       title="Affiliate dashboard"
-      subtitle="Share your link and earn competitive commission on every package sale."
+      subtitle="Copy your link, share it with creators, and track clicks and commission."
     >
       {!affiliate ? (
         <MicCard glass glow className="dash-empty">
@@ -108,21 +114,35 @@ export default function AffiliatesDashboardPage() {
 
           <MicCard glass glow className="affiliate-links">
             <h3>Your referral links</h3>
+            <p className="affiliate-links__intro">
+              Share either link. Signups and purchases within 30 days of a click are attributed to you.
+            </p>
             <div className="affiliate-link-row">
+              <div className="affiliate-link-row__label">Signup link</div>
               <code>{affiliate.referralUrl}</code>
               <MicButton variant="ghost" onClick={() => copy(affiliate.referralUrl, "signup")}>
-                {copied === "signup" ? "Copied!" : "Copy"}
+                {copied === "signup" ? "Copied!" : "Copy link"}
               </MicButton>
             </div>
             <div className="affiliate-link-row">
+              <div className="affiliate-link-row__label">Homepage link</div>
               <code>{affiliate.homeReferralUrl}</code>
               <MicButton variant="ghost" onClick={() => copy(affiliate.homeReferralUrl, "home")}>
-                {copied === "home" ? "Copied!" : "Copy"}
+                {copied === "home" ? "Copied!" : "Copy link"}
               </MicButton>
             </div>
             <p className="affiliate-links__note">
-              30-day cookie attribution · commission on Starter, Tailored, Pro &amp; Studio purchases
+              30-day attribution · commission on Starter, Tailored, Pro &amp; Studio purchases
             </p>
+          </MicCard>
+
+          <MicCard glass className="affiliate-share">
+            <h3>How to share</h3>
+            <ul className="affiliate-share__list">
+              {shareTips.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
           </MicCard>
         </>
       )}

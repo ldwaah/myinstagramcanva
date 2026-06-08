@@ -192,6 +192,40 @@ export default function TermsPage() {
         </p>
       </section>
 
+      <section id="affiliates">
+        <h2>16. Affiliate programme</h2>
+        <p>
+          Our affiliate programme allows approved participants to earn commission on qualifying
+          purchases referred through a personal tracking link.
+        </p>
+        <ul>
+          <li>
+            Attribution lasts 30 days from the visitor&apos;s most recent click on your referral link.
+          </li>
+          <li>
+            Commission applies to qualifying package purchases (Starter, Tailored, Pro and Studio) as
+            displayed in your affiliate dashboard.
+          </li>
+          <li>
+            Self-referrals, fraudulent traffic, cookie stuffing and misleading promotion are prohibited.
+          </li>
+          <li>
+            We may withhold or reverse commission on refunded, disputed or invalid transactions.
+          </li>
+          <li>
+            Rates, eligibility and payout schedules may change with reasonable notice posted on this page
+            or in your dashboard.
+          </li>
+          <li>
+            We may suspend or terminate affiliate accounts that breach these Terms or applicable law.
+          </li>
+        </ul>
+        <p>
+          For affiliate support, email{" "}
+          <a href="mailto:support@myinstagramcanva.com">support@myinstagramcanva.com</a>.
+        </p>
+      </section>
+
       <SponsorCredit className="legal-page__sponsor" />
     </main>
   );
