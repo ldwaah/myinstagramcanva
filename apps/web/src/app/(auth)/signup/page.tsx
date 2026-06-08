@@ -45,7 +45,7 @@ export default function SignupPage() {
 
   return (
     <main className="mic-container" style={{ padding: "4rem 0", maxWidth: "420px" }}>
-      <h1 style={{ fontFamily: "var(--font-syne)" }}>Start your 14-day trial</h1>
+      <h1 style={{ fontFamily: "var(--font-syne)" }}>Start your 21-day trial</h1>
       <form onSubmit={onSubmit} style={{ display: "grid", gap: "1rem", marginTop: "1.5rem" }}>
         <div>
           <label className="mic-label">Name</label>

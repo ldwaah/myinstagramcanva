@@ -32,6 +32,9 @@ export interface SiteContentData {
   phone?: string;
   email?: string;
   accentColor: string;
+  fontDisplay: string;
+  fontBody: string;
+  fontGoogleUrl: string;
   niche: Niche;
   marqueeText: string;
   metaDescription: string;
@@ -44,6 +47,7 @@ export interface GenerateInput {
   username: string;
   niche: Niche;
   tagline?: string;
+  accentColor?: string;
   profile?: {
     fullName: string;
     biography: string;

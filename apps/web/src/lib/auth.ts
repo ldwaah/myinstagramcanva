@@ -34,9 +34,10 @@ export async function createSession(user: SessionUser) {
     .sign(secret);
 
   const cookieStore = await cookies();
+  const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
   cookieStore.set(COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProd,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,

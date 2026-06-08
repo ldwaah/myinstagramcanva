@@ -1,4 +1,5 @@
 import type { GenerateInput, Niche, SiteContentData } from "./types";
+import { accentFromImageUrl, accentFromUsername, fontPairForUsername } from "./theme";
 
 const NICHE_LABELS: Record<Niche, { services: string; portfolio: string; action: string }> = {
   PHOTOGRAPHER: { services: "What I shoot", portfolio: "Selected frames", action: "Book a shoot" },
@@ -16,6 +17,8 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
   const bio = input.profile?.biography || "";
   const tagline = input.tagline || extractTagline(bio) || `Creative work by @${input.username}`;
   const heroLines = buildHeroLines(tagline, input.niche);
+  const fonts = fontPairForUsername(input.username);
+  const accentColor = input.accentColor || accentFromUsername(input.username);
 
   return {
     brandName,
@@ -51,7 +54,10 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
     instagramHandle: input.username,
     phone: input.profile?.businessPhone,
     email: input.profile?.businessEmail,
-    accentColor: "#E1306C",
+    accentColor,
+    fontDisplay: fonts.display,
+    fontBody: fonts.body,
+    fontGoogleUrl: fonts.google,
     niche: input.niche,
     marqueeText: `${brandName.toUpperCase()} · @${input.username.toUpperCase()} · `,
     metaDescription: `${brandName} · ${tagline.slice(0, 120)}`,
@@ -61,11 +67,18 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
   };
 }
 
+export async function buildThemedInput(input: GenerateInput): Promise<GenerateInput> {
+  const profilePic = input.posts[0]?.imageUrl;
+  const accentColor = await accentFromImageUrl(profilePic, input.username);
+  return { ...input, accentColor };
+}
+
 export async function generateSiteContentWithAI(
   input: GenerateInput,
   apiKey: string
 ): Promise<SiteContentData> {
-  const base = generateSiteContent(input);
+  const themed = await buildThemedInput(input);
+  const base = generateSiteContent(themed);
 
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {

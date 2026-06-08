@@ -46,7 +46,7 @@ export default function HomePage() {
         </h1>
         <p style={{ color: "var(--muted)", fontSize: "1.1rem", maxWidth: "600px" }}>
           Enter your username or connect Instagram. We build a clean, gradient-branded site
-          at <strong>username.myinstagramcanva.com</strong>. 14-day free trial.
+          at <strong>username.myinstagramcanva.com</strong>. 21-day free trial.
         </p>
         <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
           <Link href="/signup" className="mic-btn mic-btn-primary">Create your site</Link>

@@ -73,6 +73,7 @@ model SiteContent {
   id        String   @id @default(cuid())
   siteId    String   @unique
   content   String
+  bundle    String?
   version   Int      @default(1)
   commitSha String?
   updatedAt DateTime @updatedAt

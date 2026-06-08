@@ -7,6 +7,8 @@ import {
   generateSiteContentWithAI,
   renderSiteHtml,
   renderFunnelHtml,
+  buildThemedInput,
+  injectThemeIntoCss,
   type SiteContentData,
 } from "@mic/generator";
 import { env } from "./env";
@@ -15,6 +17,12 @@ import { commitSiteFiles } from "./github";
 import { getTrialEndDate } from "./trial";
 
 const TEMPLATE_ROOT = path.join(process.cwd(), "../../templates/instagram-v1");
+const IS_SERVERLESS = Boolean(process.env.VERCEL);
+const HAS_R2 = Boolean(env.r2.accessKeyId && env.r2.accountId);
+
+function shouldUseRemoteUrls() {
+  return IS_SERVERLESS && !HAS_R2;
+}
 
 export async function runSiteGeneration(siteId: string, userId: string) {
   const site = await prisma.site.findUnique({
@@ -70,9 +78,15 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       },
     });
 
+    const useRemoteUrls = shouldUseRemoteUrls();
     const postsWithUrls = [];
+
     for (let i = 0; i < profile.posts.length; i++) {
       const post = profile.posts[i];
+      if (useRemoteUrls) {
+        postsWithUrls.push(post);
+        continue;
+      }
       try {
         const buf = await downloadUrl(post.imageUrl);
         const key = `${site.username}/images/portfolio-${String(i + 1).padStart(2, "0")}.jpg`;
@@ -100,6 +114,10 @@ export async function runSiteGeneration(siteId: string, userId: string) {
 
     const reelsWithUrls = [];
     for (const reel of profile.reels) {
+      if (useRemoteUrls) {
+        reelsWithUrls.push(reel);
+        continue;
+      }
       try {
         const buf = await downloadUrl(reel.videoUrl);
         const key = `${site.username}/videos/${reel.shortcode}.mp4`;
@@ -114,10 +132,11 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       }
     }
 
-    const input = {
+    const input = await buildThemedInput({
       username: site.username,
       niche: site.niche,
       tagline: site.tagline || undefined,
+      accentColor: undefined,
       profile: {
         fullName: profile.fullName,
         biography: profile.biography,
@@ -136,19 +155,28 @@ export async function runSiteGeneration(siteId: string, userId: string) {
         caption: r.caption,
         shortcode: r.shortcode,
       })),
-    };
+    });
+
+    // Prefer profile pic for accent when available
+    if (profile.profilePicUrl) {
+      const { accentFromImageUrl } = await import("@mic/generator");
+      input.accentColor = await accentFromImageUrl(profile.profilePicUrl, site.username);
+    }
 
     let content: SiteContentData = generateSiteContent(input);
     if (env.openaiKey) {
       content = await generateSiteContentWithAI(input, env.openaiKey);
     }
 
-    // Starter: site only. Tailored: lead form + human design. Pro: calendar + funnel. Studio: CRM campaigns.
     content.showContactForm = site.tier === SiteTier.TAILORED || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showCalendar = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showFunnel = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
 
-    const css = await fs.readFile(path.join(TEMPLATE_ROOT, "css/style.css"), "utf8");
+    const baseCss = await fs.readFile(path.join(TEMPLATE_ROOT, "css/style.css"), "utf8");
+    const css = injectThemeIntoCss(baseCss, content.accentColor, {
+      display: content.fontDisplay,
+      body: content.fontBody,
+    });
     const js = await fs.readFile(path.join(TEMPLATE_ROOT, "js/main.js"), "utf8");
     const html = renderSiteHtml(content, siteId, env.appUrl);
     const siteJson = JSON.stringify(content, null, 2);
@@ -165,7 +193,17 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       files["offer/index.html"] = renderFunnelHtml(content, siteId, env.appUrl);
     }
 
-    await publishSiteBundle(site.username, files);
+    if (!useRemoteUrls) {
+      await publishSiteBundle(site.username, files);
+    } else {
+      // Still write locally when not on Vercel (dev)
+      const { publishSiteBundle: publish } = await import("./storage");
+      try {
+        await publish(site.username, files);
+      } catch {
+        /* filesystem optional on serverless */
+      }
+    }
 
     const commitSha = await commitSiteFiles(
       site.username,
@@ -175,8 +213,18 @@ export async function runSiteGeneration(siteId: string, userId: string) {
 
     await prisma.siteContent.upsert({
       where: { siteId },
-      create: { siteId, content: siteJson, commitSha: commitSha || undefined },
-      update: { content: siteJson, version: { increment: 1 }, commitSha: commitSha || undefined },
+      create: {
+        siteId,
+        content: siteJson,
+        bundle: JSON.stringify(files),
+        commitSha: commitSha || undefined,
+      },
+      update: {
+        content: siteJson,
+        bundle: JSON.stringify(files),
+        version: { increment: 1 },
+        commitSha: commitSha || undefined,
+      },
     });
 
     await prisma.site.update({

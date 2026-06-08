@@ -15,7 +15,10 @@ export async function GET(
   const filePath = relPath.endsWith("/") ? `${relPath}index.html` : relPath;
   const normalized = filePath === "" ? "index.html" : filePath;
 
-  const site = await prisma.site.findUnique({ where: { username } });
+  const site = await prisma.site.findUnique({
+    where: { username },
+    include: { siteContent: true },
+  });
   if (!site) {
     return new NextResponse("Site not found", { status: 404 });
   }
@@ -27,17 +30,17 @@ export async function GET(
     });
   }
 
+  const contentType = mimeFor(normalized);
+  const bundle = parseBundle(site.siteContent?.bundle);
+
+  if (bundle?.[normalized]) {
+    return new NextResponse(bundle[normalized], { headers: { "Content-Type": contentType } });
+  }
+
   const localPath = path.join(getLocalSitePath(username), normalized);
   try {
     const content = await fs.readFile(localPath);
-    const type = normalized.endsWith(".css")
-      ? "text/css"
-      : normalized.endsWith(".js")
-        ? "application/javascript"
-        : normalized.endsWith(".json")
-          ? "application/json"
-          : "text/html";
-    return new NextResponse(content, { headers: { "Content-Type": type } });
+    return new NextResponse(content, { headers: { "Content-Type": contentType } });
   } catch {
     if (normalized !== "index.html") {
       return new NextResponse("Not found", { status: 404 });
@@ -47,6 +50,22 @@ export async function GET(
       headers: { "Content-Type": "text/html" },
     });
   }
+}
+
+function parseBundle(raw: string | null | undefined): Record<string, string> | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as Record<string, string>;
+  } catch {
+    return null;
+  }
+}
+
+function mimeFor(file: string) {
+  if (file.endsWith(".css")) return "text/css";
+  if (file.endsWith(".js")) return "application/javascript";
+  if (file.endsWith(".json")) return "application/json";
+  return "text/html";
 }
 
 function expiredHtml(username: string) {

@@ -6,7 +6,7 @@ import { runSiteGeneration } from "@/lib/generation";
 
 const schema = z.object({
   username: z.string().min(3).max(30).regex(/^[a-z0-9_]+$/),
-  niche: z.nativeEnum(Niche),
+  niche: z.nativeEnum(Niche).optional().default(Niche.OTHER),
   tagline: z.string().optional(),
 });
 

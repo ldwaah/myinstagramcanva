@@ -89,8 +89,11 @@ function DashboardContent() {
         </nav>
       </header>
 
-      {params.get("generating") && (
-        <p className="mic-banner" style={{ marginBottom: "1rem" }}>Your site is being generated…</p>
+      {(params.get("generating") || sites.some((s) => s.status === "GENERATING" || s.generationJobs[0]?.status === "RUNNING")) && (
+        <div className="mic-banner" style={{ marginBottom: "1rem", padding: "1rem" }}>
+          <strong>Generating your tailored site…</strong>
+          <p style={{ marginTop: "0.35rem", opacity: 0.9 }}>Pulling Instagram photos, picking fonts &amp; colors, writing copy. This usually takes under a minute.</p>
+        </div>
       )}
 
       {!sites.length && (

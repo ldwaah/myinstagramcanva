@@ -64,10 +64,13 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="${escapeHtml(content.metaDescription)}" />
-  <meta name="theme-color" content="#E1306C" />
+  <meta name="theme-color" content="${escapeHtml(content.accentColor)}" />
   <meta property="og:title" content="${escapeHtml(content.brandName)}" />
   <meta property="og:description" content="${escapeHtml(content.metaDescription)}" />
   <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
