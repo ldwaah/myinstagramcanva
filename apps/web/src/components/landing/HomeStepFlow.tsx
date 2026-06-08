@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
 
 type Step = 1 | 2 | 3;
+
+type SessionState = { loggedIn: boolean };
 
 const STEPS = [
   { num: 1, title: "Enter your username", subtitle: "Type your public Instagram handle" },
@@ -22,12 +24,30 @@ export function HomeStepFlow() {
   const [siteId, setSiteId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [goLiveLoading, setGoLiveLoading] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data: SessionState) => setLoggedIn(Boolean(data.loggedIn)))
+      .catch(() => setLoggedIn(false));
+  }, []);
 
   const pollUntilReady = useCallback(async (id: string, uname: string) => {
     for (let i = 0; i < 60; i++) {
       const res = await fetch(`/api/preview/status?siteId=${id}`);
-      if (!res.ok) break;
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError((data as { error?: string }).error || "Could not check build status");
+        setStep(1);
+        return;
+      }
       const data = await res.json();
+      if (data.failed) {
+        setError(data.error || "Generation failed. Please try again.");
+        setStep(1);
+        return;
+      }
       if (data.ready) {
         setPreviewUrl(data.previewUrl || getTenantPreviewUrl(uname));
         setStep(3);
@@ -35,8 +55,8 @@ export function HomeStepFlow() {
       }
       await new Promise((r) => setTimeout(r, 2000));
     }
-    setPreviewUrl(getTenantPreviewUrl(uname));
-    setStep(3);
+    setError("Build is taking longer than expected. Please try again.");
+    setStep(1);
   }, []);
 
   async function handleUsername(e: React.FormEvent) {
@@ -155,7 +175,11 @@ export function HomeStepFlow() {
               {previewUrl} →
             </a>
           )}
-          <p className="home-step-flow__trial">{TRIAL_DAYS}-day free trial when you go live</p>
+          <p className="home-step-flow__trial">
+            {loggedIn
+              ? "Ready to publish from your dashboard"
+              : `${TRIAL_DAYS}-day free trial when you go live`}
+          </p>
         </div>
       )}
 
@@ -169,9 +193,18 @@ export function HomeStepFlow() {
           >
             <span className="hero-create-btn__text">{goLiveLoading ? "…" : "Go live"}</span>
           </button>
+          {error && <p className="home-step-flow__error">{error}</p>}
           <p className="home-step-flow__sticky-note">
-            Card on file · cancel anytime before trial ends ·{" "}
-            <Link href="/pricing">see pricing</Link>
+            {loggedIn ? (
+              <>
+                Publish from your account · <Link href="/dashboard">open dashboard</Link>
+              </>
+            ) : (
+              <>
+                Card on file · cancel anytime before trial ends ·{" "}
+                <Link href="/pricing">see pricing</Link>
+              </>
+            )}
           </p>
         </div>
       )}

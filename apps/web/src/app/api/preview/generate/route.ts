@@ -44,8 +44,27 @@ export async function POST(req: Request) {
         // same guest preview session
       } else if (!site.isPreview) {
         return NextResponse.json({ error: "Username taken" }, { status: 400 });
+      } else if (site.isPreview && session) {
+        // logged-in user adopting an abandoned guest preview
+        site = await prisma.site.update({
+          where: { id: site.id },
+          data: { userId: session.id, isPreview: false, previewToken: null },
+        });
       } else {
-        return NextResponse.json({ error: "Username taken" }, { status: 400 });
+        // hand preview to this guest (rotate token so status polling works)
+        const token = crypto.randomUUID();
+        site = await prisma.site.update({
+          where: { id: site.id },
+          data: { previewToken: token },
+        });
+        const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+        cookieStore.set(PREVIEW_COOKIE, token, {
+          httpOnly: true,
+          secure: isProd,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 7,
+          path: "/",
+        });
       }
     }
 
@@ -66,9 +85,10 @@ export async function POST(req: Request) {
       });
 
       if (token) {
+        const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
         cookieStore.set(PREVIEW_COOKIE, token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
+          secure: isProd,
           sameSite: "lax",
           maxAge: 60 * 60 * 24 * 7,
           path: "/",

@@ -38,6 +38,7 @@ export async function GET(req: Request) {
   const job = site.generationJobs[0];
   const ready = Boolean(site.siteContent) && job?.status === "COMPLETED";
   const generating = site.status === "GENERATING" || job?.status === "RUNNING";
+  const failed = job?.status === "FAILED";
 
   return NextResponse.json({
     siteId: site.id,
@@ -45,6 +46,8 @@ export async function GET(req: Request) {
     status: site.status,
     generating,
     ready,
+    failed,
+    error: failed ? job?.error || "Generation failed" : undefined,
     previewUrl: getTenantPreviewUrl(site.username),
     trialDays: TRIAL_DAYS,
   });

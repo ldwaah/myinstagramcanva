@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
+import { SiteHeader } from "@/components/SiteHeader";
 import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
 import { SponsorCredit } from "@/components/SponsorCredit";
 
@@ -8,17 +8,7 @@ const bullets = ["Share your link", "30-day attribution", "Earn on every sale"];
 export default function AffiliatesPage() {
   return (
     <main className="landing landing--art">
-      <header className="landing-header landing-header--minimal">
-        <div className="mic-container landing-header__inner">
-          <Link href="/" className="landing-logo">
-            <InstagramCanvaLogo size={28} className="landing-logo__mark" />
-            Instagram Canva
-          </Link>
-          <nav className="landing-nav landing-nav--minimal">
-            <Link href="/login">Log in</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader variant="minimal" />
 
       <section className="hero-basics hero-basics--art hero-basics--short">
         <HeroVisualScene />
