@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { AuthLayout } from "@/components/AuthLayout";
 import { MicButton } from "@/components/MicButton";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
 import { parseJsonError } from "@/lib/db-errors";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const siteId = searchParams.get("siteId");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -40,7 +42,16 @@ export default function SignupPage() {
         setError(parseJsonError(data, "Could not create your account."));
         return;
       }
-      router.push("/onboarding?welcome=1");
+      if (siteId) {
+        await fetch("/api/preview/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ siteId }),
+        });
+        router.push(`/dashboard?siteId=${siteId}&goLive=pending`);
+      } else {
+        router.push("/onboarding?welcome=1");
+      }
     } catch {
       setError("Network error — try again.");
     } finally {
@@ -89,5 +100,13 @@ export default function SignupPage() {
         Already have an account? <Link href="/login">Log in</Link>
       </p>
     </AuthLayout>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

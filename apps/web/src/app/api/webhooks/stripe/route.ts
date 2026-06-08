@@ -5,6 +5,7 @@ import { getFreeEditsForTier } from "@/lib/trial";
 import { runSiteGeneration } from "@/lib/generation";
 import { env } from "@/lib/env";
 import { createCommissionForOrder } from "@/lib/affiliate";
+import { activateSiteHosting } from "@/lib/go-live";
 
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -28,8 +29,14 @@ export async function POST(req: Request) {
       amount_total?: number;
       id: string;
       payment_intent?: string;
+      subscription?: string;
     };
     const meta = session.metadata || {};
+
+    if (meta.type === "hosting" && meta.userId && meta.siteId) {
+      const subId = typeof session.subscription === "string" ? session.subscription : undefined;
+      await activateSiteHosting(meta.siteId, meta.userId, subId);
+    }
 
     if (meta.type === "site_tier" && meta.userId && meta.siteId && meta.tier) {
       const tier = meta.tier as SiteTier;
@@ -89,6 +96,17 @@ export async function POST(req: Request) {
       current_period_end?: number;
     };
     const meta = sub.metadata || {};
+
+    if (meta.type === "hosting" && meta.userId && meta.siteId) {
+      await prisma.site.update({
+        where: { id: meta.siteId },
+        data: {
+          stripeHostingSubId: sub.id,
+          status: sub.status === "active" || sub.status === "trialing" ? SiteStatus.TRIAL : SiteStatus.EXPIRED,
+        },
+      });
+    }
+
     if (meta.userId && meta.plan) {
       await prisma.aiSubscription.upsert({
         where: { userId: meta.userId },

@@ -26,6 +26,8 @@ export async function activateSiteHosting(
     data: {
       status: SiteStatus.TRIAL,
       trialEndsAt: getTrialEndDate(),
+      isPreview: false,
+      previewToken: null,
       stripeHostingSubId: stripeSubId || undefined,
       publishedAt: new Date(),
     },

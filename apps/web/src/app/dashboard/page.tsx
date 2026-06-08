@@ -31,7 +31,21 @@ function DashboardContent() {
     if (params.get("collaborator") === "success") {
       setKeyModalOpen(true);
     }
-  }, [params]);
+    const pending = params.get("goLive");
+    const siteIdParam = params.get("siteId");
+    if (pending === "pending" && siteIdParam) {
+      fetch("/api/checkout/go-live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ siteId: siteIdParam }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.url) window.location.href = data.url;
+          else if (data.ok) router.replace("/dashboard?goLive=success");
+        });
+    }
+  }, [params, router]);
 
   useEffect(() => {
     async function init() {
@@ -91,6 +105,19 @@ function DashboardContent() {
 
   const previewUrl = getTenantPreviewUrl(site.username);
   const generating = site.status === "GENERATING" || site.generationJobs[0]?.status === "RUNNING";
+  const needsGoLive = site.status === "DRAFT" || site.status === "PREVIEW";
+  const goLiveSuccess = params.get("goLive") === "success";
+
+  async function startGoLive() {
+    if (!site) return;
+    const res = await fetch("/api/checkout/go-live", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ siteId: site.id }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }
 
   return (
     <div className="dash-minimal">
@@ -125,8 +152,21 @@ function DashboardContent() {
             </a>
           </div>
 
+          {goLiveSuccess && (
+            <p className="dash-minimal__generating">You&apos;re live — enjoy your free trial.</p>
+          )}
+
           {generating ? (
             <p className="dash-minimal__generating">Building your site…</p>
+          ) : needsGoLive ? (
+            <>
+              <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="dash-minimal__view-btn dash-minimal__view-btn--muted">
+                Preview website
+              </a>
+              <button type="button" className="dash-minimal__view-btn" onClick={startGoLive}>
+                Go live — start free trial
+              </button>
+            </>
           ) : (
             <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="dash-minimal__view-btn">
               View website
