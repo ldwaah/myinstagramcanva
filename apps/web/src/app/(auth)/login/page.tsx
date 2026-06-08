@@ -36,7 +36,9 @@ export default function LoginPage() {
         setError(parseJsonError(data, "Invalid email or password."));
         return;
       }
-      router.push("/onboarding");
+      const sessionRes = await fetch("/api/auth/session");
+      const session = (await sessionRes.json()) as { hasSites?: boolean };
+      router.push(session.hasSites ? "/dashboard" : "/onboarding");
     } catch {
       setError("Network error. Try again.");
     } finally {
