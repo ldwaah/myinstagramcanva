@@ -5,11 +5,13 @@ const packagesRoot = path.join(__dirname, "../../packages");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../.."),
+  serverExternalPackages: ["@prisma/client", "prisma"],
   outputFileTracingIncludes: {
     "/**": [
-      "../../templates/instagram-v1/**/*",
-      "../../node_modules/.prisma/client/**/*",
-      "../../node_modules/@prisma/client/**/*",
+      "templates/instagram-v1/**/*",
+      "packages/generator/ai-extractor/**/*",
+      "node_modules/.prisma/client/**/*",
+      "node_modules/@prisma/client/**/*",
     ],
   },
   transpilePackages: ["@mic/db", "@mic/generator", "@mic/instagram"],
