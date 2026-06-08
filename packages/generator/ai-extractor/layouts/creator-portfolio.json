@@ -1,0 +1,16 @@
+{
+  "id": "creator-portfolio",
+  "name": "Creator Portfolio (Cinematic)",
+  "description": "Dark editorial layout for photographers and visual creators — inspired by professional sports/portfolio sites",
+  "palette": "editorial-dark",
+  "tags": ["photographer", "visual", "instagram"],
+  "elements": [
+    "nav-centered",
+    "hero-cinematic",
+    "about-stats",
+    "gallery-carousel",
+    "about-split",
+    "contact-cta-band",
+    "footer-sponsor"
+  ]
+}

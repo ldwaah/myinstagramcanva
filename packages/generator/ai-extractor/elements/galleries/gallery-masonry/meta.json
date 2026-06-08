@@ -1,0 +1,8 @@
+{
+  "id": "gallery-masonry",
+  "category": "galleries",
+  "tags": ["photographer", "visual", "portfolio"],
+  "style": "editorial-dark",
+  "tokens": "low",
+  "description": "CSS columns masonry with mixed portrait and landscape frames"
+}

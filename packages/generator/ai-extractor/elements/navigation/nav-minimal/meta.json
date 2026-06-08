@@ -1,0 +1,8 @@
+{
+  "id": "nav-minimal",
+  "category": "navigation",
+  "tags": ["creator", "instagram", "portfolio"],
+  "style": "squarespace-minimal",
+  "tokens": "low",
+  "description": "Sticky header: logo left, nav center-right, IG CTA"
+}

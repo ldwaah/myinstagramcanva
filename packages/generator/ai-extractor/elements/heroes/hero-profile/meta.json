@@ -1,0 +1,8 @@
+{
+  "id": "hero-profile",
+  "category": "heroes",
+  "tags": ["instagram", "creator", "influencer", "profile"],
+  "style": "squarespace-minimal",
+  "tokens": "low",
+  "description": "Profile-centric hero with avatar ring, stats row, and action buttons"
+}

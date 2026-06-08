@@ -1,0 +1,16 @@
+{
+  "id": "split-landing",
+  "name": "Split Landing",
+  "description": "Clean split-hero landing for service-based creators",
+  "palette": "neutral-cool",
+  "tags": ["coach", "trainer", "business"],
+  "elements": [
+    "nav-minimal",
+    "hero-split",
+    "about-stats",
+    "gallery-grid",
+    "about-bio",
+    "contact-cta-band",
+    "footer-minimal"
+  ]
+}

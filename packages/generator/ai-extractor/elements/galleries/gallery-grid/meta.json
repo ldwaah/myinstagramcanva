@@ -1,0 +1,8 @@
+{
+  "id": "gallery-grid",
+  "category": "galleries",
+  "tags": ["instagram", "portfolio", "photographer"],
+  "style": "squarespace-minimal",
+  "tokens": "low",
+  "description": "Uniform 3-column image grid with hover overlay"
+}

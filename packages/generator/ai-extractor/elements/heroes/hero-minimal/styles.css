@@ -1,0 +1,38 @@
+.el-hero-minimal {
+  padding: clamp(80px, 14vw, 128px) 24px;
+  text-align: center;
+  background: var(--el-bg, #faf9f7);
+}
+.el-hero-minimal__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.el-hero-minimal__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--el-muted, #6b6560);
+  margin-bottom: 16px;
+}
+.el-hero-minimal__title {
+  font-family: var(--el-font-display, Georgia, serif);
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--el-text, #1a1a1a);
+  margin-bottom: 24px;
+}
+.el-hero-minimal__sub {
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--el-muted, #6b6560);
+  max-width: 540px;
+  margin: 0 auto 32px;
+}
+.el-hero-minimal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}

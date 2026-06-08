@@ -1,0 +1,20 @@
+{
+  "id": "neutral-warm",
+  "name": "Warm Stone",
+  "style": "squarespace-minimal",
+  "description": "Light neutral palette — warm off-white background, charcoal text, forest accent",
+  "tokens": {
+    "--el-bg": "#faf9f7",
+    "--el-surface": "#f3f2ef",
+    "--el-text": "#1a1a1a",
+    "--el-muted": "#6b6560",
+    "--el-accent": "#2d5a4a",
+    "--el-accent-dim": "#8fb5a8",
+    "--el-border": "rgba(26, 26, 26, 0.08)"
+  },
+  "fonts": {
+    "display": "Cormorant Garamond",
+    "body": "DM Sans",
+    "googleUrl": "Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600"
+  }
+}

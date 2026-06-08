@@ -1,0 +1,15 @@
+<section id="contact" class="el-contact-form" aria-labelledby="el-contact-heading">
+  <div class="el-contact-form__inner">
+    <span class="el-section-tag">Contact</span>
+    <h2 id="el-contact-heading">{{CONTACT_TITLE}}</h2>
+    <p>{{CONTACT_SUBTITLE}}</p>
+    <form class="el-contact-form__form lead-form" data-site-id="{{SITE_ID}}">
+      <input type="hidden" name="siteId" value="{{SITE_ID}}" />
+      <input type="text" name="name" placeholder="Your name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <textarea name="message" placeholder="How can we help?" rows="4"></textarea>
+      <button type="submit" class="el-btn el-btn--primary">Send message</button>
+      <p class="el-contact-form__status" role="status"></p>
+    </form>
+  </div>
+</section>

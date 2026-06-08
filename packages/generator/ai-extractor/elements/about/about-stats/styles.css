@@ -1,0 +1,30 @@
+.el-about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(26, 26, 26, 0.08);
+  border-top: 1px solid rgba(26, 26, 26, 0.08);
+  border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+}
+@media (max-width: 560px) {
+  .el-about-stats { grid-template-columns: 1fr; }
+}
+.el-about-stats__item {
+  padding: 40px 24px;
+  text-align: center;
+  background: var(--el-bg, #faf9f7);
+}
+.el-about-stats__num {
+  display: block;
+  font-family: var(--el-font-display, Georgia, serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+  color: var(--el-text, #1a1a1a);
+  margin-bottom: 8px;
+}
+.el-about-stats__label {
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--el-muted, #6b6560);
+}

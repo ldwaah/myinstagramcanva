@@ -1,0 +1,8 @@
+{
+  "id": "nav-centered",
+  "category": "navigation",
+  "tags": ["creator", "minimal", "editorial"],
+  "style": "editorial-dark",
+  "tokens": "low",
+  "description": "Dark sticky nav with centered links and logo"
+}

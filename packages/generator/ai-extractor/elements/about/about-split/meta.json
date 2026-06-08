@@ -1,0 +1,8 @@
+{
+  "id": "about-split",
+  "category": "about",
+  "tags": ["creator", "photographer", "coach"],
+  "style": "editorial-dark",
+  "tokens": "low",
+  "description": "Two-column about: framed image with badge, copy and bullet list"
+}

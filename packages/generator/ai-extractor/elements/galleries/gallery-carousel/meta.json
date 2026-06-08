@@ -1,0 +1,8 @@
+{
+  "id": "gallery-carousel",
+  "category": "galleries",
+  "tags": ["photographer", "instagram", "portfolio"],
+  "style": "editorial-dark",
+  "tokens": "low",
+  "description": "Horizontal scroll film rail with frame metadata"
+}

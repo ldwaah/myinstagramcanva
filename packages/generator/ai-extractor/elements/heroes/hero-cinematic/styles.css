@@ -1,0 +1,94 @@
+.el-hero-cine {
+  position: relative;
+  min-height: min(100vh, 900px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #f2f0eb;
+  overflow: hidden;
+}
+.el-hero-cine__bg {
+  position: absolute;
+  inset: 0;
+}
+.el-hero-cine__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.el-hero-cine__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 80%, transparent 0%, rgba(10, 11, 12, 0.75) 70%);
+}
+.el-hero-cine__content {
+  position: relative;
+  z-index: 1;
+  padding: 96px 24px 48px;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+.el-hero-cine__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+.el-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--el-accent, #c8ff00);
+  animation: el-pulse 2s ease-in-out infinite;
+}
+@keyframes el-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.el-hero-cine__title {
+  font-family: var(--el-font-display, sans-serif);
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.el-hero-cine__title .accent { color: var(--el-accent, #c8ff00); }
+.el-hero-cine__title .outline {
+  -webkit-text-stroke: 1px rgba(242, 240, 235, 0.5);
+  color: transparent;
+}
+.el-hero-cine__sub {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 520px;
+  opacity: 0.88;
+  margin-bottom: 32px;
+}
+.el-hero-cine__actions { display: flex; flex-wrap: wrap; gap: 16px; }
+.el-hero-cine__ticker {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(242, 240, 235, 0.12);
+  padding: 16px 0;
+  overflow: hidden;
+}
+.el-ticker-track {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: el-ticker 24s linear infinite;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.el-ticker-track span { padding-right: 2rem; }
+@keyframes el-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

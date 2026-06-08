@@ -1,0 +1,8 @@
+{
+  "id": "hero-full-bleed",
+  "category": "heroes",
+  "tags": ["photographer", "visual", "cinematic"],
+  "style": "editorial-dark",
+  "tokens": "low",
+  "description": "Full-viewport background image with gradient overlay and bottom-aligned copy"
+}

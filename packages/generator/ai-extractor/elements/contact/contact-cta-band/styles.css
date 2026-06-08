@@ -1,0 +1,46 @@
+.el-contact-band {
+  padding: clamp(80px, 12vw, 128px) 24px;
+  background: var(--el-bg, #0a0b0c);
+  color: #f2f0eb;
+  text-align: center;
+}
+.el-contact-band__inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.el-contact-band h2 {
+  font-family: var(--el-font-display, sans-serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.el-contact-band p {
+  opacity: 0.85;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+.el-contact-band__links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.el-contact-band__link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid rgba(242, 240, 235, 0.12);
+  border-radius: 2px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s;
+}
+.el-contact-band__link:hover { border-color: var(--el-accent, #c8ff00); }
+.el-contact-band__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.el-contact-band__value { font-size: 1.125rem; }

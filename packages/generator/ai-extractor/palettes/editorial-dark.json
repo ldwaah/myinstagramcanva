@@ -1,0 +1,20 @@
+{
+  "id": "editorial-dark",
+  "name": "Editorial Dark",
+  "style": "editorial-dark",
+  "description": "Near-black background, warm off-white text, sharp lime accent — visual creator portfolios",
+  "tokens": {
+    "--el-bg": "#0a0b0c",
+    "--el-surface": "#121416",
+    "--el-text": "#f2f0eb",
+    "--el-muted": "#8a8f96",
+    "--el-accent": "#c8ff00",
+    "--el-accent-dim": "rgba(200, 255, 0, 0.15)",
+    "--el-border": "rgba(242, 240, 235, 0.12)"
+  },
+  "fonts": {
+    "display": "Bebas Neue",
+    "body": "DM Sans",
+    "googleUrl": "Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Syne:wght@700;800"
+  }
+}

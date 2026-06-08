@@ -1,0 +1,15 @@
+{
+  "id": "profile-minimal",
+  "name": "Profile Minimal",
+  "description": "Light Squarespace-style layout for influencers and coaches",
+  "palette": "neutral-warm",
+  "tags": ["instagram", "creator", "coach", "influencer"],
+  "elements": [
+    "nav-minimal",
+    "hero-profile",
+    "gallery-grid",
+    "about-bio",
+    "contact-form-strip",
+    "footer-social"
+  ]
+}

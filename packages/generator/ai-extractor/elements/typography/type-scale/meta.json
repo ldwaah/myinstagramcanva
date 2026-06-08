@@ -1,0 +1,8 @@
+{
+  "id": "type-scale",
+  "category": "typography",
+  "tags": ["foundation", "design-system"],
+  "style": "squarespace-minimal",
+  "tokens": "low",
+  "description": "Base typography scale and shared button styles for element library"
+}

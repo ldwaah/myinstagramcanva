@@ -1,0 +1,20 @@
+{
+  "id": "neutral-cool",
+  "name": "Cool Slate",
+  "style": "squarespace-minimal",
+  "description": "Light cool-neutral palette — slate gray text, blue accent",
+  "tokens": {
+    "--el-bg": "#f8f9fa",
+    "--el-surface": "#eef0f2",
+    "--el-text": "#111827",
+    "--el-muted": "#6b7280",
+    "--el-accent": "#2563eb",
+    "--el-accent-dim": "#93c5fd",
+    "--el-border": "rgba(17, 24, 39, 0.08)"
+  },
+  "fonts": {
+    "display": "Libre Baskerville",
+    "body": "Inter",
+    "googleUrl": "Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600"
+  }
+}
