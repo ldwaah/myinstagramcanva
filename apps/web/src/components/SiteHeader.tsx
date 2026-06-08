@@ -64,14 +64,14 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
                 {signingOut ? "Signing out…" : "Sign out"}
               </button>
               <Link href="/dashboard" className="landing-nav__cta landing-cta-shimmer">
-                My dashboard
+                <span className="landing-nav__cta-text">My dashboard</span>
               </Link>
             </>
           ) : (
             <>
               <Link href="/login">Log in</Link>
               <Link href="/signup" className="landing-nav__cta landing-cta-shimmer">
-                Start free trial
+                <span className="landing-nav__cta-text">Start free trial</span>
               </Link>
             </>
           )}
