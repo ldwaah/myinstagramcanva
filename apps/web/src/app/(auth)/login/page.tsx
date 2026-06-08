@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { parseJsonError } from "@/lib/db-errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,21 +15,31 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     const fd = new FormData(e.currentTarget);
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: fd.get("email"),
-        password: fd.get("password"),
-      }),
-    });
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || "Login failed");
-      return;
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: fd.get("email"),
+          password: fd.get("password"),
+        }),
+      });
+      if (!res.ok) {
+        let data: unknown = null;
+        try {
+          data = await res.json();
+        } catch {
+          /* non-JSON error body */
+        }
+        setError(parseJsonError(data, "Login failed. Please check your email and password."));
+        return;
+      }
+      router.push("/dashboard");
+    } catch {
+      setError("Network error — could not reach the server. Check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-    router.push("/dashboard");
   }
 
   return (

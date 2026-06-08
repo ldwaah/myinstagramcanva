@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { registerUser, createSession } from "@/lib/auth";
+import { sanitizeAuthError } from "@/lib/db-errors";
 
 const schema = z.object({
   email: z.string().email(),
@@ -20,9 +21,8 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ok: true, userId: user.id });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Registration failed" },
-      { status: 400 }
-    );
+    const message = sanitizeAuthError(err, "Could not create account");
+    const status = err instanceof z.ZodError ? 400 : 400;
+    return NextResponse.json({ error: message }, { status });
   }
 }

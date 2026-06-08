@@ -1,7 +1,7 @@
 export const env = {
   appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000",
-  databaseUrl: process.env.DATABASE_URL || "file:../../packages/db/prisma/dev.db",
+  databaseUrl: process.env.DATABASE_URL || "file:./dev.db",
   authSecret: process.env.NEXTAUTH_SECRET || "dev-secret-change-me",
   stripeSecret: process.env.STRIPE_SECRET_KEY || "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",

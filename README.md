@@ -62,17 +62,33 @@ Create **two** repositories:
    ```
 2. Import the repo at [vercel.com/new](https://vercel.com/new)
 3. Set **Root Directory** to `apps/web`
-4. Add environment variables from `.env.example` (at minimum):
-   - `DATABASE_URL` — use Vercel Postgres or Neon PostgreSQL (switch Prisma provider to `postgresql` for prod)
-   - `NEXTAUTH_SECRET` — random 32+ char string
-   - `NEXT_PUBLIC_APP_URL` — `https://myinstagramcanva.com`
-   - `NEXT_PUBLIC_ROOT_DOMAIN` — `myinstagramcanva.com`
+4. **Create a PostgreSQL database** (SQLite files do not work on Vercel serverless):
+   - [Neon](https://neon.tech) (free tier) or Vercel Postgres / Supabase
+   - Copy the `postgresql://...` connection string
+
+5. Add environment variables in Vercel → Project → Settings → Environment Variables (required for login):
+
+   | Variable | Example / notes |
+   |----------|-----------------|
+   | `DATABASE_URL` | `postgresql://user:pass@host/db?sslmode=require` |
+   | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
+   | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.vercel.app` |
+   | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.vercel.app` |
+
+6. **Apply the database schema** (once, from your machine):
+   ```bash
+   DATABASE_URL="postgresql://..." npm run db:push
+   ```
+
+7. Redeploy, then sign up at `/signup` to create your first account.
+
+8. Optional — also set from `.env.example`:
    - `STRIPE_*` — payment keys and price IDs
    - `OPENAI_API_KEY` — for AI generation
    - `RESEND_API_KEY` — Tailored lead email alerts to site owners
    - `ENCRYPTION_KEY` — 32-byte hex for BYOK keys
-5. Add wildcard domain `*.myinstagramcanva.com` in Vercel DNS
-6. Deploy
+9. Add wildcard domain `*.myinstagramcanva.com` in Vercel DNS (when using a custom domain)
+10. Deploy
 
 ## Tenant preview
 

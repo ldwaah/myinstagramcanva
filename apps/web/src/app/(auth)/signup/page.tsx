@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { parseJsonError } from "@/lib/db-errors";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,22 +15,32 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
     const fd = new FormData(e.currentTarget);
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: fd.get("name"),
-        email: fd.get("email"),
-        password: fd.get("password"),
-      }),
-    });
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || "Signup failed");
-      return;
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fd.get("name"),
+          email: fd.get("email"),
+          password: fd.get("password"),
+        }),
+      });
+      if (!res.ok) {
+        let data: unknown = null;
+        try {
+          data = await res.json();
+        } catch {
+          /* non-JSON error body */
+        }
+        setError(parseJsonError(data, "Could not create your account. Try a different email or password (8+ characters)."));
+        return;
+      }
+      router.push("/onboarding");
+    } catch {
+      setError("Network error — could not reach the server. Check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-    router.push("/onboarding");
   }
 
   return (

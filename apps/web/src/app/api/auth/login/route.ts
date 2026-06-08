@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { loginUser, createSession } from "@/lib/auth";
+import { sanitizeAuthError } from "@/lib/db-errors";
 
 const schema = z.object({
   email: z.string().email(),
@@ -19,9 +20,8 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ok: true });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Login failed" },
-      { status: 401 }
-    );
+    const message = sanitizeAuthError(err, "Invalid email or password");
+    const status = err instanceof z.ZodError ? 400 : 401;
+    return NextResponse.json({ error: message }, { status });
   }
 }
