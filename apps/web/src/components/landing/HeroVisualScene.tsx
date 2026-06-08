@@ -1,40 +1,38 @@
 import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 
-/** Abstract branded hero — gradient frames, grid motifs, logo mark (no fake IG screenshots). */
+/** Branded hero — Chachi Petit IG previews, gradient mesh, logo watermark. */
 export function HeroVisualScene() {
   return (
-    <div className="hero-scene hero-scene--abstract" aria-hidden>
+    <div className="hero-scene hero-scene--branded" aria-hidden>
       <div className="hero-scene__mesh" />
 
-      <div className="hero-brand-float hero-brand-float--frame-a">
-        <div className="hero-brand-frame">
-          <div className="hero-brand-frame__inner">
-            <div className="hero-brand-grid">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <span key={i} className={`hero-brand-grid__cell hero-brand-grid__cell--${(i % 3) + 1}`} />
-              ))}
-            </div>
-          </div>
+      <div className="hero-brand-float hero-brand-float--preview-a">
+        <div className="hero-brand-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/chachi-petit-1.png"
+            alt=""
+            className="hero-brand-preview__img"
+            width={390}
+            height={844}
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
 
-      <div className="hero-brand-float hero-brand-float--frame-b">
-        <div className="hero-brand-frame hero-brand-frame--tall">
-          <div className="hero-brand-frame__inner hero-brand-frame__inner--gradient">
-            <div className="hero-brand-bars">
-              <span />
-              <span />
-              <span />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="hero-brand-float hero-brand-float--frame-c">
-        <div className="hero-brand-frame hero-brand-frame--wide">
-          <div className="hero-brand-frame__inner">
-            <div className="hero-brand-accent" />
-          </div>
+      <div className="hero-brand-float hero-brand-float--preview-b">
+        <div className="hero-brand-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/chachi-petit-2.png"
+            alt=""
+            className="hero-brand-preview__img"
+            width={390}
+            height={844}
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
 
