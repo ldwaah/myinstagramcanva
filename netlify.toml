@@ -8,6 +8,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Netlify sets NODE_ENV=production during build; keep devDependencies for prebuild (OG images via @resvg/resvg-js).
+  NPM_CONFIG_PRODUCTION = "false"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
