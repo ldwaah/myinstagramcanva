@@ -1,6 +1,6 @@
 import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 
-/** Branded hero — Chachi Petit IG previews, gradient mesh, logo watermark. */
+/** Branded hero — IG profile previews, gradient mesh, logo watermark. */
 export function HeroVisualScene() {
   return (
     <div className="hero-scene hero-scene--branded" aria-hidden>
@@ -10,7 +10,7 @@ export function HeroVisualScene() {
         <div className="hero-brand-preview">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/chachi-petit-1.png"
+            src="/ig-preview-1.png"
             alt=""
             className="hero-brand-preview__img"
             width={390}
@@ -25,7 +25,7 @@ export function HeroVisualScene() {
         <div className="hero-brand-preview">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/chachi-petit-2.png"
+            src="/ig-preview-2.png"
             alt=""
             className="hero-brand-preview__img"
             width={390}

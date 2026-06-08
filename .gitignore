@@ -11,3 +11,10 @@ dist
 sites-data
 uploads
 .vercel
+
+# Local Netlify folder
+.netlify
+
+# Hero source images (copies live in apps/web/public/)
+ChatGPT Image*.png
+Screenshot*.png
