@@ -37,31 +37,37 @@ export function HomeStepFlow() {
       .catch(() => setLoggedIn(false));
   }, []);
 
-  const pollUntilReady = useCallback(async (id: string, uname: string) => {
-    for (let i = 0; i < 60; i++) {
-      const res = await fetch(`/api/preview/status?siteId=${id}`);
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError((data as { error?: string }).error || "Could not check build status");
-        setStep(1);
-        return;
-      }
-      const data = await res.json();
-      if (data.failed) {
-        setError(data.error || "Generation failed. Please try again.");
-        setStep(1);
-        return;
-      }
-      if (data.ready) {
-        setPreviewUrl(data.previewUrl || getTenantPreviewUrl(uname));
-        setStep(3);
-        return;
-      }
-      await new Promise((r) => setTimeout(r, 2000));
-    }
-    setError("Build is taking longer than expected. Please try again.");
-    setStep(1);
+  const finishWhenReady = useCallback((uname: string, preview?: string) => {
+    setPreviewUrl(preview || getTenantPreviewUrl(uname));
+    setStep(3);
   }, []);
+
+  const pollUntilReady = useCallback(
+    async (id: string, uname: string) => {
+      for (let i = 0; i < 90; i++) {
+        const res = await fetch(`/api/preview/status?siteId=${id}`);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError((data as { error?: string }).error || "Could not check build status");
+          setStep(1);
+          return;
+        }
+        if (data.failed) {
+          setError(data.error || "Generation failed. Please try again.");
+          setStep(1);
+          return;
+        }
+        if (data.ready) {
+          finishWhenReady(uname, data.previewUrl);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+      setError("Build is taking longer than expected. Please try again.");
+      setStep(1);
+    },
+    [finishWhenReady]
+  );
 
   const startPolling = useCallback(
     (id: string, uname: string) => {
@@ -81,19 +87,31 @@ export function HomeStepFlow() {
     pollRef.current = false;
     setStep(2);
 
-    const res = await fetch("/api/preview/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Could not start");
+    let res: Response;
+    try {
+      res = await fetch("/api/preview/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
+    } catch {
+      setError("Network error — check your connection and try again.");
+      setStep(1);
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.failed) {
+      setError(data.error || "Could not start generation");
       setStep(1);
       return;
     }
 
     setSiteId(data.siteId);
+    if (data.ready) {
+      finishWhenReady(data.username, data.previewUrl);
+      return;
+    }
     startPolling(data.siteId, data.username);
   }
 
@@ -188,9 +206,12 @@ export function HomeStepFlow() {
           <div className="home-step-flow__building-status">
             <div className="home-step-flow__spinner" aria-hidden />
             <p className="home-step-flow__muted">
-              {quizDone ? "Tailoring your site…" : "Fetching your Instagram whilst you answer a few questions"}
+              {quizDone
+                ? "Tailoring your site — usually ready within 1–2 minutes"
+                : "Fetching your Instagram whilst you answer a few questions"}
             </p>
           </div>
+          {error && <p className="home-step-flow__error">{error}</p>}
           <BrandQuiz siteId={siteId} onComplete={handleQuizComplete} onSkip={handleQuizSkip} />
         </div>
       )}

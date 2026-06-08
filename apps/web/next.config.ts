@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       "packages/generator/ai-extractor/**/*",
       "node_modules/.prisma/client/**/*",
       "node_modules/@prisma/client/**/*",
+      "node_modules/.prisma/client/libquery_engine-*",
     ],
   },
   transpilePackages: ["@mic/db", "@mic/generator", "@mic/instagram"],

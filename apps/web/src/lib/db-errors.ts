@@ -4,6 +4,10 @@ const FRIENDLY_UNAVAILABLE =
   "Sign-in is temporarily unavailable. The server database is not configured. Contact support if this persists.";
 
 /** Map Prisma / infra errors to safe user-facing messages (no stack traces or env names). */
+export function sanitizeDbError(err: unknown, fallback: string): string {
+  return sanitizeAuthError(err, fallback);
+}
+
 export function sanitizeAuthError(err: unknown, fallback: string): string {
   if (err instanceof ZodError) {
     return err.issues.map((e) => e.message).join(". ");

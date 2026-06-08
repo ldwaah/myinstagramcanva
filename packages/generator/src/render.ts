@@ -294,9 +294,14 @@ export function renderSiteHtml(
   apiBase: string,
   options: RenderSiteOptions = {},
 ): string {
-  if (options.useElementLibrary) {
+  const useLibrary = options.useElementLibrary !== false;
+  if (useLibrary) {
     const fromLibrary = renderSiteHtmlFromLibrary(content, siteId, options, apiBase);
     if (fromLibrary) return fromLibrary;
+  }
+
+  if (options.useElementLibrary === true) {
+    console.warn("[render] element library composition failed, using inline template");
   }
 
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;

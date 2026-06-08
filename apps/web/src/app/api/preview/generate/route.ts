@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { runInBackground } from "@/lib/background-task";
 import { z } from "zod";
 import { cookies } from "next/headers";
-import { prisma, Niche } from "@mic/db";
+import { prisma, Niche, JobStatus } from "@mic/db";
 import { getSession } from "@/lib/auth";
 import { runSiteGeneration } from "@/lib/generation";
 import {
@@ -11,6 +10,11 @@ import {
 } from "@/lib/instagram-username";
 import { buildTenantSubdomain } from "@/lib/site-urls";
 import { getOrCreatePreviewUser } from "@/lib/preview-user";
+import { assertDatabaseReady, formatDbError } from "@/lib/db-health";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 120;
 
 const PREVIEW_COOKIE = "mic_preview_token";
 const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
@@ -19,8 +23,18 @@ const schema = z.object({
   username: z.string().min(1),
 });
 
+function isSecureCookie() {
+  return (
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.VERCEL) ||
+    Boolean(process.env.NETLIFY)
+  );
+}
+
 export async function POST(req: Request) {
   try {
+    await assertDatabaseReady();
+
     const { username: raw } = schema.parse(await req.json());
     const username = sanitizeInstagramUsername(raw);
     const validationError = validateInstagramUsername(username);
@@ -45,22 +59,19 @@ export async function POST(req: Request) {
       } else if (!site.isPreview) {
         return NextResponse.json({ error: "Username taken" }, { status: 400 });
       } else if (site.isPreview && session) {
-        // logged-in user adopting an abandoned guest preview
         site = await prisma.site.update({
           where: { id: site.id },
           data: { userId: session.id, isPreview: false, previewToken: null },
         });
       } else {
-        // hand preview to this guest (rotate token so status polling works)
         const token = crypto.randomUUID();
         site = await prisma.site.update({
           where: { id: site.id },
           data: { previewToken: token },
         });
-        const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
         cookieStore.set(PREVIEW_COOKIE, token, {
           httpOnly: true,
-          secure: isProd,
+          secure: isSecureCookie(),
           sameSite: "lax",
           maxAge: 60 * 60 * 24 * 7,
           path: "/",
@@ -85,10 +96,9 @@ export async function POST(req: Request) {
       });
 
       if (token) {
-        const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
         cookieStore.set(PREVIEW_COOKIE, token, {
           httpOnly: true,
-          secure: isProd,
+          secure: isSecureCookie(),
           sameSite: "lax",
           maxAge: 60 * 60 * 24 * 7,
           path: "/",
@@ -104,30 +114,65 @@ export async function POST(req: Request) {
       prisma.siteContent.findUnique({ where: { siteId: site.id }, select: { id: true } }),
     ]);
 
-    const needsGeneration =
-      !latestJob ||
-      latestJob.status === "FAILED" ||
-      (!content && latestJob.status !== "RUNNING");
+    const staleRunning =
+      latestJob?.status === JobStatus.RUNNING &&
+      Date.now() - new Date(latestJob.updatedAt).getTime() > 3 * 60 * 1000;
 
-    if (needsGeneration && latestJob?.status !== "RUNNING") {
-      const ownerId = session?.id ?? site.userId;
-      runInBackground(
-        runSiteGeneration(site.id, ownerId).catch((err) => {
-          console.error("[preview/generate]", site!.id, err);
-        })
-      );
+    if (staleRunning && latestJob) {
+      await prisma.generationJob.update({
+        where: { id: latestJob.id },
+        data: { status: JobStatus.FAILED, error: "Generation timed out — retrying" },
+      });
     }
+
+    const needsGeneration =
+      !content &&
+      latestJob?.status !== JobStatus.RUNNING &&
+      (!latestJob || latestJob.status === JobStatus.FAILED || staleRunning);
+
+    if (needsGeneration) {
+      const ownerId = session?.id ?? site.userId;
+      try {
+        await runSiteGeneration(site.id, ownerId);
+      } catch (err) {
+        console.error("[preview/generate]", site.id, err);
+        return NextResponse.json(
+          {
+            siteId: site.id,
+            username: site.username,
+            error: formatDbError(err, "Generation failed. Please try again."),
+            failed: true,
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    const refreshed = await prisma.site.findUnique({
+      where: { id: site.id },
+      include: {
+        siteContent: { select: { id: true } },
+        generationJobs: { orderBy: { createdAt: "desc" }, take: 1 },
+      },
+    });
+
+    const job = refreshed?.generationJobs[0];
+    const ready = Boolean(refreshed?.siteContent) && job?.status === JobStatus.COMPLETED;
 
     return NextResponse.json({
       siteId: site.id,
       username: site.username,
-      status: site.status,
+      status: refreshed?.status ?? site.status,
       isPreview: site.isPreview,
+      ready,
+      failed: job?.status === JobStatus.FAILED,
+      error: job?.status === JobStatus.FAILED ? job.error : undefined,
+      previewUrl: ready ? `/site/${site.username}/` : undefined,
     });
   } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed" },
-      { status: 400 }
-    );
+    console.error("[preview/generate]", err);
+    const message = formatDbError(err, "Could not start site generation");
+    const status = message.includes("not configured") ? 503 : 400;
+    return NextResponse.json({ error: message, failed: true }, { status });
   }
 }

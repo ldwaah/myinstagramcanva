@@ -8,9 +8,9 @@ import {
   buildThemedInput,
   injectThemeIntoCss,
   suggestLayoutForNiche,
-  layoutHintFromQuiz,
   type SiteContentData,
 } from "@mic/generator";
+import { classifyNiche } from "./niche";
 import { env } from "./env";
 import { publishSiteBundle, downloadUrl } from "./storage";
 import { commitSiteFiles } from "./github";
@@ -68,15 +68,30 @@ async function resolveQuizContext(
     }
   }
 
-  const layoutHint = quizAnswers.layoutHint ?? layoutHintFromQuiz(quizAnswers);
+  const igProfile = await prisma.instagramProfile.findUnique({
+    where: { siteId },
+    select: { biography: true },
+  });
+
+  const classified = classifyNiche(quizAnswers, igProfile?.biography);
+  const layoutHint = quizAnswers.layoutHint ?? classified.layoutHint;
 
   const fresh = await prisma.site.findUnique({
     where: { id: siteId },
     select: { niche: true },
   });
 
+  const niche = classified.niche ?? fresh?.niche ?? currentNiche;
+
+  if (quizAnswers.brandType || igProfile?.biography) {
+    await prisma.site.update({
+      where: { id: siteId },
+      data: { niche },
+    });
+  }
+
   return {
-    niche: fresh?.niche ?? currentNiche,
+    niche,
     quizAnswers,
     layoutHint,
   };
