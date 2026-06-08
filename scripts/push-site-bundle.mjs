@@ -16,6 +16,7 @@ import { renderSiteHtml } from "../packages/generator/src/render.ts";
 import { injectThemeIntoCss } from "../packages/generator/src/theme.ts";
 
 const APP_URL = process.env.PUSH_APP_URL || "https://myinstagramcanva.com";
+const SKIP_BUNDLE = process.env.PUSH_SKIP_BUNDLE === "1";
 const usernames = process.argv.slice(2);
 
 if (!usernames.length) {
@@ -57,7 +58,7 @@ async function buildBundle(username) {
 
   const bundleAssets = {};
   let profilePicUrl = profile.profilePicUrl;
-  if (profile.profilePicUrl) {
+  if (profile.profilePicUrl && !SKIP_BUNDLE) {
     const b = await bundleUrl(profile.profilePicUrl, "assets/profile.jpg", "image/jpeg");
     if (b?.bundleValue) {
       bundleAssets[b.relPath] = b.bundleValue;
@@ -66,14 +67,16 @@ async function buildBundle(username) {
   }
 
   const mediaItems = [];
+  let bundledCount = profile.profilePicUrl ? 1 : 0;
   for (const item of profile.mediaItems) {
     const next = { ...item };
-    if (item.imageUrl) {
+    if (item.imageUrl && !SKIP_BUNDLE && bundledCount < MAX_BUNDLED_IMAGES) {
       const b = await bundleUrl(item.imageUrl, `assets/posts/${item.shortcode}.jpg`, "image/jpeg");
       if (b?.bundleValue) {
         bundleAssets[b.relPath] = b.bundleValue;
         next.imageUrl = `/site/${username}/${b.relPath}`;
         next.posterUrl = next.imageUrl;
+        bundledCount += 1;
       }
     }
     mediaItems.push(next);
@@ -83,12 +86,16 @@ async function buildBundle(username) {
   for (let i = 0; i < profile.posts.length; i++) {
     const post = profile.posts[i];
     const relPath = `assets/portfolio/portfolio-${String(i + 1).padStart(2, "0")}.jpg`;
-    const b = await bundleUrl(post.imageUrl, relPath, "image/jpeg");
-    posts.push({
-      ...post,
-      imageUrl: b?.bundleValue ? `/site/${username}/${relPath}` : post.imageUrl,
-    });
-    if (b?.bundleValue) bundleAssets[relPath] = b.bundleValue;
+    let imageUrl = post.imageUrl;
+    if (!SKIP_BUNDLE && bundledCount < MAX_BUNDLED_IMAGES) {
+      const b = await bundleUrl(post.imageUrl, relPath, "image/jpeg");
+      if (b?.bundleValue) {
+        bundleAssets[relPath] = b.bundleValue;
+        imageUrl = `/site/${username}/${relPath}`;
+        bundledCount += 1;
+      }
+    }
+    posts.push({ ...post, imageUrl });
   }
 
   const input = await buildThemedInput({
