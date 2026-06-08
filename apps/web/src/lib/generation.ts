@@ -111,7 +111,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
         biography: profile.biography,
         profilePicUrl,
         followers: profile.followers,
-        postCount: profile.postCount,
+        postCount: profile.postCount || mediaItems.length,
         businessEmail: profile.businessEmail,
         businessPhone: profile.businessPhone,
       },
@@ -130,11 +130,6 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       })),
     });
 
-    if (profilePicUrl) {
-      const { accentFromImageUrl } = await import("@mic/generator");
-      input.accentColor = await accentFromImageUrl(profilePicUrl, site.username);
-    }
-
     let content: SiteContentData = generateSiteContent(input);
     if (env.openaiKey) {
       content = await generateSiteContentWithAI(input, env.openaiKey);
@@ -146,7 +141,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     content.showFunnel = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
 
     const baseCss = await readTemplateFile("css/style.css");
-    const css = injectThemeIntoCss(baseCss, content.accentColor, {
+    const css = injectThemeIntoCss(baseCss, content.theme, {
       display: content.fontDisplay,
       body: content.fontBody,
     });

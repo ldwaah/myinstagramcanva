@@ -1,11 +1,142 @@
 import type { SiteContentData } from "./types";
+import { themeCssVariables } from "./theme";
+import {
+  composeFromLayout,
+  suggestLayout,
+  type ElementTokenMap,
+} from "./element-library";
 
-export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBase: string): string {
+/**
+ * Element-library generation path (optional).
+ *
+ * When `useElementLibrary` is true, the generator composes HTML from
+ * ai-extractor snippets instead of the inline template below.
+ * Future LLM step (llm.ts): pick layout id + write copy tokens only —
+ * no full HTML/CSS generation required.
+ */
+export interface RenderSiteOptions {
+  useElementLibrary?: boolean;
+  layoutId?: string;
+}
+
+/** Build placeholder tokens from IG-derived content for library hydration */
+export function buildElementTokens(content: SiteContentData, siteId: string): ElementTokenMap {
+  const ig = `https://www.instagram.com/${content.instagramHandle}/`;
+  const heroLines = content.heroTitle
+    .map((line, i) => {
+      const cls = i === 1 ? ' class="accent"' : i === 2 ? ' class="outline"' : "";
+      return `<span class="line"${cls}>${escapeHtml(line)}</span>`;
+    })
+    .join("\n          ");
+
+  const statsItems = content.stats
+    .map(
+      (s) =>
+        `<div class="el-about-stats__item"><span class="el-about-stats__num">${s.value}</span><span class="el-about-stats__label">${escapeHtml(s.label)}</span></div>`,
+    )
+    .join("\n  ");
+
+  const statsRow = content.stats
+    .map((s) => `<span><strong>${formatStatValue(s.value, s.label)}</strong> ${escapeHtml(s.label)}</span>`)
+    .join("\n      ");
+
+  const aboutBullets = content.aboutBullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("\n            ");
+
+  const phoneLink = content.phone
+    ? `<a class="el-contact-band__link" href="tel:${content.phone.replace(/\s/g, "")}"><span class="el-contact-band__label">Phone</span><span class="el-contact-band__value">${escapeHtml(content.phone)}</span></a>`
+    : "";
+
+  return {
+    BRAND_NAME: content.brandName,
+    HANDLE: content.instagramHandle,
+    HERO_EYEBROW: content.heroEyebrow,
+    HERO_TITLE: content.heroTitle.join(" "),
+    HERO_TITLE_LINES: heroLines,
+    HERO_SUBTITLE: content.heroSubtitle,
+    HERO_IMAGE_URL: content.heroImageUrl || content.portfolioItems[0]?.imageUrl || content.profilePicUrl,
+    AVATAR_URL: content.profilePicUrl || content.portfolioItems[0]?.imageUrl || "",
+    IG_URL: ig,
+    PHONE: content.phone ?? "",
+    PHONE_LINK: phoneLink,
+    YEAR: String(new Date().getFullYear()),
+    MARQUEE_TEXT: content.marqueeText,
+    SPONSOR_NAME: "Evolve One",
+    SPONSOR_URL: "https://evolveone.ai",
+    ABOUT_TITLE: content.aboutTitle || `About ${content.brandName}`,
+    ABOUT_BODY: content.aboutBody,
+    ABOUT_BULLETS: aboutBullets,
+    ABOUT_BADGE: content.aboutBadge.join(" · ") || content.heroEyebrow,
+    TAGLINE: content.tagline,
+    CONTACT_TITLE: content.contactTitle,
+    CONTACT_SUBTITLE: content.contactSubtitle,
+    SITE_ID: siteId,
+    STATS_ROW: statsRow,
+    STATS_ITEMS: statsItems,
+    ITEMS: "",
+  };
+}
+
+/** Compose site HTML from ai-extractor layout + hydrated tokens */
+export function renderSiteHtmlFromLibrary(
+  content: SiteContentData,
+  siteId: string,
+  options: RenderSiteOptions = {},
+): string | undefined {
+  const layoutId = options.layoutId ?? suggestLayout([content.niche.toLowerCase(), "instagram"]);
+  const tokens = buildElementTokens(content, siteId);
+  const composed = composeFromLayout(layoutId, tokens);
+  if (!composed) return undefined;
+
+  const theme = content.theme;
+  const themeClass = theme?.isDark ? "theme-dark" : "theme-light";
+  const inlineTheme = theme
+    ? `<style id="mic-theme">${themeCssVariables(theme, { display: content.fontDisplay, body: content.fontBody })}</style>`
+    : "";
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="${escapeHtml(content.metaDescription)}" />
+  <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
+  ${inlineTheme}
+  <style id="mic-element-library">${composed.css}</style>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="${themeClass} el-library" data-layout="${composed.layout.id}">
+  <main id="top">
+${composed.html}
+  </main>
+  <script src="js/main.js"></script>
+</body>
+</html>`;
+}
+
+export function renderSiteHtml(
+  content: SiteContentData,
+  siteId: string,
+  _apiBase: string,
+  options: RenderSiteOptions = {},
+): string {
+  if (options.useElementLibrary) {
+    const fromLibrary = renderSiteHtmlFromLibrary(content, siteId, options);
+    if (fromLibrary) return fromLibrary;
+  }
+
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;
   const assetBase = `/site/${content.instagramHandle}/`;
   const avatar = content.profilePicUrl || content.portfolioItems[0]?.imageUrl || "";
+  const theme = content.theme;
+  const themeClass = theme?.isDark ? "theme-dark" : "theme-light";
+  const inlineTheme = theme
+    ? `<style id="mic-theme">${themeCssVariables(theme, { display: content.fontDisplay, body: content.fontBody })}</style>`
+    : "";
 
-  const highlights = content.portfolioItems.slice(0, 5).map((item, i) => `
+  const highlights = content.portfolioItems.slice(0, 5).map((item) => `
     <div class="highlight">
       <div class="highlight-ring"><img src="${item.imageUrl}" alt="" loading="lazy" /></div>
       <span>${escapeHtml(item.label.slice(0, 12))}</span>
@@ -44,7 +175,13 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
     </article>`).join("");
 
   const stats = content.stats.map((s) => `
-    <span><strong>${s.value}</strong> ${escapeHtml(s.label)}</span>`).join("");
+    <div class="stat" data-reveal>
+      <span class="stat-num" data-count="${s.value}">0</span>
+      <span class="stat-label">${escapeHtml(s.label)}</span>
+    </div>`).join("");
+
+  const profileStats = content.stats.map((s) => `
+    <span><strong>${formatStatValue(s.value, s.label)}</strong> ${escapeHtml(s.label)}</span>`).join("");
 
   const services = content.services.map((s) => `
     <article class="service-item">
@@ -76,6 +213,59 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
     ? `<a class="btn btn-secondary" href="tel:${content.phone.replace(/\s/g, "")}">${escapeHtml(content.phone)}</a>`
     : "";
 
+  const heroSection =
+    content.layoutVariant === "cinematic" && content.heroImageUrl
+      ? `
+    <section class="hero cinematic-hero" aria-label="Introduction">
+      <div class="hero-bg">
+        <img class="hero-photo" src="${content.heroImageUrl}" alt="${escapeHtml(content.brandName)}" fetchpriority="high" />
+        <div class="hero-vignette"></div>
+      </div>
+      <div class="hero-content">
+        <p class="hero-eyebrow"><span class="pulse-dot"></span>${escapeHtml(content.heroEyebrow)}</p>
+        <h1 class="hero-title">
+          ${content.heroTitle.map((line, i) => `<span class="line${i === 1 ? " accent" : i === 2 ? " outline" : ""}">${escapeHtml(line)}</span>`).join("")}
+        </h1>
+        <p class="hero-sub">${escapeHtml(content.heroSubtitle)}</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#posts">View posts</a>
+          <a class="btn btn-ghost" href="${ig}" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+          ${phoneBtn}
+        </div>
+      </div>
+      <div class="hero-ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span>${escapeHtml(content.marqueeText)}</span>
+          <span>${escapeHtml(content.marqueeText)}</span>
+        </div>
+      </div>
+    </section>
+    <section class="stats-strip" aria-label="Highlights">${stats}</section>`
+      : `
+    <section class="profile-hero" aria-label="Profile">
+      <div class="avatar-ring">
+        <img src="${avatar}" alt="${escapeHtml(content.brandName)}" fetchpriority="high" />
+      </div>
+      <div class="profile-meta">
+        <h1>${escapeHtml(content.brandName)}</h1>
+        <p class="profile-handle">@${escapeHtml(content.instagramHandle)}</p>
+        <div class="profile-stats">${profileStats}</div>
+        <p class="profile-bio">${escapeHtml(content.heroSubtitle)}</p>
+        <div class="profile-actions">
+          <a class="btn btn-primary" href="#contact">Get in touch</a>
+          <a class="btn btn-secondary" href="${ig}" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+          ${phoneBtn}
+        </div>
+      </div>
+    </section>
+    ${content.marqueeText ? `
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="ticker-track">
+        <span>${escapeHtml(content.marqueeText)}</span>
+        <span>${escapeHtml(content.marqueeText)}</span>
+      </div>
+    </div>` : ""}`;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,14 +275,16 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
   <meta name="theme-color" content="${escapeHtml(content.accentColor)}" />
   <meta property="og:title" content="${escapeHtml(content.brandName)}" />
   <meta property="og:description" content="${escapeHtml(content.metaDescription)}" />
+  <meta property="og:image" content="${avatar}" />
   <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
   <base href="${assetBase}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
+  ${inlineTheme}
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="${themeClass}">
   <header class="site-header">
     <a class="logo" href="#top">${escapeHtml(content.brandName)}</a>
     <nav class="nav" aria-label="Primary">
@@ -114,24 +306,9 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
   </div>
 
   <main id="top">
-    <section class="profile-hero" aria-label="Profile">
-      <div class="avatar-ring">
-        <img src="${avatar}" alt="${escapeHtml(content.brandName)}" fetchpriority="high" />
-      </div>
-      <div class="profile-meta">
-        <h1>${escapeHtml(content.brandName)}</h1>
-        <p class="profile-handle">@${escapeHtml(content.instagramHandle)}</p>
-        <div class="profile-stats">${stats}</div>
-        <p class="profile-bio">${escapeHtml(content.heroSubtitle)}</p>
-        <div class="profile-actions">
-          <a class="btn btn-primary" href="#contact">Get in touch</a>
-          <a class="btn btn-secondary" href="${ig}" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
-          ${phoneBtn}
-        </div>
-      </div>
-    </section>
+    ${heroSection}
 
-    ${highlights ? `<div class="highlights" aria-label="Highlights">${highlights}</div>` : ""}
+    ${highlights && content.layoutVariant !== "cinematic" ? `<div class="highlights" aria-label="Highlights">${highlights}</div>` : ""}
 
     <section id="posts" class="section my-posts">
       <div class="section-head">
@@ -166,7 +343,7 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
         <p>${escapeHtml(content.tagline)}</p>
       </div>
       <p>${escapeHtml(content.aboutBody)}</p>
-      <ul style="margin-top:1rem;padding-left:1.25rem;color:var(--muted)">${bullets}</ul>
+      <ul class="about-bullets">${bullets}</ul>
     </section>
 
     <section class="section">
@@ -198,6 +375,11 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
 
 export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiBase: string): string {
   const assetBase = `/site/${content.instagramHandle}/`;
+  const theme = content.theme;
+  const inlineTheme = theme
+    ? `<style id="mic-theme">${themeCssVariables(theme, { display: content.fontDisplay, body: content.fontBody })}</style>`
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -205,9 +387,10 @@ export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiB
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(content.brandName)} | Offer</title>
   <base href="${assetBase}" />
+  ${inlineTheme}
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="${theme?.isDark ? "theme-dark" : "theme-light"}">
   <main class="funnel-page">
     <div class="funnel-card">
       <h1>Work with ${escapeHtml(content.brandName)}</h1>
@@ -230,6 +413,12 @@ export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiB
   <script src="js/main.js"></script>
 </body>
 </html>`;
+}
+
+function formatStatValue(value: number, label: string): string {
+  if (label.includes("M followers")) return `${value}M`;
+  if (label.includes("K followers")) return `${value}K`;
+  return String(value);
 }
 
 function escapeHtml(str: string): string {

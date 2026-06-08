@@ -143,4 +143,26 @@
 
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
+
+  // Animated stat counters
+  document.querySelectorAll(".stat-num[data-count]").forEach(function (el) {
+    var target = parseFloat(el.getAttribute("data-count") || "0");
+    if (!target) {
+      el.textContent = "0";
+      return;
+    }
+    var isDecimal = target % 1 !== 0;
+    var start = 0;
+    var duration = 1200;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var p = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = start + (target - start) * eased;
+      el.textContent = isDecimal ? val.toFixed(1) : String(Math.round(val));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
 })();

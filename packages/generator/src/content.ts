@@ -1,5 +1,10 @@
-import type { GenerateInput, Niche, SiteContentData } from "./types";
-import { accentFromImageUrl, accentFromUsername, fontPairForUsername } from "./theme";
+import type { GenerateInput, Niche, SiteContentData, SiteThemeVars } from "./types";
+import {
+  accentFromUsername,
+  fontPairForUsername,
+  layoutVariantForUsername,
+} from "./theme";
+import { extractThemeFromImages, themeFromAccent } from "./palette";
 
 const NICHE_LABELS: Record<Niche, { services: string; portfolio: string; action: string }> = {
   PHOTOGRAPHER: { services: "What I shoot", portfolio: "Selected frames", action: "Book a shoot" },
@@ -18,19 +23,26 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
   const tagline = input.tagline || extractTagline(bio) || `Creative work by @${input.username}`;
   const heroLines = buildHeroLines(tagline, input.niche);
   const fonts = fontPairForUsername(input.username);
-  const accentColor = input.accentColor || accentFromUsername(input.username);
-
+  const theme = input.theme || themeFromAccent(input.accentColor || accentFromUsername(input.username), input.username);
+  const accentColor = theme.accent;
   const profilePicUrl = input.profile?.profilePicUrl || input.posts[0]?.imageUrl || "";
+  const heroImageUrl = input.posts[0]?.imageUrl || profilePicUrl;
+  const followers = input.profile?.followers ?? 0;
+  const postCount = input.profile?.postCount ?? input.mediaItems?.length ?? input.posts.length;
+  const layoutVariant = layoutVariantForUsername(input.username);
 
   return {
     brandName,
     ownerName,
     profilePicUrl,
+    heroImageUrl,
+    layoutVariant,
+    followers,
     tagline,
     heroEyebrow: buildEyebrow(input.niche, bio),
     heroTitle: heroLines,
     heroSubtitle: buildHeroSubtitle(brandName, bio, input.niche),
-    stats: buildStats(input.niche, input.profile?.postCount, input.profile?.followers),
+    stats: buildStats(input.niche, followers, postCount),
     portfolioTitle: labels.portfolio,
     portfolioSubtitle: `Shots from @${input.username}.`,
     portfolioItems: input.posts.map((p, i) => ({
@@ -61,11 +73,12 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
     phone: input.profile?.businessPhone,
     email: input.profile?.businessEmail,
     accentColor,
+    theme,
     fontDisplay: fonts.display,
     fontBody: fonts.body,
     fontGoogleUrl: fonts.google,
     niche: input.niche,
-    marqueeText: `${brandName.toUpperCase()} · @${input.username.toUpperCase()} · `,
+    marqueeText: buildMarquee(brandName, input.username, bio, input.niche),
     metaDescription: `${brandName} · ${tagline.slice(0, 120)}`,
     showContactForm: false,
     showCalendar: false,
@@ -74,9 +87,20 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
 }
 
 export async function buildThemedInput(input: GenerateInput): Promise<GenerateInput> {
-  const profilePic = input.profile?.profilePicUrl || input.posts[0]?.imageUrl;
-  const accentColor = await accentFromImageUrl(profilePic, input.username);
-  return { ...input, accentColor };
+  const imageUrls = [
+    input.profile?.profilePicUrl,
+    ...input.posts.slice(0, 5).map((p) => p.imageUrl),
+    ...input.mediaItems?.slice(0, 4).map((m) => m.imageUrl || m.posterUrl) ?? [],
+  ].filter((u): u is string => Boolean(u?.startsWith("http")));
+
+  let theme: SiteThemeVars;
+  try {
+    theme = await extractThemeFromImages(imageUrls, input.username);
+  } catch {
+    theme = themeFromAccent(input.accentColor || accentFromUsername(input.username), input.username);
+  }
+
+  return { ...input, accentColor: theme.accent, theme };
 }
 
 export async function generateSiteContentWithAI(
@@ -100,15 +124,17 @@ export async function generateSiteContentWithAI(
           {
             role: "system",
             content:
-              "You are a copywriter for creator websites. Return JSON matching the requested fields. Keep tone premium, concise, and niche-appropriate.",
+              "You are a premium copywriter for creator websites. Each site must feel unique to that creator's Instagram voice and niche. Return JSON only. Keep tone elevated, specific, and never generic.",
           },
           {
             role: "user",
             content: JSON.stringify({
-              task: "Enhance website copy",
+              task: "Enhance website copy from real Instagram data",
               niche: input.niche,
               username: input.username,
               biography: input.profile?.biography,
+              followers: input.profile?.followers,
+              accentColor: themed.accentColor,
               tagline: input.tagline,
               fields: {
                 heroEyebrow: base.heroEyebrow,
@@ -119,6 +145,7 @@ export async function generateSiteContentWithAI(
                 services: base.services,
                 contactSubtitle: base.contactSubtitle,
                 metaDescription: base.metaDescription,
+                marqueeText: base.marqueeText,
               },
             }),
           },
@@ -147,7 +174,7 @@ function buildMyPosts(input: GenerateInput): SiteContentData["myPosts"] {
       posterUrl: item.posterUrl,
       alt: item.alt,
       caption: item.caption,
-      carouselCount: item.carouselCount ?? item.type === "carousel" ? 2 : undefined,
+      carouselCount: item.carouselCount ?? (item.type === "carousel" ? 2 : undefined),
     }));
   }
   return input.posts.map((p) => ({
@@ -164,9 +191,29 @@ function extractTagline(bio: string): string {
   return line?.slice(0, 80) || "";
 }
 
+function buildMarquee(brand: string, username: string, bio: string, niche: Niche): string {
+  const bits = bio
+    .split(/[\n|•·]/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 2 && s.length < 40)
+    .slice(0, 4);
+  if (bits.length >= 2) {
+    return `${bits.join(" · ")} · @${username.toUpperCase()} · `;
+  }
+  const nicheBits: Record<Niche, string> = {
+    PHOTOGRAPHER: "On location · Portrait · Brand · Matchday ·",
+    MUSICIAN: "Live · Studio · Original · Performances ·",
+    ACTOR: "Stage · Screen · Character · Auditions ·",
+    COACH: "Mindset · Growth · Clarity · Sessions ·",
+    TRAINER: "Strength · Form · Results · Coaching ·",
+    OTHER: `${brand.toUpperCase()} · CREATIVE · PROFESSIONAL ·`,
+  };
+  return `${nicheBits[niche]} @${username.toUpperCase()} · `;
+}
+
 function buildEyebrow(niche: Niche, bio: string): string {
   const first = bio.split("\n")[1]?.trim();
-  if (first && first.length < 60) return first;
+  if (first && first.length < 60) return first.replace(/^[|•·\s]+/, "");
   const map: Record<Niche, string> = {
     PHOTOGRAPHER: "Portfolio · On location · Every brief",
     MUSICIAN: "Live · Studio · Original sound",
@@ -200,7 +247,7 @@ function buildHeroLines(tagline: string, niche: Niche): string[] {
 }
 
 function buildHeroSubtitle(name: string, bio: string, niche: Niche): string {
-  if (bio.length > 40) return bio.slice(0, 200);
+  if (bio.length > 40) return bio.slice(0, 220);
   const map: Record<Niche, string> = {
     PHOTOGRAPHER: `${name}. Performance-driven photography for brands that need the frame before the moment passes.`,
     MUSICIAN: `${name}. Original performances and studio-ready content built for your audience.`,
@@ -212,20 +259,33 @@ function buildHeroSubtitle(name: string, bio: string, niche: Niche): string {
   return map[niche];
 }
 
+function formatCount(n: number): number {
+  if (n >= 1_000_000) return Math.round(n / 100_000) / 10;
+  if (n >= 10_000) return Math.round(n / 100) / 10;
+  return n;
+}
+
+function countLabel(n: number, raw: number): string {
+  if (raw >= 1_000_000) return "M followers";
+  if (raw >= 1_000) return "K followers";
+  return "followers";
+}
+
 function buildStats(
   niche: Niche,
-  postCount?: number,
-  followers?: number
+  followers: number,
+  postCount: number
 ): { value: number; label: string }[] {
-  if (postCount && postCount > 0) {
-    const stats: { value: number; label: string }[] = [
-      { value: postCount, label: "posts" },
-    ];
-    if (followers && followers > 0) {
-      stats.push({ value: followers, label: "followers" });
+  if (followers > 0 || postCount > 0) {
+    const stats: { value: number; label: string }[] = [];
+    if (postCount > 0) stats.push({ value: postCount, label: "posts" });
+    if (followers > 0) {
+      stats.push({ value: formatCount(followers), label: countLabel(followers, followers) });
     }
-    stats.push({ value: 100, label: "% you" });
-    return stats;
+    if (stats.length < 3) {
+      stats.push({ value: Math.min(postCount || 12, 30), label: "curated" });
+    }
+    return stats.slice(0, 3);
   }
 
   const map: Record<Niche, { value: number; label: string }[]> = {
@@ -276,14 +336,15 @@ function buildAboutTitle(niche: Niche): string {
 }
 
 function buildDefaultAbout(name: string, niche: Niche): string {
+  void niche;
   return `${name} brings a professional, authentic presence to every project, with content shaped for the platforms where your audience already lives.`;
 }
 
 function buildBullets(niche: Niche, bio: string): string[] {
-  if (bio.includes("•") || bio.includes("-")) {
+  if (bio.includes("•") || bio.includes("-") || bio.includes("||")) {
     return bio
       .split(/\n/)
-      .map((l) => l.replace(/^[-•]\s*/, "").trim())
+      .map((l) => l.replace(/^[-•|]+\s*/, "").trim())
       .filter((l) => l.length > 5)
       .slice(0, 4);
   }

@@ -70,8 +70,16 @@ export async function extractThemeFromImages(
   return buildThemeFromPalette(dominant, username);
 }
 
+function isNeutralHex(hex: string): boolean {
+  const { r, g, b } = hexToRgb(hex);
+  return Math.max(r, g, b) - Math.min(r, g, b) < 18;
+}
+
 export function buildThemeFromPalette(colors: Rgb[], username: string): SiteTheme {
-  const accent = pickAccent(colors, username);
+  let accent = pickAccent(colors, username);
+  if (isNeutralHex(accent)) {
+    accent = vibrantAccentFromUsername(username, colors[0]);
+  }
   const accent2 = shiftHue(accent, hashString(username) % 2 === 0 ? 35 : -28);
   const luminance = relativeLuminance(accent);
   const avgBrightness =
@@ -116,11 +124,25 @@ function pickAccent(colors: Rgb[], username: string): string {
     const sat = max === 0 ? 0 : (max - min) / max;
     const lum = (c.r + c.g + c.b) / 3;
     const score = sat * 120 + (lum > 50 && lum < 210 ? 40 : 0);
-    return { c, score };
+    return { c, score, sat };
   });
   scored.sort((a, b) => b.score - a.score);
+  const avgSat = scored.slice(0, 3).reduce((sum, s) => sum + s.sat, 0) / Math.min(3, scored.length);
+  if (!scored.length || avgSat < 0.15) {
+    return vibrantAccentFromUsername(username, colors[0]);
+  }
   const pick = scored[hashString(username) % Math.min(3, scored.length)]?.c || colors[0];
   return boostSaturation(rgbToHex(pick));
+}
+
+/** When IG imagery is mostly neutral (B&W sports, etc.), derive a bold accent from username + content hue. */
+function vibrantAccentFromUsername(username: string, hint?: Rgb): string {
+  const fallback = accentFromUsername(username);
+  if (!hint) return fallback;
+  const contentHue = rgbToHsl(hint.r, hint.g, hint.b)[0];
+  const seedHue = (contentHue + hashString(username) * 37) % 360;
+  const [r, g, b] = hslToRgb(seedHue, 0.72, 0.55);
+  return rgbToHex({ r, g, b });
 }
 
 function boostSaturation(hex: string): string {
