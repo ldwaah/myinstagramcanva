@@ -50,35 +50,34 @@ Create **two** repositories:
 1. **`myinstagramcanva`** (this app) — push the full monorepo. Connect to Vercel for deployment.
 2. **`myinstagramcanva-sites`** (optional) — tenant site files under `sites/{username}/`. Use the template in [`sites-repo/`](sites-repo/). Set `GITHUB_TOKEN` and `GITHUB_SITES_REPO=youruser/myinstagramcanva-sites` in Vercel env.
 
-## Deploy to Vercel
+## Deploy to Netlify (primary)
 
-1. Create a new GitHub repo and push this project:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial My Instagram Canva platform"
-   git remote add origin git@github.com:YOURUSER/myinstagramcanva.git
-   git push -u origin main
-   ```
-2. Import the repo at [vercel.com/new](https://vercel.com/new)
-3. Set **Root Directory** to `apps/web`
-4. **Create a PostgreSQL database** (SQLite files do not work on Vercel serverless):
-   - [Neon](https://neon.tech) (free tier) or Vercel Postgres / Supabase
+1. Push this repo to GitHub and import at [app.netlify.com/start](https://app.netlify.com/start).
+2. Netlify reads `netlify.toml` at the repo root (builds `apps/web` via npm workspaces).
+3. **Create a PostgreSQL database** (SQLite does not work in production):
+   - [Neon](https://neon.tech) (free tier) or Supabase / Netlify DB
    - Copy the `postgresql://...` connection string
 
-5. Add environment variables in Vercel → Project → Settings → Environment Variables (required for login):
+4. Add environment variables in Netlify → Site configuration → Environment variables:
 
    | Variable | Example / notes |
    |----------|-----------------|
    | `DATABASE_URL` | `postgresql://user:pass@host/db?sslmode=require` |
    | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
-   | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.vercel.app` (main app) |
-   | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.thesale.app` (tenant sites) |
+   | `NEXTAUTH_URL` | `https://myinstagramcanva.com` |
+   | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.com` (main app) |
+   | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.com` (tenant subdomains) |
 
-6. **Apply the database schema** (once, from your machine):
+5. **Apply the database schema** (once, from your machine):
    ```bash
    DATABASE_URL="postgresql://..." npm run db:push
    ```
+
+6. **Custom domain DNS** (at your registrar or Netlify DNS):
+   - `myinstagramcanva.com` → Netlify (ALIAS/ANAME or A record per Netlify docs)
+   - `www.myinstagramcanva.com` → CNAME → your Netlify site URL
+   - `*.myinstagramcanva.com` → CNAME → your Netlify site URL (wildcard for tenant sites)
+   - Add all three in Netlify → Domain management
 
 7. Redeploy, then sign up at `/signup` to create your first account.
 
@@ -87,18 +86,17 @@ Create **two** repositories:
    - `OPENAI_API_KEY` — for AI generation
    - `RESEND_API_KEY` — Tailored lead email alerts to site owners
    - `ENCRYPTION_KEY` — 32-byte hex for BYOK keys
-9. **Tenant DNS on thesale.app** — add a wildcard CNAME so tenant sites resolve:
-   - Record: `*.myinstagramcanva` → CNAME → `cname.vercel-dns.com` (or your Vercel project domain)
-   - Also add `myinstagramcanva.thesale.app` as a domain on the Vercel project
-   - Tenant URL format: `www.{username}.myinstagramcanva.thesale.app`
-10. Deploy
+
+## Deploy to Vercel (optional / fallback)
+
+Same env vars as Netlify. Set **Root Directory** to `apps/web`. Keep `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_ROOT_DOMAIN` pointing at `myinstagramcanva.com` so canonical URLs stay correct even when building on Vercel.
 
 ## Tenant preview
 
 Locally: `/site/{username}`.
 
-Production (before DNS): `https://myinstagramcanva.vercel.app/site/{username}`.
+Production (reliable now): `https://myinstagramcanva.com/site/{username}`.
 
-With DNS wired: `https://www.{username}.myinstagramcanva.thesale.app`
+With wildcard DNS wired: `https://www.{username}.myinstagramcanva.com`
 
 Use **Dev: mock pay** on the dashboard when Stripe is not configured.

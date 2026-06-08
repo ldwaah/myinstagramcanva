@@ -7,7 +7,18 @@ export function isVercelAppHost(host: string): boolean {
   return host.toLowerCase().includes(".vercel.app");
 }
 
-/** Host label stored on Site.subdomain, e.g. www.khiagovisuals.myinstagramcanva.thesale.app */
+/** Main app hosts use path-based preview (/site/{username}) until wildcard tenant DNS is live */
+export function isMainAppHost(host: string): boolean {
+  const normalized = host.split(":")[0]?.toLowerCase() ?? "";
+  const root = env.rootDomain.split(":")[0]?.toLowerCase() ?? "";
+  return (
+    isVercelAppHost(normalized) ||
+    normalized === root ||
+    normalized === `www.${root}`
+  );
+}
+
+/** Host label stored on Site.subdomain, e.g. www.khiagovisuals.myinstagramcanva.com */
 export function buildTenantSubdomain(username: string): string {
   return `www.${username}.${env.rootDomain}`;
 }
@@ -19,13 +30,13 @@ export function getTenantPublicUrl(username: string): string {
 }
 
 /**
- * Preview link that works before custom DNS is wired.
- * On Vercel app host, use /site/{username}; otherwise use the tenant subdomain URL.
+ * Preview link that works before wildcard DNS is wired.
+ * On the main app host, use /site/{username}; otherwise use the tenant subdomain URL.
  */
 export function getTenantPreviewUrl(username: string): string {
   try {
     const appHost = new URL(env.appUrl).host;
-    if (isVercelAppHost(appHost)) {
+    if (isMainAppHost(appHost)) {
       return `${env.appUrl}/site/${username}`;
     }
   } catch {

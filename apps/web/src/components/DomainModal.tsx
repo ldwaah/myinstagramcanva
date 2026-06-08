@@ -10,7 +10,7 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
   if (!open) return null;
 
   const rootDomain =
-    process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim() || "myinstagramcanva.thesale.app";
+    process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim() || "myinstagramcanva.com";
   const host = username ? `www.${username}.${rootDomain}` : `www.you.${rootDomain}`;
 
   return (

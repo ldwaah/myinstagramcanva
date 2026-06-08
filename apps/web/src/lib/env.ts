@@ -1,17 +1,21 @@
+const PRODUCTION_APP_URL = "https://myinstagramcanva.com";
+const PRODUCTION_ROOT_DOMAIN = "myinstagramcanva.com";
+
+function isProductionDeploy() {
+  return Boolean(process.env.VERCEL || process.env.NETLIFY);
+}
+
 function resolveAppUrl() {
   const raw = process.env.NEXT_PUBLIC_APP_URL?.trim();
   if (raw) return raw.replace(/\/$/, "");
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  if (isProductionDeploy()) return PRODUCTION_APP_URL;
   return "http://localhost:3000";
 }
-
-const TENANT_ROOT_DOMAIN = "myinstagramcanva.thesale.app";
 
 function resolveRootDomain() {
   const raw = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim();
   if (raw) return raw;
-  // Tenant subdomains use the custom domain, not the Vercel deployment host.
-  if (process.env.VERCEL) return TENANT_ROOT_DOMAIN;
+  if (isProductionDeploy()) return PRODUCTION_ROOT_DOMAIN;
   return "localhost:3000";
 }
 

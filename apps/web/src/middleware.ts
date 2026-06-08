@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "@/lib/env";
 import { parseTenantUsernameFromHost } from "@/lib/site-urls";
 
 const REF_COOKIE = "mic_ref";
@@ -16,7 +17,7 @@ function attachReferralCookie(response: NextResponse, ref: string) {
 
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
+  const rootDomain = env.rootDomain;
   const url = request.nextUrl.clone();
   const ref = url.searchParams.get("ref");
 
