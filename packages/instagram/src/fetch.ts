@@ -6,11 +6,20 @@ import type {
   InstagramReel,
 } from "./types";
 
-const HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "X-IG-App-ID": "936619743392459",
-};
+function igHeaders(username: string): Record<string, string> {
+  return {
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "X-IG-App-ID": "936619743392459",
+    Accept: "*/*",
+    "Accept-Language": "en-US,en;q=0.9",
+    Referer: `https://www.instagram.com/${username}/`,
+    Origin: "https://www.instagram.com",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+  };
+}
 
 const GRAPHQL_DOC_ID = "7950224923793128298";
 const MAX_MEDIA_ITEMS = 30;
@@ -18,6 +27,7 @@ const MAX_PAGES = 5;
 const MAX_REELS = 8;
 
 interface TimelineBundle {
+  count?: number;
   edges: { node: InstagramMediaNode }[];
   page_info: { has_next_page: boolean; end_cursor: string };
 }
@@ -26,7 +36,7 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   const url = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(clean)}`;
 
-  const res = await fetch(url, { headers: HEADERS });
+  const res = await fetch(url, { headers: igHeaders(clean) });
   if (!res.ok) {
     throw new Error(`Instagram profile not found or unavailable (@${clean})`);
   }
@@ -58,7 +68,7 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
   while (hasNext && allEdges.length < MAX_MEDIA_ITEMS && pages < MAX_PAGES) {
     pages += 1;
     try {
-      const page = await fetchTimelinePage(user.id, cursor);
+      const page = await fetchTimelinePage(user.id, clean, cursor);
       const pageTimeline = page.data?.user?.edge_owner_to_timeline_media;
       if (!pageTimeline?.edges?.length) break;
       allEdges.push(...pageTimeline.edges);
@@ -100,6 +110,7 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
     biography: user.biography || "",
     profilePicUrl: user.profile_pic_url_hd || user.profile_pic_url || "",
     followers: user.edge_followed_by?.count ?? 0,
+    postCount: timeline?.count ?? allEdges.length,
     businessEmail: user.business_email,
     businessPhone: user.business_phone_number,
     userId: user.id,
@@ -110,14 +121,14 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
   };
 }
 
-async function fetchTimelinePage(userId: string, cursor?: string) {
+async function fetchTimelinePage(userId: string, username: string, cursor?: string) {
   const variables = JSON.stringify({
     id: userId,
     first: 24,
     after: cursor ?? null,
   });
   const gqlUrl = `https://www.instagram.com/graphql/query/?doc_id=${GRAPHQL_DOC_ID}&variables=${encodeURIComponent(variables)}`;
-  const res = await fetch(gqlUrl, { headers: HEADERS });
+  const res = await fetch(gqlUrl, { headers: igHeaders(username) });
   if (!res.ok) throw new Error(`Instagram pagination failed (${res.status})`);
   return res.json() as Promise<{
     data?: { user?: { edge_owner_to_timeline_media?: TimelineBundle } };

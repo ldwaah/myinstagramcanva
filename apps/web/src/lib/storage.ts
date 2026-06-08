@@ -48,7 +48,12 @@ async function uploadToR2(key: string, buffer: Buffer, contentType: string): Pro
 
 export async function downloadUrl(url: string): Promise<Buffer> {
   const res = await fetch(url, {
-    headers: { "User-Agent": "MyInstagramCanva/1.0" },
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+      Referer: "https://www.instagram.com/",
+    },
   });
   if (!res.ok) throw new Error(`Failed to download ${url}`);
   return Buffer.from(await res.arrayBuffer());

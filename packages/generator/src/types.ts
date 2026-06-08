@@ -9,6 +9,7 @@ export type Niche =
 export interface SiteContentData {
   brandName: string;
   ownerName: string;
+  profilePicUrl: string;
   tagline: string;
   heroEyebrow: string;
   heroTitle: string[];
@@ -63,6 +64,9 @@ export interface GenerateInput {
   profile?: {
     fullName: string;
     biography: string;
+    profilePicUrl?: string;
+    followers?: number;
+    postCount?: number;
     businessEmail?: string;
     businessPhone?: string;
   };

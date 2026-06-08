@@ -5,6 +5,7 @@ import { prisma, SiteStatus } from "@mic/db";
 import { isSiteAccessible } from "@/lib/trial";
 import { getLocalSitePath } from "@/lib/storage";
 import { env } from "@/lib/env";
+import { decodeBundleBinary, isBundleBinary } from "@/lib/bundle-media";
 
 export async function GET(
   req: NextRequest,
@@ -34,7 +35,24 @@ export async function GET(
   const bundle = parseBundle(site.siteContent?.bundle);
 
   if (bundle?.[normalized]) {
-    return new NextResponse(bundle[normalized], { headers: { "Content-Type": contentType } });
+    const body = bundle[normalized];
+    if (isBundleBinary(body)) {
+      const { buffer, contentType: binaryType } = decodeBundleBinary(body);
+      return new NextResponse(new Uint8Array(buffer), {
+        headers: {
+          "Content-Type": binaryType,
+          "Cache-Control": "public, max-age=86400, immutable",
+        },
+      });
+    }
+    return new NextResponse(body, {
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control": normalized.endsWith(".html")
+          ? "public, max-age=0, must-revalidate"
+          : "public, max-age=86400, immutable",
+      },
+    });
   }
 
   const localPath = path.join(getLocalSitePath(username), normalized);
@@ -65,6 +83,10 @@ function mimeFor(file: string) {
   if (file.endsWith(".css")) return "text/css";
   if (file.endsWith(".js")) return "application/javascript";
   if (file.endsWith(".json")) return "application/json";
+  if (file.endsWith(".jpg") || file.endsWith(".jpeg")) return "image/jpeg";
+  if (file.endsWith(".png")) return "image/png";
+  if (file.endsWith(".webp")) return "image/webp";
+  if (file.endsWith(".mp4")) return "video/mp4";
   return "text/html";
 }
 

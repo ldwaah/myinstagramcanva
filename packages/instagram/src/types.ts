@@ -37,6 +37,7 @@ export interface InstagramProfile {
   biography: string;
   profilePicUrl: string;
   followers: number;
+  postCount: number;
   businessEmail?: string;
   businessPhone?: string;
   userId?: string;

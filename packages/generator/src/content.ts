@@ -20,14 +20,17 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
   const fonts = fontPairForUsername(input.username);
   const accentColor = input.accentColor || accentFromUsername(input.username);
 
+  const profilePicUrl = input.profile?.profilePicUrl || input.posts[0]?.imageUrl || "";
+
   return {
     brandName,
     ownerName,
+    profilePicUrl,
     tagline,
     heroEyebrow: buildEyebrow(input.niche, bio),
     heroTitle: heroLines,
     heroSubtitle: buildHeroSubtitle(brandName, bio, input.niche),
-    stats: buildStats(input.niche),
+    stats: buildStats(input.niche, input.profile?.postCount, input.profile?.followers),
     portfolioTitle: labels.portfolio,
     portfolioSubtitle: `Shots from @${input.username}.`,
     portfolioItems: input.posts.map((p, i) => ({
@@ -71,7 +74,7 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
 }
 
 export async function buildThemedInput(input: GenerateInput): Promise<GenerateInput> {
-  const profilePic = input.posts[0]?.imageUrl;
+  const profilePic = input.profile?.profilePicUrl || input.posts[0]?.imageUrl;
   const accentColor = await accentFromImageUrl(profilePic, input.username);
   return { ...input, accentColor };
 }
@@ -209,7 +212,22 @@ function buildHeroSubtitle(name: string, bio: string, niche: Niche): string {
   return map[niche];
 }
 
-function buildStats(niche: Niche): { value: number; label: string }[] {
+function buildStats(
+  niche: Niche,
+  postCount?: number,
+  followers?: number
+): { value: number; label: string }[] {
+  if (postCount && postCount > 0) {
+    const stats: { value: number; label: string }[] = [
+      { value: postCount, label: "posts" },
+    ];
+    if (followers && followers > 0) {
+      stats.push({ value: followers, label: "followers" });
+    }
+    stats.push({ value: 100, label: "% you" });
+    return stats;
+  }
+
   const map: Record<Niche, { value: number; label: string }[]> = {
     PHOTOGRAPHER: [
       { value: 90, label: "min of focus" },

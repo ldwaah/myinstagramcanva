@@ -7,6 +7,8 @@
   if (toggle && menu) {
     toggle.addEventListener("click", function () {
       var open = menu.classList.toggle("is-open");
+      if (open) menu.removeAttribute("hidden");
+      else menu.setAttribute("hidden", "");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }

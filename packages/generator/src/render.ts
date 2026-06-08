@@ -2,7 +2,8 @@ import type { SiteContentData } from "./types";
 
 export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBase: string): string {
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;
-  const avatar = content.portfolioItems[0]?.imageUrl || "";
+  const assetBase = `/site/${content.instagramHandle}/`;
+  const avatar = content.profilePicUrl || content.portfolioItems[0]?.imageUrl || "";
 
   const highlights = content.portfolioItems.slice(0, 5).map((item, i) => `
     <div class="highlight">
@@ -85,6 +86,7 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
   <meta property="og:title" content="${escapeHtml(content.brandName)}" />
   <meta property="og:description" content="${escapeHtml(content.metaDescription)}" />
   <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
+  <base href="${assetBase}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
@@ -103,7 +105,7 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
     <a class="nav-cta" href="${ig}" target="_blank" rel="noopener noreferrer">@${escapeHtml(content.instagramHandle)}</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu"><span></span><span></span></button>
   </header>
-  <div id="mobile-menu" class="mobile-menu">
+  <div id="mobile-menu" class="mobile-menu" hidden>
     <a href="#posts">Posts</a>
     ${content.reels.length ? '<a href="#reels">Reels</a>' : ""}
     <a href="#about">About</a>
@@ -195,13 +197,15 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
 }
 
 export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiBase: string): string {
+  const assetBase = `/site/${content.instagramHandle}/`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escapeHtml(content.brandName)} | Offer</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <base href="${assetBase}" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <main class="funnel-page">
@@ -223,7 +227,7 @@ export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiB
       </form>
     </div>
   </main>
-  <script src="../js/main.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>`;
 }
