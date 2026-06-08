@@ -2,7 +2,7 @@
 # https://docs.netlify.com/frameworks/next-js/overview/
 
 [build]
-  command = "npm install && npm install --include=optional -w web && npm run db:generate && npm run db:push && npm run build -w web"
+  command = "npm install && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
   publish = "apps/web/.next"
 
 [build.environment]
