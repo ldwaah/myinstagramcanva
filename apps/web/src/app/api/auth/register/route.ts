@@ -3,6 +3,10 @@ import { z } from "zod";
 import { registerUser, createSession } from "@/lib/auth";
 import { sanitizeAuthError } from "@/lib/db-errors";
 import { attachReferralToUser, readReferralCodeFromCookie } from "@/lib/affiliate";
+import { assertDatabaseReady } from "@/lib/db-health";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const schema = z.object({
   email: z.string().email(),
@@ -13,6 +17,7 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   try {
+    await assertDatabaseReady();
     const body = schema.parse(await req.json());
     const user = await registerUser(body.email, body.password, body.name);
     const refCode = await readReferralCodeFromCookie();

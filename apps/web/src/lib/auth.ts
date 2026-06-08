@@ -34,7 +34,10 @@ export async function createSession(user: SessionUser) {
     .sign(secret);
 
   const cookieStore = await cookies();
-  const isProd = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+  const isProd =
+    process.env.NODE_ENV === "production" ||
+    Boolean(process.env.VERCEL) ||
+    Boolean(process.env.NETLIFY);
   cookieStore.set(COOKIE, token, {
     httpOnly: true,
     secure: isProd,
