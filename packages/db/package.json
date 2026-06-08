@@ -8,6 +8,7 @@
     "prepare-schema": "node scripts/prepare-schema.mjs",
     "generate": "npm run prepare-schema && prisma generate",
     "push": "npm run prepare-schema && prisma db push",
+    "migrate": "npm run prepare-schema && prisma migrate deploy",
     "studio": "npm run prepare-schema && prisma studio",
     "build": "npm run generate"
   },

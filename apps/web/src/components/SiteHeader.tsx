@@ -49,7 +49,9 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
               <Link href="/pricing" className="landing-nav__pricing">
                 Pricing
               </Link>
-              <Link href="/affiliates">Affiliates</Link>
+              <Link href="/affiliates" className="landing-nav__affiliates">
+                Affiliates
+              </Link>
             </>
           )}
           {session.loggedIn ? (

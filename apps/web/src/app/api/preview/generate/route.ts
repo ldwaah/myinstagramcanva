@@ -9,6 +9,7 @@ import {
 } from "@/lib/instagram-username";
 import { buildTenantSubdomain } from "@/lib/site-urls";
 import { getOrCreatePreviewUser } from "@/lib/preview-user";
+import { runInBackground } from "@/lib/background-task";
 import { assertDatabaseReady, formatDbError } from "@/lib/db-health";
 
 export const runtime = "nodejs";
@@ -131,21 +132,11 @@ export async function POST(req: Request) {
 
     if (needsGeneration) {
       const ownerId = session?.id ?? site.userId;
-      try {
-        const { runSiteGeneration } = await import("@/lib/generation");
-        await runSiteGeneration(site.id, ownerId);
-      } catch (err) {
-        console.error("[preview/generate]", site.id, err);
-        return NextResponse.json(
-          {
-            siteId: site.id,
-            username: site.username,
-            error: formatDbError(err, "Generation failed. Please try again."),
-            failed: true,
-          },
-          { status: 500 }
-        );
-      }
+      runInBackground(
+        import("@/lib/generation").then(({ runSiteGeneration }) =>
+          runSiteGeneration(site!.id, ownerId)
+        )
+      );
     }
 
     const refreshed = await prisma.site.findUnique({

@@ -11,6 +11,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ username: string; path?: string[] }> }
 ) {
+  try {
   const { username, path: pathSegments } = await params;
   const relPath = pathSegments?.length ? pathSegments.join("/") : "index.html";
   const filePath = relPath.endsWith("/") ? `${relPath}index.html` : relPath;
@@ -67,6 +68,10 @@ export async function GET(
       status: 202,
       headers: { "Content-Type": "text/html" },
     });
+  }
+  } catch (err) {
+    console.error("[site]", err);
+    return new NextResponse("Site temporarily unavailable", { status: 503 });
   }
 }
 

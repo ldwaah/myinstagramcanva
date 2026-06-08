@@ -85,8 +85,13 @@ export function buildRootMetadata(overrides: Metadata = {}): Metadata {
       follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large" },
     },
-    themeColor: "#E1306C",
     ...overrides,
+  };
+}
+
+export function buildViewport() {
+  return {
+    themeColor: "#E1306C",
   };
 }
 
