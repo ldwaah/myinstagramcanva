@@ -3,7 +3,7 @@
 # Root netlify.toml only — do not add netlify.toml under templates/ (use .example).
 
 [build]
-  command = "NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm run db:generate && npm run build -w web"
+  command = "NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
   publish = "apps/web/.next"
 
 [build.environment]
