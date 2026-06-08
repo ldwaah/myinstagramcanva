@@ -190,12 +190,9 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     });
 
     const statusUpdate =
-      site.status === SiteStatus.LIVE || site.tier
+      site.status === SiteStatus.LIVE || site.status === SiteStatus.TRIAL || site.tier
         ? {}
-        : {
-            status: SiteStatus.TRIAL,
-            trialEndsAt: site.trialEndsAt ?? getTrialEndDate(),
-          };
+        : { status: SiteStatus.DRAFT };
 
     await prisma.site.update({
       where: { id: siteId },

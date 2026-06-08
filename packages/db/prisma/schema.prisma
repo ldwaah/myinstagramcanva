@@ -40,6 +40,9 @@ model Site {
   githubPath      String?
   tagline         String?
   needsAdminTweak Boolean    @default(false)
+  isPreview       Boolean    @default(false)
+  previewToken    String?    @unique
+  stripeHostingSubId String? @unique
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   publishedAt     DateTime?
