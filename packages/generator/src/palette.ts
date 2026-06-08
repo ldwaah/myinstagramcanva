@@ -1,5 +1,16 @@
-import sharp from "sharp";
 import { accentFromUsername, hashString } from "./theme";
+
+type SharpModule = typeof import("sharp");
+let sharpLoader: Promise<SharpModule["default"] | null> | undefined;
+
+async function loadSharp() {
+  if (!sharpLoader) {
+    sharpLoader = import("sharp")
+      .then((mod) => mod.default)
+      .catch(() => null);
+  }
+  return sharpLoader;
+}
 
 export interface SiteTheme {
   accent: string;
@@ -27,6 +38,11 @@ export async function extractThemeFromImages(
   imageUrls: string[],
   username: string
 ): Promise<SiteTheme> {
+  const sharp = await loadSharp();
+  if (!sharp) {
+    return themeFromAccent(accentFromUsername(username), username);
+  }
+
   const urls = [...new Set(imageUrls.filter((u) => u?.startsWith("http")))].slice(0, 6);
   const buckets = new Map<string, number>();
 

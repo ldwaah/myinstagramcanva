@@ -4,7 +4,6 @@ import { prisma, JobStatus } from "@mic/db";
 import { getSession } from "@/lib/auth";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
-import { runSiteGeneration } from "@/lib/generation";
 import { assertDatabaseReady, formatDbError } from "@/lib/db-health";
 
 export const runtime = "nodejs";
@@ -66,6 +65,7 @@ export async function GET(req: Request) {
     if (needsKick) {
       const ownerId = session?.id ?? site.userId;
       try {
+        const { runSiteGeneration } = await import("@/lib/generation");
         await runSiteGeneration(siteId, ownerId);
       } catch (err) {
         console.error("[preview/status] generation", siteId, err);

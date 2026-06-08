@@ -3,7 +3,6 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { prisma, Niche, JobStatus } from "@mic/db";
 import { getSession } from "@/lib/auth";
-import { runSiteGeneration } from "@/lib/generation";
 import {
   sanitizeInstagramUsername,
   validateInstagramUsername,
@@ -133,6 +132,7 @@ export async function POST(req: Request) {
     if (needsGeneration) {
       const ownerId = session?.id ?? site.userId;
       try {
+        const { runSiteGeneration } = await import("@/lib/generation");
         await runSiteGeneration(site.id, ownerId);
       } catch (err) {
         console.error("[preview/generate]", site.id, err);

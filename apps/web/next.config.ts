@@ -6,7 +6,7 @@ const packagesRoot = path.join(__dirname, "../../packages");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../.."),
-  serverExternalPackages: ["@prisma/client", "prisma"],
+  serverExternalPackages: ["@prisma/client", "prisma", "sharp"],
   outputFileTracingIncludes: {
     "/**": [
       "templates/instagram-v1/**/*",
