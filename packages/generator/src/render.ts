@@ -15,6 +15,23 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
       <img src="${item.imageUrl}" alt="${escapeHtml(item.alt)}" loading="lazy" />
     </a>`).join("");
 
+  const myPostsGrid = content.myPosts.map((item) => {
+    const postUrl = item.type === "video"
+      ? `https://www.instagram.com/reel/${item.shortcode}/`
+      : `https://www.instagram.com/p/${item.shortcode}/`;
+    const typeClass = item.type === "video" ? " post-cell--video" : item.type === "carousel" ? " post-cell--carousel" : "";
+    const carouselBadge = item.type === "carousel" && item.carouselCount && item.carouselCount > 1
+      ? `<span class="post-cell__badge" aria-hidden>${item.carouselCount}</span>`
+      : "";
+    const media = item.type === "video" && item.videoUrl
+      ? `<video src="${item.videoUrl}" poster="${item.posterUrl || item.imageUrl || ""}" muted playsinline preload="metadata"></video><span class="post-cell__play" aria-hidden></span>`
+      : `<img src="${item.imageUrl || item.posterUrl || ""}" alt="${escapeHtml(item.alt)}" loading="lazy" />`;
+    return `
+    <a class="post-cell${typeClass}" href="${postUrl}" target="_blank" rel="noopener noreferrer" data-type="${item.type}">
+      ${media}${carouselBadge}
+    </a>`;
+  }).join("");
+
   const reels = content.reels.map((reel) => `
     <article class="reel-card">
       <video src="${reel.videoUrl}" playsinline muted loop preload="metadata" poster="${reel.posterUrl}"></video>
@@ -114,13 +131,23 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
 
     ${highlights ? `<div class="highlights" aria-label="Highlights">${highlights}</div>` : ""}
 
-    <section id="posts" class="section">
+    <section id="posts" class="section my-posts">
+      <div class="section-head">
+        <p class="my-posts__brand">My Instagram Canva</p>
+        <h2>${escapeHtml(content.myPostsTitle)}</h2>
+        <p>${escapeHtml(content.myPostsSubtitle)}</p>
+      </div>
+      <div class="post-grid my-posts__grid" role="list">${myPostsGrid || grid}</div>
+    </section>
+
+    ${content.portfolioItems.length > 0 && myPostsGrid ? `
+    <section class="section section--compact">
       <div class="section-head">
         <h2>${escapeHtml(content.portfolioTitle)}</h2>
         <p>${escapeHtml(content.portfolioSubtitle)}</p>
       </div>
       <div class="post-grid" role="list">${grid}</div>
-    </section>
+    </section>` : ""}
 
     ${content.reels.length ? `
     <section id="reels" class="section">
@@ -160,6 +187,7 @@ export function renderSiteHtml(content: SiteContentData, siteId: string, _apiBas
 
   <footer class="site-footer">
     <p>© <span id="year"></span> ${escapeHtml(content.brandName)} · <a href="https://myinstagramcanva.com" target="_blank" rel="noopener">My Instagram Canva</a></p>
+    <p class="site-footer__sponsor">Sponsored by <a href="https://evolveone.ai" target="_blank" rel="noopener noreferrer">Evolve One</a></p>
   </footer>
   <script src="js/main.js"></script>
 </body>

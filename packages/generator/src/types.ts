@@ -17,6 +17,18 @@ export interface SiteContentData {
   portfolioTitle: string;
   portfolioSubtitle: string;
   portfolioItems: { label: string; alt: string; imageUrl: string }[];
+  myPostsTitle: string;
+  myPostsSubtitle: string;
+  myPosts: {
+    shortcode: string;
+    type: "image" | "video" | "carousel";
+    imageUrl?: string;
+    videoUrl?: string;
+    posterUrl?: string;
+    alt: string;
+    caption: string;
+    carouselCount?: number;
+  }[];
   reelsTitle: string;
   reelsSubtitle: string;
   reels: { shortcode: string; videoUrl: string; posterUrl: string; caption: string }[];
@@ -55,5 +67,15 @@ export interface GenerateInput {
     businessPhone?: string;
   };
   posts: { imageUrl: string; alt: string; caption: string; shortcode: string }[];
+  mediaItems?: {
+    shortcode: string;
+    type: "image" | "video" | "carousel";
+    imageUrl?: string;
+    videoUrl?: string;
+    posterUrl?: string;
+    alt: string;
+    caption: string;
+    carouselCount?: number;
+  }[];
   reels: { videoUrl: string; posterUrl?: string; caption: string; shortcode: string }[];
 }

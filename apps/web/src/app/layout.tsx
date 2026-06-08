@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
+import { ReferralTracker } from "@/components/ReferralTracker";
 
 export const metadata: Metadata = {
   title: "My Instagram Canva",
@@ -10,7 +12,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={null}>
+          <ReferralTracker />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }

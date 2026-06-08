@@ -72,8 +72,8 @@ Create **two** repositories:
    |----------|-----------------|
    | `DATABASE_URL` | `postgresql://user:pass@host/db?sslmode=require` |
    | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
-   | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.vercel.app` |
-   | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.vercel.app` |
+   | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.vercel.app` (main app) |
+   | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.thesale.app` (tenant sites) |
 
 6. **Apply the database schema** (once, from your machine):
    ```bash
@@ -87,11 +87,18 @@ Create **two** repositories:
    - `OPENAI_API_KEY` — for AI generation
    - `RESEND_API_KEY` — Tailored lead email alerts to site owners
    - `ENCRYPTION_KEY` — 32-byte hex for BYOK keys
-9. Add wildcard domain `*.myinstagramcanva.com` in Vercel DNS (when using a custom domain)
+9. **Tenant DNS on thesale.app** — add a wildcard CNAME so tenant sites resolve:
+   - Record: `*.myinstagramcanva` → CNAME → `cname.vercel-dns.com` (or your Vercel project domain)
+   - Also add `myinstagramcanva.thesale.app` as a domain on the Vercel project
+   - Tenant URL format: `www.{username}.myinstagramcanva.thesale.app`
 10. Deploy
 
 ## Tenant preview
 
-Locally: `/site/{username}`. Production: `{username}.myinstagramcanva.com`
+Locally: `/site/{username}`.
+
+Production (before DNS): `https://myinstagramcanva.vercel.app/site/{username}`.
+
+With DNS wired: `https://www.{username}.myinstagramcanva.thesale.app`
 
 Use **Dev: mock pay** on the dashboard when Stripe is not configured.

@@ -57,7 +57,7 @@ export async function createAiSubscriptionCheckout(
 ) {
   const stripe = getStripe();
   if (!stripe) {
-    return { url: `${env.appUrl}/dashboard/ai-changer?checkout=mock&plan=${plan}` };
+    return { url: `${env.appUrl}/dashboard/collaborator?checkout=mock&plan=${plan}` };
   }
 
   const priceId = plan === "BYOK" ? env.stripePrices.aiByok : env.stripePrices.aiManaged;
@@ -68,7 +68,7 @@ export async function createAiSubscriptionCheckout(
           currency: "gbp",
           unit_amount: plan === "BYOK" ? 1000 : 1800,
           recurring: { interval: "month" as const },
-          product_data: { name: `AI Changer ${plan}` },
+          product_data: { name: `AI Collaborator ${plan}` },
         },
         quantity: 1,
       }];
@@ -77,8 +77,8 @@ export async function createAiSubscriptionCheckout(
     mode: "subscription",
     customer_email: email,
     line_items: lineItems,
-    success_url: `${env.appUrl}/dashboard/ai-changer?success=1`,
-    cancel_url: `${env.appUrl}/dashboard/ai-changer?canceled=1`,
+    success_url: `${env.appUrl}/dashboard/collaborator?success=1`,
+    cancel_url: `${env.appUrl}/dashboard/collaborator?canceled=1`,
     metadata: { userId, plan, type: "ai_subscription" },
   });
 
@@ -88,7 +88,7 @@ export async function createAiSubscriptionCheckout(
 export async function createAiTopupCheckout(userId: string, email: string) {
   const stripe = getStripe();
   if (!stripe) {
-    return { url: `${env.appUrl}/dashboard/ai-changer?topup=mock` };
+    return { url: `${env.appUrl}/dashboard/collaborator?topup=mock` };
   }
 
   const priceId = env.stripePrices.aiTopup;
@@ -100,8 +100,8 @@ export async function createAiTopupCheckout(userId: string, email: string) {
     mode: "payment",
     customer_email: email,
     line_items: lineItems,
-    success_url: `${env.appUrl}/dashboard/ai-changer?topup=success`,
-    cancel_url: `${env.appUrl}/dashboard/ai-changer?topup=canceled`,
+    success_url: `${env.appUrl}/dashboard/collaborator?topup=success`,
+    cancel_url: `${env.appUrl}/dashboard/collaborator?topup=canceled`,
     metadata: { userId, type: "ai_topup" },
   });
 

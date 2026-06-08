@@ -23,6 +23,8 @@ model User {
   aiApiKey         AiApiKey?
   aiEditLogs       AiEditLog[]
   generationJobs   GenerationJob[]
+  affiliate        Affiliate?
+  referralRecord   Referral?      @relation("UserReferrals")
 }
 
 model Site {
@@ -109,9 +111,55 @@ model Order {
   status          String   @default("pending")
   createdAt       DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commission Commission?
 
   @@index([userId])
+}
+
+model Affiliate {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  code      String   @unique
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  referrals   Referral[]
+  commissions Commission[]
+}
+
+model Referral {
+  id              String    @id @default(cuid())
+  affiliateId     String
+  referredUserId  String?   @unique
+  stripeSessionId String?
+  convertedAt     DateTime?
+  tier            SiteTier?
+  createdAt       DateTime  @default(now())
+
+  affiliate    Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  referredUser User?     @relation("UserReferrals", fields: [referredUserId], references: [id], onDelete: SetNull)
+
+  @@index([affiliateId])
+}
+
+model Commission {
+  id          String           @id @default(cuid())
+  affiliateId String
+  orderId     String           @unique
+  amount      Int
+  rate        Float
+  status      CommissionStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  paidAt      DateTime?
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+  @@index([status])
 }
 
 model AiSubscription {
@@ -308,4 +356,9 @@ enum JobStatus {
   RUNNING
   COMPLETED
   FAILED
+}
+
+enum CommissionStatus {
+  PENDING
+  PAID
 }

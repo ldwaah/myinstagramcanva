@@ -1,6 +1,7 @@
 import { prisma, SiteStatus } from "@mic/db";
+import { TRIAL_DAYS } from "./trial-constants";
 
-const TRIAL_DAYS = 21;
+export { TRIAL_DAYS };
 
 export function getTrialEndDate(from = new Date()) {
   const end = new Date(from);

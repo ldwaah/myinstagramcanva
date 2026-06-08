@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AuthLayout } from "@/components/AuthLayout";
+import { MicButton } from "@/components/MicButton";
 import { parseJsonError } from "@/lib/db-errors";
 
 export default function LoginPage() {
@@ -29,23 +31,22 @@ export default function LoginPage() {
         try {
           data = await res.json();
         } catch {
-          /* non-JSON error body */
+          /* non-JSON */
         }
-        setError(parseJsonError(data, "Login failed. Please check your email and password."));
+        setError(parseJsonError(data, "Invalid email or password."));
         return;
       }
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch {
-      setError("Network error — could not reach the server. Check your connection and try again.");
+      setError("Network error — try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="mic-container" style={{ padding: "4rem 0", maxWidth: "420px" }}>
-      <h1 style={{ fontFamily: "var(--font-syne)" }}>Log in</h1>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: "1rem", marginTop: "1.5rem" }}>
+    <AuthLayout title="Welcome back" subtitle="Log in to manage your sites.">
+      <form onSubmit={onSubmit} className="auth-form">
         <div>
           <label className="mic-label">Email</label>
           <input className="mic-input" name="email" type="email" required />
@@ -54,12 +55,14 @@ export default function LoginPage() {
           <label className="mic-label">Password</label>
           <input className="mic-input" name="password" type="password" required />
         </div>
-        {error && <p style={{ color: "#ff6b6b" }}>{error}</p>}
-        <button className="mic-btn mic-btn-primary" disabled={loading}>{loading ? "..." : "Log in"}</button>
+        {error && <p className="auth-form__error">{error}</p>}
+        <MicButton type="submit" shimmer disabled={loading} className="auth-form__submit">
+          {loading ? "Logging in…" : "Log in"}
+        </MicButton>
       </form>
-      <p style={{ marginTop: "1rem", color: "var(--muted)" }}>
-        No account? <Link href="/signup" style={{ color: "var(--accent)" }}>Sign up</Link>
+      <p className="auth-form__footer">
+        No account? <Link href="/signup">Sign up</Link>
       </p>
-    </main>
+    </AuthLayout>
   );
 }

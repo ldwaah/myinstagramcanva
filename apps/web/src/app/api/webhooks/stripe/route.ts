@@ -4,6 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { getFreeEditsForTier } from "@/lib/trial";
 import { runSiteGeneration } from "@/lib/generation";
 import { env } from "@/lib/env";
+import { createCommissionForOrder } from "@/lib/affiliate";
 
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 
     if (meta.type === "site_tier" && meta.userId && meta.siteId && meta.tier) {
       const tier = meta.tier as SiteTier;
-      await prisma.order.create({
+      const order = await prisma.order.create({
         data: {
           userId: meta.userId,
           siteId: meta.siteId,
@@ -43,6 +44,14 @@ export async function POST(req: Request) {
           status: "paid",
         },
       });
+
+      await createCommissionForOrder(
+        meta.userId,
+        order.id,
+        order.amount,
+        tier,
+        session.id
+      );
 
       const needsAdmin = tier === SiteTier.TAILORED;
       await prisma.site.update({

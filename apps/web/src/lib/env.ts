@@ -1,6 +1,20 @@
+function resolveAppUrl() {
+  const raw = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (raw) return raw.replace(/\/$/, "");
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
+function resolveRootDomain() {
+  const raw = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim();
+  if (raw) return raw;
+  if (process.env.VERCEL_URL) return process.env.VERCEL_URL;
+  return "localhost:3000";
+}
+
 export const env = {
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000",
+  appUrl: resolveAppUrl(),
+  rootDomain: resolveRootDomain(),
   databaseUrl: process.env.DATABASE_URL || "file:./dev.db",
   authSecret: process.env.NEXTAUTH_SECRET || "dev-secret-change-me",
   stripeSecret: process.env.STRIPE_SECRET_KEY || "",

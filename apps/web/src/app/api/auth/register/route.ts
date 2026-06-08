@@ -2,17 +2,21 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { registerUser, createSession } from "@/lib/auth";
 import { sanitizeAuthError } from "@/lib/db-errors";
+import { attachReferralToUser, readReferralCodeFromCookie } from "@/lib/affiliate";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   name: z.string().optional(),
+  acceptedTerms: z.boolean().refine((v) => v === true, "You must accept the Terms & Conditions"),
 });
 
 export async function POST(req: Request) {
   try {
     const body = schema.parse(await req.json());
     const user = await registerUser(body.email, body.password, body.name);
+    const refCode = await readReferralCodeFromCookie();
+    await attachReferralToUser(user.id, refCode);
     await createSession({
       id: user.id,
       email: user.email,

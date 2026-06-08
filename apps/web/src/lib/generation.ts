@@ -1,7 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
-import { prisma, SiteStatus, SiteTier, JobStatus } from "@mic/db";
-import { fetchInstagramProfile } from "@mic/instagram";
+import { prisma, SiteStatus, SiteTier, JobStatus, MediaType } from "@mic/db";
+import { fetchInstagramProfile, type InstagramMediaItem, type InstagramProfile } from "@mic/instagram";
 import {
   generateSiteContent,
   generateSiteContentWithAI,
@@ -15,8 +13,8 @@ import { env } from "./env";
 import { publishSiteBundle, downloadUrl } from "./storage";
 import { commitSiteFiles } from "./github";
 import { getTrialEndDate } from "./trial";
+import { readTemplateFile } from "./template-assets";
 
-const TEMPLATE_ROOT = path.join(process.cwd(), "../../templates/instagram-v1");
 const IS_SERVERLESS = Boolean(process.env.VERCEL);
 const HAS_R2 = Boolean(env.r2.accessKeyId && env.r2.accountId);
 
@@ -24,7 +22,18 @@ function shouldUseRemoteUrls() {
   return IS_SERVERLESS && !HAS_R2;
 }
 
-export async function runSiteGeneration(siteId: string, userId: string) {
+type ProcessedMediaItem = {
+  shortcode: string;
+  type: "image" | "video" | "carousel";
+  imageUrl?: string;
+  videoUrl?: string;
+  posterUrl?: string;
+  alt: string;
+  caption: string;
+  carouselCount?: number;
+};
+
+export async function runSiteGeneration(siteId: string, userId: string, options?: { sync?: boolean }) {
   const site = await prisma.site.findUnique({
     where: { id: siteId },
     include: { instagramProfile: true },
@@ -36,25 +45,18 @@ export async function runSiteGeneration(siteId: string, userId: string) {
   });
 
   try {
-    await prisma.site.update({
-      where: { id: siteId },
-      data: { status: SiteStatus.GENERATING },
-    });
+    if (!options?.sync) {
+      await prisma.site.update({
+        where: { id: siteId },
+        data: { status: SiteStatus.GENERATING },
+      });
+    }
 
-    let profile;
+    let profile: InstagramProfile | ReturnType<typeof emptyProfile>;
     try {
       profile = await fetchInstagramProfile(site.username);
     } catch {
-      profile = {
-        username: site.username,
-        fullName: site.username,
-        biography: site.tagline || "",
-        profilePicUrl: "",
-        followers: 0,
-        posts: [],
-        reels: [],
-        raw: null,
-      };
+      profile = emptyProfile(site.username, site.tagline);
     }
 
     await prisma.instagramProfile.upsert({
@@ -78,59 +80,12 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       },
     });
 
+    await prisma.mediaAsset.deleteMany({ where: { siteId } });
+
     const useRemoteUrls = shouldUseRemoteUrls();
-    const postsWithUrls = [];
-
-    for (let i = 0; i < profile.posts.length; i++) {
-      const post = profile.posts[i];
-      if (useRemoteUrls) {
-        postsWithUrls.push(post);
-        continue;
-      }
-      try {
-        const buf = await downloadUrl(post.imageUrl);
-        const key = `${site.username}/images/portfolio-${String(i + 1).padStart(2, "0")}.jpg`;
-        const { uploadBuffer } = await import("./storage");
-        const publicUrl = await uploadBuffer(key, buf, "image/jpeg");
-        postsWithUrls.push({
-          ...post,
-          imageUrl: publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`,
-        });
-        await prisma.mediaAsset.create({
-          data: {
-            siteId,
-            type: "IMAGE",
-            storageKey: key,
-            publicUrl: publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`,
-            altText: post.alt,
-            sortOrder: i,
-            instagramId: post.shortcode,
-          },
-        });
-      } catch {
-        postsWithUrls.push(post);
-      }
-    }
-
-    const reelsWithUrls = [];
-    for (const reel of profile.reels) {
-      if (useRemoteUrls) {
-        reelsWithUrls.push(reel);
-        continue;
-      }
-      try {
-        const buf = await downloadUrl(reel.videoUrl);
-        const key = `${site.username}/videos/${reel.shortcode}.mp4`;
-        const { uploadBuffer } = await import("./storage");
-        const publicUrl = await uploadBuffer(key, buf, "video/mp4");
-        reelsWithUrls.push({
-          ...reel,
-          videoUrl: publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`,
-        });
-      } catch {
-        reelsWithUrls.push(reel);
-      }
-    }
+    const mediaItems = await processMediaItems(site.username, siteId, profile.mediaItems, useRemoteUrls);
+    const postsWithUrls = await processImagePosts(site.username, siteId, profile.posts, useRemoteUrls);
+    const reelsWithUrls = await processReels(site.username, profile.reels, useRemoteUrls);
 
     const input = await buildThemedInput({
       username: site.username,
@@ -149,6 +104,7 @@ export async function runSiteGeneration(siteId: string, userId: string) {
         caption: p.caption,
         shortcode: p.shortcode,
       })),
+      mediaItems,
       reels: reelsWithUrls.map((r) => ({
         videoUrl: r.videoUrl,
         posterUrl: r.posterUrl,
@@ -157,7 +113,6 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       })),
     });
 
-    // Prefer profile pic for accent when available
     if (profile.profilePicUrl) {
       const { accentFromImageUrl } = await import("@mic/generator");
       input.accentColor = await accentFromImageUrl(profile.profilePicUrl, site.username);
@@ -168,16 +123,17 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       content = await generateSiteContentWithAI(input, env.openaiKey);
     }
 
-    content.showContactForm = site.tier === SiteTier.TAILORED || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
+    content.showContactForm =
+      site.tier === SiteTier.TAILORED || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showCalendar = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showFunnel = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
 
-    const baseCss = await fs.readFile(path.join(TEMPLATE_ROOT, "css/style.css"), "utf8");
+    const baseCss = await readTemplateFile("css/style.css");
     const css = injectThemeIntoCss(baseCss, content.accentColor, {
       display: content.fontDisplay,
       body: content.fontBody,
     });
-    const js = await fs.readFile(path.join(TEMPLATE_ROOT, "js/main.js"), "utf8");
+    const js = await readTemplateFile("js/main.js");
     const html = renderSiteHtml(content, siteId, env.appUrl);
     const siteJson = JSON.stringify(content, null, 2);
 
@@ -186,7 +142,12 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       "site.json": siteJson,
       "css/style.css": css,
       "js/main.js": js,
-      "manifest.json": JSON.stringify({ username: site.username, template: "instagram-v1", generatedAt: new Date().toISOString() }),
+      "manifest.json": JSON.stringify({
+        username: site.username,
+        template: "instagram-v1",
+        generatedAt: new Date().toISOString(),
+        mediaCount: mediaItems.length,
+      }),
     };
 
     if (content.showFunnel) {
@@ -196,7 +157,6 @@ export async function runSiteGeneration(siteId: string, userId: string) {
     if (!useRemoteUrls) {
       await publishSiteBundle(site.username, files);
     } else {
-      // Still write locally when not on Vercel (dev)
       const { publishSiteBundle: publish } = await import("./storage");
       try {
         await publish(site.username, files);
@@ -208,8 +168,10 @@ export async function runSiteGeneration(siteId: string, userId: string) {
     const commitSha = await commitSiteFiles(
       site.username,
       Object.entries(files).map(([p, c]) => ({ path: p, content: c })),
-      `Generate site for @${site.username}`
+      `${options?.sync ? "Sync" : "Generate"} site for @${site.username}`
     );
+
+    const existingContent = await prisma.siteContent.findUnique({ where: { siteId } });
 
     await prisma.siteContent.upsert({
       where: { siteId },
@@ -227,11 +189,18 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       },
     });
 
+    const statusUpdate =
+      site.status === SiteStatus.LIVE || site.tier
+        ? {}
+        : {
+            status: SiteStatus.TRIAL,
+            trialEndsAt: site.trialEndsAt ?? getTrialEndDate(),
+          };
+
     await prisma.site.update({
       where: { id: siteId },
       data: {
-        status: SiteStatus.TRIAL,
-        trialEndsAt: getTrialEndDate(),
+        ...statusUpdate,
         githubPath: `sites/${site.username}`,
         publishedAt: new Date(),
       },
@@ -242,16 +211,178 @@ export async function runSiteGeneration(siteId: string, userId: string) {
       data: { status: JobStatus.COMPLETED },
     });
 
-    return { siteId, username: site.username };
+    return {
+      siteId,
+      username: site.username,
+      mediaCount: mediaItems.length,
+      syncedAt: new Date().toISOString(),
+      version: (existingContent?.version ?? 0) + 1,
+    };
   } catch (err) {
     await prisma.generationJob.update({
       where: { id: job.id },
       data: { status: JobStatus.FAILED, error: err instanceof Error ? err.message : "Unknown error" },
     });
-    await prisma.site.update({
-      where: { id: siteId },
-      data: { status: SiteStatus.DRAFT },
-    });
+    if (!options?.sync) {
+      await prisma.site.update({
+        where: { id: siteId },
+        data: { status: SiteStatus.DRAFT },
+      });
+    }
     throw err;
   }
+}
+
+function emptyProfile(username: string, tagline: string | null): InstagramProfile {
+  return {
+    username,
+    fullName: username,
+    biography: tagline || "",
+    profilePicUrl: "",
+    followers: 0,
+    mediaItems: [],
+    posts: [],
+    reels: [],
+    raw: null,
+  };
+}
+
+async function processMediaItems(
+  username: string,
+  siteId: string,
+  items: InstagramMediaItem[],
+  useRemoteUrls: boolean
+): Promise<ProcessedMediaItem[]> {
+  const processed: ProcessedMediaItem[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const base: ProcessedMediaItem = {
+      shortcode: item.shortcode,
+      type: item.type,
+      alt: item.alt,
+      caption: item.caption,
+      carouselCount: item.carouselItems?.length,
+    };
+
+    if (useRemoteUrls) {
+      processed.push({
+        ...base,
+        imageUrl: item.imageUrl,
+        videoUrl: item.videoUrl,
+        posterUrl: item.posterUrl,
+      });
+      continue;
+    }
+
+    let imageUrl = item.imageUrl;
+    let videoUrl = item.videoUrl;
+    let posterUrl = item.posterUrl;
+
+    if (item.imageUrl) {
+      try {
+        const buf = await downloadUrl(item.imageUrl);
+        const key = `${username}/posts/${item.shortcode}.jpg`;
+        const { uploadBuffer } = await import("./storage");
+        const publicUrl = await uploadBuffer(key, buf, "image/jpeg");
+        imageUrl = publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`;
+        await prisma.mediaAsset.create({
+          data: {
+            siteId,
+            type: MediaType.IMAGE,
+            storageKey: key,
+            publicUrl: imageUrl,
+            altText: item.alt,
+            sortOrder: i,
+            instagramId: item.shortcode,
+          },
+        });
+      } catch {
+        imageUrl = item.imageUrl;
+      }
+    }
+
+    if (item.videoUrl) {
+      try {
+        const buf = await downloadUrl(item.videoUrl);
+        const key = `${username}/posts/${item.shortcode}.mp4`;
+        const { uploadBuffer } = await import("./storage");
+        const publicUrl = await uploadBuffer(key, buf, "video/mp4");
+        videoUrl = publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`;
+        await prisma.mediaAsset.create({
+          data: {
+            siteId,
+            type: MediaType.VIDEO,
+            storageKey: key,
+            publicUrl: videoUrl,
+            altText: item.alt,
+            sortOrder: i,
+            instagramId: `${item.shortcode}_video`,
+          },
+        });
+      } catch {
+        videoUrl = item.videoUrl;
+      }
+    }
+
+    processed.push({ ...base, imageUrl, videoUrl, posterUrl: posterUrl || imageUrl });
+  }
+
+  return processed;
+}
+
+async function processImagePosts(
+  username: string,
+  siteId: string,
+  posts: InstagramProfile["posts"],
+  useRemoteUrls: boolean
+) {
+  const result = [];
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i];
+    if (useRemoteUrls) {
+      result.push(post);
+      continue;
+    }
+    try {
+      const buf = await downloadUrl(post.imageUrl);
+      const key = `${username}/images/portfolio-${String(i + 1).padStart(2, "0")}.jpg`;
+      const { uploadBuffer } = await import("./storage");
+      const publicUrl = await uploadBuffer(key, buf, "image/jpeg");
+      result.push({
+        ...post,
+        imageUrl: publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`,
+      });
+    } catch {
+      result.push(post);
+    }
+  }
+  return result;
+}
+
+async function processReels(
+  username: string,
+  reels: InstagramProfile["reels"],
+  useRemoteUrls: boolean
+) {
+  const result = [];
+  for (const reel of reels) {
+    if (useRemoteUrls) {
+      result.push(reel);
+      continue;
+    }
+    try {
+      const buf = await downloadUrl(reel.videoUrl);
+      const key = `${username}/videos/${reel.shortcode}.mp4`;
+      const { uploadBuffer } = await import("./storage");
+      const publicUrl = await uploadBuffer(key, buf, "video/mp4");
+      result.push({
+        ...reel,
+        videoUrl: publicUrl.startsWith("http") ? publicUrl : `${env.appUrl}${publicUrl}`,
+      });
+    } catch {
+      result.push(reel);
+    }
+  }
+  return result;
 }

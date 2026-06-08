@@ -4,22 +4,37 @@ import { z } from "zod";
 import { prisma, Niche } from "@mic/db";
 import { getSession } from "@/lib/auth";
 import { runSiteGeneration } from "@/lib/generation";
+import {
+  sanitizeInstagramUsername,
+  validateInstagramUsername,
+} from "@/lib/instagram-username";
+import { buildTenantSubdomain } from "@/lib/site-urls";
+
+export const maxDuration = 60;
 
 const schema = z.object({
-  username: z.string().min(3).max(30).regex(/^[a-z0-9_]+$/),
+  username: z.string().min(1),
   niche: z.nativeEnum(Niche).optional().default(Niche.OTHER),
   tagline: z.string().optional(),
 });
 
 const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
 
+function formatZodError(err: z.ZodError): string {
+  return err.issues.map((e) => e.message).join(" ");
+}
+
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const body = schema.parse(await req.json());
-    const username = body.username.toLowerCase();
+    const raw = schema.parse(await req.json());
+    const username = sanitizeInstagramUsername(raw.username);
+    const validationError = validateInstagramUsername(username);
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
+    }
 
     if (RESERVED.has(username)) {
       return NextResponse.json({ error: "Username reserved" }, { status: 400 });
@@ -34,9 +49,9 @@ export async function POST(req: Request) {
       data: {
         userId: session.id,
         username,
-        subdomain: `${username}.myinstagramcanva.com`,
-        niche: body.niche,
-        tagline: body.tagline,
+        subdomain: buildTenantSubdomain(username),
+        niche: raw.niche,
+        tagline: raw.tagline,
         githubPath: `sites/${username}`,
       },
     });
@@ -49,6 +64,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ siteId: site.id, username: site.username });
   } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: formatZodError(err) }, { status: 400 });
+    }
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Failed to create site" },
       { status: 400 }
@@ -62,7 +80,11 @@ export async function GET() {
 
   const sites = await prisma.site.findMany({
     where: { userId: session.id },
-    include: { siteContent: true, generationJobs: { orderBy: { createdAt: "desc" }, take: 1 } },
+    include: {
+      siteContent: true,
+      instagramProfile: { select: { lastSyncedAt: true } },
+      generationJobs: { orderBy: { createdAt: "desc" }, take: 1 },
+    },
     orderBy: { createdAt: "desc" },
   });
 

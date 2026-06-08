@@ -35,7 +35,10 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
       alt: p.alt,
       imageUrl: p.imageUrl,
     })),
-    reelsTitle: "From Instagram",
+    myPostsTitle: "My Posts",
+    myPostsSubtitle: `From @${input.username} · synced by My Instagram Canva`,
+    myPosts: buildMyPosts(input),
+    reelsTitle: "Reels",
     reelsSubtitle: `Clips pulled from @${input.username}.`,
     reels: input.reels.map((r) => ({
       shortcode: r.shortcode,
@@ -129,6 +132,28 @@ export async function generateSiteContentWithAI(
   } catch {
     return base;
   }
+}
+
+function buildMyPosts(input: GenerateInput): SiteContentData["myPosts"] {
+  if (input.mediaItems?.length) {
+    return input.mediaItems.map((item) => ({
+      shortcode: item.shortcode,
+      type: item.type,
+      imageUrl: item.imageUrl,
+      videoUrl: item.videoUrl,
+      posterUrl: item.posterUrl,
+      alt: item.alt,
+      caption: item.caption,
+      carouselCount: item.carouselCount ?? item.type === "carousel" ? 2 : undefined,
+    }));
+  }
+  return input.posts.map((p) => ({
+    shortcode: p.shortcode,
+    type: "image" as const,
+    imageUrl: p.imageUrl,
+    alt: p.alt,
+    caption: p.caption,
+  }));
 }
 
 function extractTagline(bio: string): string {

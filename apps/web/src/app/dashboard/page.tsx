@@ -1,8 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { AppShell } from "@/components/AppShell";
+import { DashboardNav } from "@/components/DashboardNav";
+import { LockedFeatureCard } from "@/components/LockedFeatureCard";
+import { MicButton } from "@/components/MicButton";
+import { MicCard } from "@/components/MicCard";
+import { SitePreviewFrame } from "@/components/SitePreviewFrame";
+import { TrialWelcomeBanner } from "@/components/TrialWelcomeBanner";
+import { canUseFeature } from "@/lib/features";
+import { getTenantPreviewUrl, getTenantPublicUrl } from "@/lib/site-urls";
 
 interface Site {
   id: string;
@@ -11,13 +19,12 @@ interface Site {
   tier: string | null;
   trialEndsAt: string | null;
   subdomain: string;
-  needsAdminTweak: boolean;
   generationJobs: { status: string }[];
+  instagramProfile?: { lastSyncedAt: string | null } | null;
 }
 
 const TIERS = ["STARTER", "TAILORED", "PRO", "STUDIO"] as const;
-
-const TIER_LABELS: Record<string, string> = {
+const TIER_PRICES: Record<string, string> = {
   STARTER: "£27",
   TAILORED: "£54",
   PRO: "£101",
@@ -28,6 +35,12 @@ function DashboardContent() {
   const params = useSearchParams();
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
+  const [welcomeDismissed, setWelcomeDismissed] = useState(false);
+  const [hasCollaborator, setHasCollaborator] = useState(false);
+
+  const site = sites[0];
+  const tier = site?.tier ?? null;
 
   async function load() {
     const res = await fetch("/api/sites");
@@ -42,120 +55,99 @@ function DashboardContent() {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 5000);
+    fetch("/api/ai/key")
+      .then((r) => r.json())
+      .then((d) => setHasCollaborator(d.subscription?.status === "active"));
+    const interval = setInterval(load, 8000);
     return () => clearInterval(interval);
   }, []);
 
-  async function checkout(siteId: string, tier: string) {
+  async function checkout(tierName: string) {
+    if (!site) return;
     const res = await fetch("/api/checkout/tier", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ siteId, tier }),
+      body: JSON.stringify({ siteId: site.id, tier: tierName }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
   }
 
-  async function mockPay(siteId: string, tier: string) {
-    await fetch("/api/checkout/mock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ siteId, tier }),
-    });
+  async function syncFromInstagram() {
+    if (!site) return;
+    setSyncingId(site.id);
+    await fetch(`/api/sites/${site.id}/sync`, { method: "POST" });
+    setSyncingId(null);
     load();
   }
 
-  if (loading) return <p className="mic-container" style={{ padding: "3rem 0" }}>Loading...</p>;
+  if (loading) {
+    return (
+      <AppShell actions={<DashboardNav />}>
+        <p className="app-loading">Loading…</p>
+      </AppShell>
+    );
+  }
+
+  if (!site) {
+    return (
+      <AppShell actions={<DashboardNav />}>
+        <MicCard glass glow className="dash-empty">
+          <MicButton href="/onboarding" shimmer>
+            Create your site
+          </MicButton>
+        </MicCard>
+      </AppShell>
+    );
+  }
+
+  const previewUrl = getTenantPreviewUrl(site.username);
+  const generating = site.status === "GENERATING" || site.generationJobs[0]?.status === "RUNNING";
+  const showWelcome = !welcomeDismissed && (params.get("welcome") === "1" || params.get("generating") === "1");
 
   return (
-    <main className="mic-container" style={{ padding: "2rem 0 4rem" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
-        <h1 className="mic-gradient-text" style={{ fontWeight: 700 }}>Dashboard</h1>
-        <nav style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <Link href="/onboarding" className="mic-btn mic-btn-ghost">New site</Link>
-          <Link href="/dashboard/ai-changer" className="mic-btn mic-btn-ghost">AI Changer</Link>
-          <Link href="/dashboard/crm" className="mic-btn mic-btn-ghost">Leads & CRM</Link>
-          <Link href="/dashboard/domains" className="mic-btn mic-btn-ghost">Domains</Link>
-          <Link href="/dashboard/admin" className="mic-btn mic-btn-ghost">Admin</Link>
-          <button
-            className="mic-btn mic-btn-ghost"
-            onClick={async () => {
-              await fetch("/api/auth/logout", { method: "POST" });
-              window.location.href = "/";
-            }}
-          >
-            Log out
-          </button>
-        </nav>
-      </header>
+    <AppShell actions={<DashboardNav />}>
+      <TrialWelcomeBanner
+        show={showWelcome}
+        trialEndsAt={site.trialEndsAt}
+        onDismiss={() => setWelcomeDismissed(true)}
+      />
 
-      {(params.get("generating") || sites.some((s) => s.status === "GENERATING" || s.generationJobs[0]?.status === "RUNNING")) && (
-        <div className="mic-banner" style={{ marginBottom: "1rem", padding: "1rem" }}>
-          <strong>Generating your tailored site…</strong>
-          <p style={{ marginTop: "0.35rem", opacity: 0.9 }}>Pulling Instagram photos, picking fonts &amp; colors, writing copy. This usually takes under a minute.</p>
+      <MicCard glass glow className="dash-site-card">
+        <div className="dash-site-card__grid">
+          <div>
+            <h2>@{site.username}</h2>
+            <p className="dash-url">{site.subdomain || getTenantPublicUrl(site.username).replace(/^https?:\/\//, "")}</p>
+            <div className="dash-site-card__actions">
+              <MicButton variant="ghost" href={previewUrl} external>
+                Open
+              </MicButton>
+              <MicButton variant="gradient-outline" disabled={!!syncingId || generating} onClick={syncFromInstagram}>
+                {syncingId ? "Syncing…" : "Sync IG"}
+              </MicButton>
+            </div>
+          </div>
+          <SitePreviewFrame username={site.username} previewUrl={previewUrl} status={site.status} generating={generating} />
         </div>
-      )}
+      </MicCard>
 
-      {!sites.length && (
-        <div className="mic-card">
-          <p>No sites yet.</p>
-          <Link href="/onboarding" className="mic-btn mic-btn-primary" style={{ marginTop: "1rem" }}>Create your first site</Link>
-        </div>
-      )}
-
-      <div style={{ display: "grid", gap: "1rem" }}>
-        {sites.map((site) => {
-          const job = site.generationJobs[0];
-          const previewUrl = `/site/${site.username}`;
-          const isTailoredPending = site.tier === "TAILORED" && site.needsAdminTweak;
-
-          return (
-            <article key={site.id} className="mic-card">
-              {isTailoredPending && (
-                <div className="mic-banner" style={{ marginBottom: "1rem" }}>
-                  Our team will tailor your site within 48 hours. You&apos;ll get an email when it&apos;s ready. Leads from your embedded form appear in Leads &amp; CRM.
-                </div>
-              )}
-
-              <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-                <div>
-                  <h2 style={{ fontWeight: 700 }}>@{site.username}</h2>
-                  <p style={{ color: "var(--muted)" }}>
-                    Status: {site.status} {site.tier ? `· ${site.tier}` : ""}
-                  </p>
-                  {site.trialEndsAt && !site.tier && (
-                    <p style={{ color: "var(--accent)" }}>Trial ends {new Date(site.trialEndsAt).toLocaleDateString()}</p>
-                  )}
-                  {site.tier === "TAILORED" && !site.needsAdminTweak && (
-                    <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: "0.35rem" }}>
-                      Lead form active · view submissions in Leads &amp; CRM
-                    </p>
-                  )}
-                  {job?.status === "RUNNING" && <p>Generating…</p>}
-                </div>
-                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                  <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="mic-btn mic-btn-ghost">Preview</a>
-                  {(site.tier === "TAILORED" || site.tier === "PRO" || site.tier === "STUDIO") && (
-                    <Link href="/dashboard/crm" className="mic-btn mic-btn-ghost">View leads</Link>
-                  )}
-                </div>
-              </div>
-
-              {!site.tier && (
-                <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                  {TIERS.map((tier) => (
-                    <button key={tier} className="mic-btn mic-btn-primary" onClick={() => checkout(site.id, tier)}>
-                      {tier} ({TIER_LABELS[tier]})
-                    </button>
-                  ))}
-                  <button className="mic-btn mic-btn-ghost" onClick={() => mockPay(site.id, "TAILORED")}>Dev: mock Tailored</button>
-                </div>
-              )}
-            </article>
-          );
-        })}
+      <div className="dash-features" id="upgrade">
+        <LockedFeatureCard feature="crm" locked={!canUseFeature("crm", tier)} onUpgrade={() => checkout("TAILORED")} />
+        <LockedFeatureCard feature="affiliates" locked={!canUseFeature("affiliates", tier)} onUpgrade={() => checkout("STARTER")} />
+        <LockedFeatureCard feature="ai_collaborator" locked={!canUseFeature("ai_collaborator", tier, hasCollaborator)} />
+        <LockedFeatureCard feature="calendar" locked={!canUseFeature("calendar", tier)} onUpgrade={() => checkout("PRO")} />
       </div>
-    </main>
+
+      {!tier && (
+        <div className="dash-pricing">
+          {TIERS.map((t) => (
+            <MicButton key={t} shimmer onClick={() => checkout(t)}>
+              {t} {TIER_PRICES[t]}
+            </MicButton>
+          ))}
+        </div>
+      )}
+    </AppShell>
   );
 }
 

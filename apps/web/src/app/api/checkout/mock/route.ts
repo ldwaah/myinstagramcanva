@@ -4,6 +4,8 @@ import { prisma, SiteStatus, SiteTier } from "@mic/db";
 import { getSession } from "@/lib/auth";
 import { getFreeEditsForTier } from "@/lib/trial";
 import { runSiteGeneration } from "@/lib/generation";
+import { createCommissionForOrder } from "@/lib/affiliate";
+import { TIER_PRICES } from "@/lib/env";
 
 const schema = z.object({
   siteId: z.string(),
@@ -25,15 +27,18 @@ export async function POST(req: Request) {
     });
     if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
 
-    await prisma.order.create({
+    const amount = TIER_PRICES[body.tier] ?? 0;
+    const order = await prisma.order.create({
       data: {
         userId: session.id,
         siteId: site.id,
         tier: body.tier,
-        amount: 0,
+        amount,
         status: "paid",
       },
     });
+
+    await createCommissionForOrder(session.id, order.id, amount, body.tier);
 
     await prisma.site.update({
       where: { id: site.id },

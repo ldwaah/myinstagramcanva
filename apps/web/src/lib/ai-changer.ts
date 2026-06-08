@@ -20,7 +20,7 @@ export async function canUserEdit(userId: string): Promise<{
     if (sub.plan === "BYOK") {
       const keyRecord = await prisma.aiApiKey.findUnique({ where: { userId } });
       if (!keyRecord?.isValid) {
-        return { allowed: false, reason: "Add a valid OpenAI API key in AI Changer settings" };
+        return { allowed: false, reason: "Add a valid OpenAI API key in AI Collaborator settings" };
       }
       return { allowed: true, usePlatformKey: false, apiKey: decrypt(keyRecord.encryptedKey) };
     }
@@ -39,7 +39,7 @@ export async function canUserEdit(userId: string): Promise<{
     return { allowed: true, usePlatformKey: true, apiKey: env.openaiKey };
   }
 
-  return { allowed: false, reason: "Subscribe to AI Changer or use your free edits during onboarding." };
+  return { allowed: false, reason: "Subscribe to AI Collaborator to edit your site with AI." };
 }
 
 export async function applyAiEdit(

@@ -11,6 +11,18 @@
     });
   }
 
+  // My Posts grid — tap to play inline videos
+  document.querySelectorAll(".post-cell--video").forEach(function (cell) {
+    var video = cell.querySelector("video");
+    if (!video) return;
+    cell.addEventListener("click", function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      if (video.paused) video.play();
+      else video.pause();
+    });
+  });
+
   // Reel play buttons
   document.querySelectorAll(".reel-card").forEach(function (card) {
     var video = card.querySelector("video");

@@ -5,6 +5,9 @@ const packagesRoot = path.join(__dirname, "../../packages");
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../.."),
+  outputFileTracingIncludes: {
+    "/**": ["../../templates/instagram-v1/**/*"],
+  },
   transpilePackages: ["@mic/db", "@mic/generator", "@mic/instagram"],
   experimental: {
     serverActions: {
