@@ -165,10 +165,27 @@ export function buildElementTokens(
   };
 }
 
+function deriveRootDomain(apiBase: string): string {
+  try {
+    return new URL(apiBase).hostname;
+  } catch {
+    return "myinstagramcanva.com";
+  }
+}
+
+function tenantCanonicalUrl(username: string, rootDomain: string): string {
+  const protocol = rootDomain.includes("localhost") ? "http" : "https";
+  return `${protocol}://${username}.${rootDomain}`;
+}
+
 function sitePaths(content: SiteContentData, apiBase: string) {
   const appBase = apiBase.replace(/\/$/, "");
   const assetBase = `/site/${content.instagramHandle}/`;
-  const canonicalUrl = `${appBase}${assetBase}`;
+  const root = deriveRootDomain(appBase);
+  const usePathCanonical = root.includes("localhost") || root.includes("vercel.app");
+  const canonicalUrl = usePathCanonical
+    ? `${appBase}${assetBase}`.replace(/\/$/, "")
+    : tenantCanonicalUrl(content.instagramHandle, root);
   return { appBase, assetBase, canonicalUrl };
 }
 

@@ -11,5 +11,5 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Tenant subdomains (www.{username}.myinstagramcanva.com) are rewritten by Next.js middleware.
+# Tenant subdomains ({username}.myinstagramcanva.com) are rewritten by Next.js middleware.
 # Add myinstagramcanva.com, www.myinstagramcanva.com, and *.myinstagramcanva.com in Netlify → Domain management.

@@ -95,8 +95,8 @@ Same env vars as Netlify. Set **Root Directory** to `apps/web`. Keep `NEXT_PUBLI
 
 Locally: `/site/{username}`.
 
-Production (reliable now): `https://myinstagramcanva.com/site/{username}`.
+Vercel fallback: `https://myinstagramcanva.com/site/{username}` (nested subdomains are not supported on `*.vercel.app`).
 
-With wildcard DNS wired: `https://www.{username}.myinstagramcanva.com`
+Production (with wildcard DNS): `https://{username}.myinstagramcanva.com`
 
 Use **Dev: mock pay** on the dashboard when Stripe is not configured.

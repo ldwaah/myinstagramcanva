@@ -2,7 +2,7 @@ import { env } from "./env";
 
 const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
 
-/** Vercel *.vercel.app does not support nested tenant hosts like www.user.project.vercel.app */
+/** Vercel *.vercel.app does not support nested tenant hosts like user.project.vercel.app */
 export function isVercelAppHost(host: string): boolean {
   return host.toLowerCase().includes(".vercel.app");
 }
@@ -18,29 +18,40 @@ export function isMainAppHost(host: string): boolean {
   );
 }
 
-/** Host label stored on Site.subdomain, e.g. www.khiagovisuals.myinstagramcanva.com */
+/** Host label stored on Site.subdomain, e.g. official4dads.myinstagramcanva.com */
 export function buildTenantSubdomain(username: string): string {
-  return `www.${username}.${env.rootDomain}`;
+  return `${username}.${env.rootDomain}`;
 }
 
-/** Public URL shown in UI: https://www.{username}.{rootDomain} */
+/** Public URL shown in UI: https://{username}.{rootDomain} */
 export function getTenantPublicUrl(username: string): string {
   const protocol = env.rootDomain.includes("localhost") ? "http" : "https";
   return `${protocol}://${buildTenantSubdomain(username)}`;
 }
 
-/**
- * Preview link that works before wildcard DNS is wired.
- * On the main app host, use /site/{username}; otherwise use the tenant subdomain URL.
- */
-export function getTenantPreviewUrl(username: string): string {
+/** Canonical live tenant URL (subdomain). */
+export function getTenantLiveUrl(username: string): string {
+  return getTenantPublicUrl(username);
+}
+
+function shouldUsePathFallback(): boolean {
   try {
     const appHost = new URL(env.appUrl).host;
-    if (isMainAppHost(appHost)) {
-      return `${env.appUrl}/site/${username}`;
-    }
+    if (isVercelAppHost(appHost)) return true;
   } catch {
     /* fall through */
+  }
+  return env.rootDomain.includes("localhost");
+}
+
+/**
+ * Preview link shown in the dashboard.
+ * Production: https://{username}.{rootDomain}
+ * Vercel / local dev fallback: {appUrl}/site/{username}
+ */
+export function getTenantPreviewUrl(username: string): string {
+  if (shouldUsePathFallback()) {
+    return `${env.appUrl}/site/${username}`;
   }
 
   return getTenantPublicUrl(username);
@@ -64,6 +75,7 @@ export function parseTenantUsernameFromHost(host: string, rootDomain: string): s
   }
 
   let prefix = normalizedHost.slice(0, -suffix.length);
+  // Legacy: www.{username}.{root} still resolves to {username}
   if (prefix.startsWith("www.")) {
     prefix = prefix.slice(4);
   }

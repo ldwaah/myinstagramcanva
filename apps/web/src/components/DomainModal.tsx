@@ -15,8 +15,8 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
     process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim() || "myinstagramcanva.com";
   const cnameTarget = "sites.myinstagramcanva.com";
   const defaultHost = username
-    ? `www.${username}.${rootDomain}`
-    : `www.you.${rootDomain}`;
+    ? `${username}.${rootDomain}`
+    : `you.${rootDomain}`;
 
   return (
     <div
