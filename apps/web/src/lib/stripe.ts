@@ -118,7 +118,7 @@ export async function createAiSubscriptionCheckout(
     mode: "subscription",
     customer_email: email,
     line_items: lineItems,
-    success_url: `${env.appUrl}/dashboard?collaborator=success`,
+    success_url: `${env.appUrl}/dashboard?collaborator=success&plan=${plan}`,
     cancel_url: `${env.appUrl}/dashboard?collaborator=canceled`,
     metadata: { userId, plan, type: "ai_subscription" },
   });

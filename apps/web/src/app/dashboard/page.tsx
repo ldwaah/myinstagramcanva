@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { CollaboratorDock } from "@/components/CollaboratorDock";
+import { CollaboratorIntroModal } from "@/components/CollaboratorIntroModal";
 import { CollaboratorKeyModal } from "@/components/CollaboratorKeyModal";
 import { DomainModal } from "@/components/DomainModal";
 import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
@@ -17,20 +18,30 @@ interface Site {
   generationJobs: { status: string }[];
 }
 
+type AiPlan = "BYOK" | "MANAGED";
+
 function DashboardContent() {
   const router = useRouter();
   const params = useSearchParams();
   const [site, setSite] = useState<Site | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasCollaborator, setHasCollaborator] = useState(false);
+  const [collaboratorPlan, setCollaboratorPlan] = useState<AiPlan | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
   const [domainOpen, setDomainOpen] = useState(false);
+  const [introOpen, setIntroOpen] = useState(false);
   const [keyModalOpen, setKeyModalOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (params.get("collaborator") === "success") {
-      setKeyModalOpen(true);
+      const plan = params.get("plan") as AiPlan | null;
+      if (plan === "BYOK") {
+        setKeyModalOpen(true);
+      } else {
+        router.replace("/dashboard/collaborator");
+      }
     }
     const pending = params.get("goLive");
     const siteIdParam = params.get("siteId");
@@ -73,6 +84,7 @@ function DashboardContent() {
       const aiRes = await fetch("/api/ai/key");
       const ai = await aiRes.json();
       setHasCollaborator(ai.subscription?.status === "active");
+      setCollaboratorPlan(ai.subscription?.plan ?? null);
       setHasApiKey(Boolean(ai.hasKey));
     }
 
@@ -85,13 +97,15 @@ function DashboardContent() {
     return () => clearInterval(interval);
   }, [router]);
 
-  async function subscribeCollaborator() {
+  async function checkoutCollaborator(plan: AiPlan) {
+    setCheckoutLoading(true);
     const res = await fetch("/api/checkout/ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plan: "BYOK" }),
+      body: JSON.stringify({ plan }),
     });
     const data = await res.json();
+    setCheckoutLoading(false);
     if (data.url) window.location.href = data.url;
   }
 
@@ -108,6 +122,7 @@ function DashboardContent() {
   const generating = site.status === "GENERATING" || site.generationJobs[0]?.status === "RUNNING";
   const needsGoLive = site.status === "DRAFT" || site.status === "PREVIEW";
   const goLiveSuccess = params.get("goLive") === "success";
+  const needsApiKey = hasCollaborator && collaboratorPlan === "BYOK" && !hasApiKey;
 
   async function startGoLive() {
     if (!site) return;
@@ -118,6 +133,14 @@ function DashboardContent() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
+  }
+
+  function openCollaboratorEditor() {
+    if (needsApiKey) {
+      setKeyModalOpen(true);
+      return;
+    }
+    router.push("/dashboard/collaborator");
   }
 
   return (
@@ -186,14 +209,18 @@ function DashboardContent() {
 
       <CollaboratorDock
         hasSubscription={hasCollaborator}
-        onSubscribe={subscribeCollaborator}
-        onOpenEditor={() => {
-          if (hasCollaborator && !hasApiKey) setKeyModalOpen(true);
-          else router.push("/dashboard/collaborator");
-        }}
+        needsApiKey={needsApiKey}
+        onOpenIntro={() => setIntroOpen(true)}
+        onOpenEditor={openCollaboratorEditor}
       />
 
       <DomainModal open={domainOpen} onClose={() => setDomainOpen(false)} username={site.username} />
+      <CollaboratorIntroModal
+        open={introOpen}
+        onClose={() => setIntroOpen(false)}
+        onCheckout={checkoutCollaborator}
+        loading={checkoutLoading}
+      />
       <CollaboratorKeyModal
         open={keyModalOpen}
         onClose={() => setKeyModalOpen(false)}
