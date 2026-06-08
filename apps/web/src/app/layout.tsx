@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { ReferralTracker } from "@/components/ReferralTracker";
-import { env } from "@/lib/env";
+import { buildRootMetadata, organizationJsonLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(env.appUrl),
-  title: "My Instagram Canva",
-  description: "Turn your Instagram into a website in minutes",
-  themeColor: "#E1306C",
-};
+export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const jsonLd = organizationJsonLd();
+
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body>
         <Suspense fallback={null}>
           <ReferralTracker />

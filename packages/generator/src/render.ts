@@ -163,11 +163,85 @@ export function buildElementTokens(
   };
 }
 
+function sitePaths(content: SiteContentData, apiBase: string) {
+  const appBase = apiBase.replace(/\/$/, "");
+  const assetBase = `/site/${content.instagramHandle}/`;
+  const canonicalUrl = `${appBase}${assetBase}`;
+  return { appBase, assetBase, canonicalUrl };
+}
+
+function resolveSocialImage(
+  content: SiteContentData,
+  apiBase: string,
+  assetBase: string,
+): string {
+  const appBase = apiBase.replace(/\/$/, "");
+  const dynamicOg = `${appBase}/api/og/site/${content.instagramHandle}`;
+  const candidates = [
+    dynamicOg,
+    content.profilePicUrl,
+    content.heroImageUrl,
+    content.portfolioItems[0]?.imageUrl,
+    content.myPosts[0]?.imageUrl,
+  ];
+  for (const url of candidates) {
+    const absolute = toAbsoluteAssetUrl(url, apiBase, assetBase);
+    if (absolute) return absolute;
+  }
+  return `${appBase}/og-default.png`;
+}
+
+function toAbsoluteAssetUrl(
+  url: string | undefined,
+  apiBase: string,
+  assetBase: string,
+): string {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  const base = apiBase.replace(/\/$/, "");
+  const path = url.startsWith("/") ? url : `${assetBase}${url}`;
+  return `${base}${path}`;
+}
+
+function buildSocialMetaTags(opts: {
+  title: string;
+  description: string;
+  imageUrl: string;
+  canonicalUrl: string;
+  siteName?: string;
+  themeColor?: string;
+}): string {
+  const siteName = opts.siteName || "My Instagram Canva";
+  const themeColor = opts.themeColor || "#E1306C";
+  const image = escapeHtml(opts.imageUrl);
+  const title = escapeHtml(opts.title);
+  const description = escapeHtml(opts.description);
+  const url = escapeHtml(opts.canonicalUrl);
+
+  return `
+  <meta name="description" content="${description}" />
+  <meta name="theme-color" content="${escapeHtml(themeColor)}" />
+  <link rel="canonical" href="${url}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="${escapeHtml(siteName)}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${description}" />
+  <meta property="og:url" content="${url}" />
+  <meta property="og:image" content="${image}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${description}" />
+  <meta name="twitter:image" content="${image}" />`;
+}
+
 /** Compose site HTML from ai-extractor layout + hydrated tokens */
 export function renderSiteHtmlFromLibrary(
   content: SiteContentData,
   siteId: string,
   options: RenderSiteOptions = {},
+  apiBase = "https://myinstagramcanva.com",
 ): string | undefined {
   const layoutId =
     options.layoutId ??
@@ -181,14 +255,23 @@ export function renderSiteHtmlFromLibrary(
   const inlineTheme = theme
     ? `<style id="mic-theme">${themeCssVariables(theme, { display: content.fontDisplay, body: content.fontBody })}</style>`
     : "";
+  const { assetBase, canonicalUrl } = sitePaths(content, apiBase);
+  const ogTitle = `${content.brandName} (@${content.instagramHandle})`;
+  const socialMeta = buildSocialMetaTags({
+    title: ogTitle,
+    description: content.metaDescription,
+    imageUrl: resolveSocialImage(content, apiBase, assetBase),
+    canonicalUrl,
+    themeColor: content.accentColor,
+  });
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="${escapeHtml(content.metaDescription)}" />
-  <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
+  ${socialMeta}
+  <title>${escapeHtml(ogTitle)}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
@@ -208,17 +291,26 @@ ${composed.html}
 export function renderSiteHtml(
   content: SiteContentData,
   siteId: string,
-  _apiBase: string,
+  apiBase: string,
   options: RenderSiteOptions = {},
 ): string {
   if (options.useElementLibrary) {
-    const fromLibrary = renderSiteHtmlFromLibrary(content, siteId, options);
+    const fromLibrary = renderSiteHtmlFromLibrary(content, siteId, options, apiBase);
     if (fromLibrary) return fromLibrary;
   }
 
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;
-  const assetBase = `/site/${content.instagramHandle}/`;
+  const { assetBase, canonicalUrl } = sitePaths(content, apiBase);
   const avatar = content.profilePicUrl || content.portfolioItems[0]?.imageUrl || "";
+  const avatarAbsolute = toAbsoluteAssetUrl(avatar, apiBase, assetBase);
+  const ogTitle = `${content.brandName} (@${content.instagramHandle})`;
+  const socialMeta = buildSocialMetaTags({
+    title: ogTitle,
+    description: content.metaDescription,
+    imageUrl: resolveSocialImage(content, apiBase, assetBase),
+    canonicalUrl,
+    themeColor: content.accentColor,
+  });
   const theme = content.theme;
   const themeClass = theme?.isDark ? "theme-dark" : "theme-light";
   const inlineTheme = theme
@@ -333,7 +425,7 @@ export function renderSiteHtml(
       : `
     <section class="profile-hero" aria-label="Profile">
       <div class="avatar-ring">
-        <img src="${avatar}" alt="${escapeHtml(content.brandName)}" fetchpriority="high" />
+        <img src="${avatarAbsolute || avatar}" alt="${escapeHtml(content.brandName)}" fetchpriority="high" />
       </div>
       <div class="profile-meta">
         <h1>${escapeHtml(content.brandName)}</h1>
@@ -360,12 +452,8 @@ export function renderSiteHtml(
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="${escapeHtml(content.metaDescription)}" />
-  <meta name="theme-color" content="${escapeHtml(content.accentColor)}" />
-  <meta property="og:title" content="${escapeHtml(content.brandName)}" />
-  <meta property="og:description" content="${escapeHtml(content.metaDescription)}" />
-  <meta property="og:image" content="${avatar}" />
-  <title>${escapeHtml(content.brandName)} (@${escapeHtml(content.instagramHandle)})</title>
+  ${socialMeta}
+  <title>${escapeHtml(ogTitle)}</title>
   <base href="${assetBase}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -462,19 +550,29 @@ export function renderSiteHtml(
 </html>`;
 }
 
-export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiBase: string): string {
-  const assetBase = `/site/${content.instagramHandle}/`;
+export function renderFunnelHtml(content: SiteContentData, siteId: string, apiBase: string): string {
+  const { assetBase, canonicalUrl } = sitePaths(content, apiBase);
   const theme = content.theme;
   const inlineTheme = theme
     ? `<style id="mic-theme">${themeCssVariables(theme, { display: content.fontDisplay, body: content.fontBody })}</style>`
     : "";
+  const funnelUrl = `${canonicalUrl}offer/`;
+  const ogTitle = `${content.brandName} | Offer`;
+  const socialMeta = buildSocialMetaTags({
+    title: ogTitle,
+    description: content.metaDescription,
+    imageUrl: resolveSocialImage(content, apiBase, assetBase),
+    canonicalUrl: funnelUrl,
+    themeColor: content.accentColor,
+  });
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${escapeHtml(content.brandName)} | Offer</title>
+  ${socialMeta}
+  <title>${escapeHtml(ogTitle)}</title>
   <base href="${assetBase}" />
   ${inlineTheme}
   <link rel="stylesheet" href="css/style.css" />

@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "generate:og": "node scripts/generate-og-images.mjs",
+    "prebuild": "npm run generate:og",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
@@ -26,6 +28,7 @@
     "lightningcss-linux-x64-gnu": "1.32.0"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

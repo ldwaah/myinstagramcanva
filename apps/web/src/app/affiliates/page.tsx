@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
 import { SponsorCredit } from "@/components/SponsorCredit";
+import { buildAffiliatesMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildAffiliatesMetadata();
 
 const bullets = ["Share your link", "30-day attribution", "Earn on every sale"];
 

@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SponsorCredit } from "@/components/SponsorCredit";
+import { buildPricingMetadata } from "@/lib/seo";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
+
+export const metadata: Metadata = buildPricingMetadata();
 
 const tiers = [
   {

@@ -1,7 +1,21 @@
+import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
 import { HomeStepFlow } from "@/components/landing/HomeStepFlow";
 import { SponsorCredit } from "@/components/SponsorCredit";
+import { buildHomeMetadata, buildReferralMetadata } from "@/lib/seo";
+
+type PageProps = {
+  searchParams: Promise<{ ref?: string }>;
+};
+
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  if (params.ref?.trim()) {
+    return buildReferralMetadata(params.ref.trim());
+  }
+  return buildHomeMetadata();
+}
 
 export default function HomePage() {
   return (
