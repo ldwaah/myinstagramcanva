@@ -36,7 +36,9 @@ export function buildElementTokens(
   content: SiteContentData,
   siteId: string,
   quizAnswers?: Record<string, string>,
+  apiBase = "https://myinstagramcanva.com",
 ): ElementTokenMap {
+  const { assetBase } = sitePaths(content, apiBase);
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;
   const heroLines = content.heroTitle
     .map((line, i) => {
@@ -87,6 +89,8 @@ export function buildElementTokens(
         `<blockquote class="el-testimonials__card"><p>"${escapeHtml(t.quote)}"</p><cite>— ${escapeHtml(t.name)}</cite></blockquote>`,
     )
     .join("\n  ");
+
+  const galleryItems = buildGalleryItems(content, apiBase, assetBase);
 
   const external = quizAnswers?.externalLink ?? "none";
   const primaryGoal = quizAnswers?.primaryGoal ?? "contact";
@@ -146,7 +150,9 @@ export function buildElementTokens(
     SITE_ID: siteId,
     STATS_ROW: statsRow,
     STATS_ITEMS: statsItems,
-    ITEMS: testimonialItems,
+    GALLERY_ITEMS: galleryItems,
+    TESTIMONIAL_ITEMS: testimonialItems,
+    ITEMS: galleryItems || testimonialItems,
     SERVICES_TITLE: content.servicesTitle,
     SERVICES_SUBTITLE: `How ${content.ownerName} works with clients.`,
     SERVICES_ITEMS: servicesItems,
@@ -265,7 +271,7 @@ export function renderSiteHtmlFromLibrary(
   const layoutId =
     options.layoutId ??
     suggestLayoutForNiche(content.niche, options.layoutHint ?? options.quizAnswers?.layoutHint, options.quizAnswers);
-  const tokens = buildElementTokens(content, siteId, options.quizAnswers);
+  const tokens = buildElementTokens(content, siteId, options.quizAnswers, apiBase);
   const composed = composeFromLayout(layoutId, tokens, {
     sparse: options.sparseLayout !== false,
   });
@@ -293,6 +299,7 @@ export function renderSiteHtmlFromLibrary(
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   ${socialMeta}
   <title>${escapeHtml(ogTitle)}</title>
+  <base href="${assetBase}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=${content.fontGoogleUrl}&display=swap" rel="stylesheet" />
@@ -309,19 +316,32 @@ ${composed.html}
 </html>`;
 }
 
+function hasVisualContent(content: SiteContentData): boolean {
+  return Boolean(
+    content.profilePicUrl ||
+      content.heroImageUrl ||
+      content.myPosts.some((p) => p.imageUrl || p.posterUrl) ||
+      content.portfolioItems.some((p) => p.imageUrl),
+  );
+}
+
 export function renderSiteHtml(
   content: SiteContentData,
   siteId: string,
   apiBase: string,
   options: RenderSiteOptions = {},
 ): string {
-  const useLibrary = options.useElementLibrary !== false;
+  const wantsLibrary = options.useElementLibrary === true;
+  const useLibrary =
+    wantsLibrary ||
+    (options.useElementLibrary !== false && hasVisualContent(content));
+
   if (useLibrary) {
     const fromLibrary = renderSiteHtmlFromLibrary(content, siteId, options, apiBase);
     if (fromLibrary) return fromLibrary;
   }
 
-  if (options.useElementLibrary === true) {
+  if (wantsLibrary) {
     console.warn("[render] element library composition failed, using inline template");
   }
 
@@ -459,10 +479,10 @@ export function renderSiteHtml(
         <div class="profile-stats">${profileStats}</div>
         <p class="profile-bio">${escapeHtml(content.heroSubtitle)}</p>
         <div class="profile-actions">
-          <a class="btn btn-primary" href="#contact">Get in touch</a>
-          <a class="btn btn-secondary" href="${ig}" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+          <a class="btn btn-primary" href="#contact">${escapeHtml(content.contactTitle)}</a>
           ${phoneBtn}
         </div>
+        <p class="profile-ig-link"><a href="${ig}" target="_blank" rel="noopener noreferrer">@${escapeHtml(content.instagramHandle)} on Instagram</a></p>
       </div>
     </section>
     ${content.marqueeText ? `
@@ -626,6 +646,39 @@ export function renderFunnelHtml(content: SiteContentData, siteId: string, apiBa
   <script src="js/main.js"></script>
 </body>
 </html>`;
+}
+
+function buildGalleryItems(
+  content: SiteContentData,
+  apiBase: string,
+  assetBase: string,
+): string {
+  const ig = `https://www.instagram.com/${content.instagramHandle}/`;
+  const posts = content.myPosts.length
+    ? content.myPosts
+    : content.portfolioItems.map((p, i) => ({
+        shortcode: `post-${i}`,
+        type: "image" as const,
+        imageUrl: p.imageUrl,
+        posterUrl: undefined,
+        alt: p.alt,
+      }));
+
+  return posts
+    .filter((p) => p.imageUrl || p.posterUrl)
+    .map((item) => {
+      const imgUrl = toAbsoluteAssetUrl(item.imageUrl || item.posterUrl || "", apiBase, assetBase);
+      const postUrl =
+        item.type === "video" && item.shortcode && !item.shortcode.startsWith("post-")
+          ? `https://www.instagram.com/reel/${item.shortcode}/`
+          : item.shortcode && !item.shortcode.startsWith("post-")
+            ? `https://www.instagram.com/p/${item.shortcode}/`
+            : ig;
+      return `<a class="el-gallery-grid__cell" href="${postUrl}" target="_blank" rel="noopener noreferrer" role="listitem">
+    <img src="${imgUrl}" alt="${escapeHtml(item.alt || "")}" loading="lazy" width="400" height="400" />
+  </a>`;
+    })
+    .join("\n  ");
 }
 
 function formatStatValue(value: number, label: string): string {

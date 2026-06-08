@@ -36,12 +36,31 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   const url = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(clean)}`;
 
-  const res = await fetch(url, { headers: igHeaders(clean) });
-  if (!res.ok) {
-    throw new Error(`Instagram profile not found or unavailable (@${clean})`);
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(url, { headers: igHeaders(clean) });
+      if (res.status === 429 || res.status >= 500) {
+        lastError = new Error(`Instagram rate limited or unavailable (${res.status})`);
+        await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+        continue;
+      }
+      if (!res.ok) {
+        throw new Error(`Instagram profile not found or unavailable (@${clean}, ${res.status})`);
+      }
+      return await parseProfileResponse(await res.json(), clean);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (attempt < 2) {
+        await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+      }
+    }
   }
+  throw lastError ?? new Error(`Instagram profile not found or unavailable (@${clean})`);
+}
 
-  const data = (await res.json()) as {
+async function parseProfileResponse(
+  data: {
     data: {
       user: {
         id: string;
@@ -56,8 +75,9 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
         edge_owner_to_timeline_media?: TimelineBundle;
       };
     };
-  };
-
+  },
+  clean: string,
+): Promise<InstagramProfile> {
   const user = data.data.user;
   const timeline = user.edge_owner_to_timeline_media;
   const allEdges = [...(timeline?.edges ?? [])];

@@ -220,7 +220,7 @@ function buildHeroLines(tagline: string, niche: Niche): string[] {
 }
 
 function buildHeroSubtitle(name: string, bio: string, niche: Niche): string {
-  if (bio.length > 40) return bio.slice(0, 220);
+  if (bio.trim().length > 0) return bio.slice(0, 220);
   const map: Record<Niche, string> = {
     PHOTOGRAPHER: `${name}. Performance-driven photography for brands that need the frame before the moment passes.`,
     MUSICIAN: `${name}. Original performances and studio-ready content built for your audience.`,

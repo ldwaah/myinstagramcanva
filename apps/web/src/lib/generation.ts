@@ -116,10 +116,23 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       });
     }
 
-    let profile: InstagramProfile | ReturnType<typeof emptyProfile>;
-    try {
-      profile = await fetchInstagramProfile(site.username);
-    } catch {
+    let profile: InstagramProfile | ReturnType<typeof emptyProfile> | undefined;
+    let igFetchError: unknown;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        profile = await fetchInstagramProfile(site.username);
+        igFetchError = undefined;
+        break;
+      } catch (err) {
+        igFetchError = err;
+        console.warn(`[generation] IG fetch attempt ${attempt + 1} failed for @${site.username}`, err);
+        if (attempt < 2) {
+          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+        }
+      }
+    }
+    if (!profile) {
+      console.error(`[generation] IG fetch failed for @${site.username}, using empty profile`, igFetchError);
       profile = emptyProfile(site.username, site.tagline);
     }
 
@@ -216,7 +229,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     });
     const js = await readTemplateFile("js/main.js");
     const html = renderSiteHtml(content, siteId, env.appUrl, {
-      useElementLibrary: true,
+      useElementLibrary: false,
       layoutId: suggestLayoutForNiche(content.niche, quizData.layoutHint, quizData.quizAnswers),
       layoutHint: quizData.layoutHint,
       quizAnswers: quizData.quizAnswers,
@@ -370,7 +383,7 @@ async function resolveAssetUrl(
   }
 
   const bundled = await bundleRemoteAsset(remoteUrl, relPath, contentType);
-  if (!bundled) return null;
+  if (!bundled) return remoteUrl.startsWith("http") ? remoteUrl : null;
   bundleAssets[bundled.relPath] = bundled.bundleValue;
   return siteAssetUrl(username, bundled.relPath);
 }
