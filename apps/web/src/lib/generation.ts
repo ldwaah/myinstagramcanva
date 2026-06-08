@@ -1,5 +1,11 @@
 import { prisma, SiteStatus, SiteTier, JobStatus, MediaType, type Niche } from "@mic/db";
-import { fetchInstagramProfile, profileFromRawPayload, type InstagramMediaItem, type InstagramProfile } from "@mic/instagram";
+import {
+  fetchInstagramProfile,
+  isProfileUsable,
+  profileFromRawPayload,
+  type InstagramMediaItem,
+  type InstagramProfile,
+} from "@mic/instagram";
 import {
   generateSiteContent,
   generateSiteContentWithAI,
@@ -35,6 +41,31 @@ type ProcessedMediaItem = {
 };
 
 const QUIZ_WAIT_MS = 45_000;
+
+function isSiteContentRich(row: { content?: string | null; bundle?: string | null }): boolean {
+  if (row.bundle) {
+    try {
+      const files = JSON.parse(row.bundle) as Record<string, string>;
+      if (Object.keys(files).some((key) => key.startsWith("assets/"))) return true;
+    } catch {
+      /* ignore corrupt bundle */
+    }
+  }
+  if (row.content) {
+    try {
+      const data = JSON.parse(row.content) as Pick<
+        SiteContentData,
+        "heroImageUrl" | "profilePicUrl" | "portfolioItems" | "myPosts"
+      >;
+      if (data.heroImageUrl || data.profilePicUrl) return true;
+      if (Array.isArray(data.portfolioItems) && data.portfolioItems.length > 0) return true;
+      if (Array.isArray(data.myPosts) && data.myPosts.length > 0) return true;
+    } catch {
+      /* ignore corrupt content */
+    }
+  }
+  return false;
+}
 
 async function resolveQuizContext(
   siteId: string,
@@ -140,7 +171,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
             JSON.parse(site.instagramProfile.rawPayload),
             site.username,
           );
-          if (cached && (cached.mediaItems.length > 0 || cached.profilePicUrl)) {
+          if (cached && isProfileUsable(cached)) {
             profile = cached;
             console.warn(`[generation] Using cached IG profile for @${site.username}`);
           }
@@ -156,8 +187,40 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
 
     const resolvedProfile =
       profile ?? emptyProfile(site.username, site.tagline);
+    const profileUsable = isProfileUsable(resolvedProfile);
 
-    if (igFetchSucceeded) {
+    const existingContent = await prisma.siteContent.findUnique({ where: { siteId } });
+    if (existingContent && isSiteContentRich(existingContent) && !profileUsable) {
+      console.warn(
+        `[generation] Preserving existing siteContent for @${site.username} — IG unavailable on server`,
+      );
+
+      const statusUpdate =
+        site.status === SiteStatus.LIVE || site.status === SiteStatus.TRIAL || site.tier
+          ? {}
+          : { status: SiteStatus.DRAFT };
+
+      await prisma.site.update({
+        where: { id: siteId },
+        data: statusUpdate,
+      });
+
+      await prisma.generationJob.update({
+        where: { id: job.id },
+        data: { status: JobStatus.COMPLETED },
+      });
+
+      return {
+        siteId,
+        username: site.username,
+        mediaCount: 0,
+        preservedExisting: true,
+        syncedAt: new Date().toISOString(),
+        version: existingContent.version,
+      };
+    }
+
+    if (igFetchSucceeded && profileUsable) {
       await prisma.instagramProfile.upsert({
         where: { siteId },
         create: {
@@ -289,8 +352,6 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       Object.entries(files).map(([p, c]) => ({ path: p, content: c })),
       `${options?.sync ? "Sync" : "Generate"} site for @${site.username}`
     );
-
-    const existingContent = await prisma.siteContent.findUnique({ where: { siteId } });
 
     await prisma.siteContent.upsert({
       where: { siteId },

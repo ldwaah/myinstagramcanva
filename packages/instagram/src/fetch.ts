@@ -22,15 +22,59 @@ function igHeaders(username: string): Record<string, string> {
   };
 }
 
-async function igFetch(url: string, username: string, init?: RequestInit): Promise<Response> {
-  const proxy = process.env.INSTAGRAM_PROXY_URL?.trim();
-  const target = proxy
-    ? `${proxy}${proxy.includes("?") ? "&" : "?"}url=${encodeURIComponent(url)}`
-    : url;
-  return fetch(target, {
+function igRequestInit(username: string, init?: RequestInit): RequestInit {
+  return {
     ...init,
     headers: { ...igHeaders(username), ...(init?.headers || {}) },
-  });
+  };
+}
+
+async function igFetchDirect(url: string, username: string, init?: RequestInit): Promise<Response> {
+  return fetch(url, igRequestInit(username, init));
+}
+
+async function igFetchViaProxy(url: string, username: string, init?: RequestInit): Promise<Response> {
+  const proxy = process.env.INSTAGRAM_PROXY_URL!.trim();
+  const target = `${proxy}${proxy.includes("?") ? "&" : "?"}url=${encodeURIComponent(url)}`;
+  return fetch(target, igRequestInit(username, init));
+}
+
+/** True when the web_profile_info payload has real profile data (not an IP-block stub). */
+function profilePayloadUsable(data: unknown): boolean {
+  const user = (data as { data?: { user?: Record<string, unknown> } })?.data?.user;
+  if (!user || typeof user.username !== "string") return false;
+  const edges =
+    (user.edge_owner_to_timeline_media as { edges?: unknown[] } | undefined)?.edges ?? [];
+  if (edges.length > 0) return true;
+  if (user.profile_pic_url_hd || user.profile_pic_url) return true;
+  return typeof user.biography === "string" && user.biography.trim().length > 0;
+}
+
+export function isProfileUsable(profile: InstagramProfile): boolean {
+  return (
+    profile.mediaItems.length > 0 ||
+    Boolean(profile.profilePicUrl) ||
+    Boolean(profile.biography?.trim())
+  );
+}
+
+async function igFetch(url: string, username: string, init?: RequestInit): Promise<Response> {
+  const direct = await igFetchDirect(url, username, init);
+  const proxy = process.env.INSTAGRAM_PROXY_URL?.trim();
+  if (!proxy) return direct;
+
+  if (direct.status === 429 || direct.status >= 500 || !direct.ok) {
+    return igFetchViaProxy(url, username, init);
+  }
+
+  try {
+    const data = await direct.clone().json();
+    if (profilePayloadUsable(data)) return direct;
+  } catch {
+    return direct;
+  }
+
+  return igFetchViaProxy(url, username, init);
 }
 
 const GRAPHQL_DOC_ID = "7950224923793128298";
@@ -60,7 +104,15 @@ export async function fetchInstagramProfile(username: string): Promise<Instagram
       if (!res.ok) {
         throw new Error(`Instagram profile not found or unavailable (@${clean}, ${res.status})`);
       }
-      return await parseProfileResponse(await res.json(), clean);
+      const data = await res.json();
+      if (!profilePayloadUsable(data)) {
+        throw new Error(`Instagram returned empty profile for @${clean} (likely datacenter IP block)`);
+      }
+      const parsed = await parseProfileResponse(data, clean);
+      if (!isProfileUsable(parsed)) {
+        throw new Error(`Instagram profile for @${clean} has no usable media or bio`);
+      }
+      return parsed;
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
       if (attempt < 2) {

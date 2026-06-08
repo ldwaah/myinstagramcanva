@@ -67,6 +67,7 @@ Create **two** repositories:
    | `NEXTAUTH_URL` | `https://myinstagramcanva.com` |
    | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.com` (main app) |
    | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.com` (tenant subdomains) |
+   | `INSTAGRAM_PROXY_URL` | **Recommended on Netlify.** Instagram blocks datacenter IPs; set a proxy that accepts `?url=` (see `.env.example`). Without it, first-time previews may be sparse; existing bundles are preserved on failed sync. |
 
 5. **Apply the database schema** (once, from your machine):
    ```bash
