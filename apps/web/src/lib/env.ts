@@ -5,10 +5,13 @@ function resolveAppUrl() {
   return "http://localhost:3000";
 }
 
+const TENANT_ROOT_DOMAIN = "myinstagramcanva.thesale.app";
+
 function resolveRootDomain() {
   const raw = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim();
   if (raw) return raw;
-  if (process.env.VERCEL_URL) return process.env.VERCEL_URL;
+  // Tenant subdomains use the custom domain, not the Vercel deployment host.
+  if (process.env.VERCEL) return TENANT_ROOT_DOMAIN;
   return "localhost:3000";
 }
 

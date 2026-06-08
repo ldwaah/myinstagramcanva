@@ -2,6 +2,11 @@ import { env } from "./env";
 
 const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
 
+/** Vercel *.vercel.app does not support nested tenant hosts like www.user.project.vercel.app */
+export function isVercelAppHost(host: string): boolean {
+  return host.toLowerCase().includes(".vercel.app");
+}
+
 /** Host label stored on Site.subdomain, e.g. www.khiagovisuals.myinstagramcanva.thesale.app */
 export function buildTenantSubdomain(username: string): string {
   return `www.${username}.${env.rootDomain}`;
@@ -20,10 +25,7 @@ export function getTenantPublicUrl(username: string): string {
 export function getTenantPreviewUrl(username: string): string {
   try {
     const appHost = new URL(env.appUrl).host;
-    const onVercelFallback =
-      appHost.includes("vercel.app") && !env.rootDomain.includes("vercel.app");
-
-    if (onVercelFallback) {
+    if (isVercelAppHost(appHost)) {
       return `${env.appUrl}/site/${username}`;
     }
   } catch {
