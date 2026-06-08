@@ -14,5 +14,6 @@ export async function GET() {
     loggedIn: true,
     hasSites: siteCount > 0,
     email: session.email,
+    isAdmin: session.isAdmin,
   });
 }

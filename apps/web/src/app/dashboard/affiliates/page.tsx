@@ -1,8 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
-import { DashboardNav } from "@/components/DashboardNav";
 import { MicButton } from "@/components/MicButton";
 import { MicCard } from "@/components/MicCard";
 import { formatPence } from "@/lib/affiliate-utils";
@@ -23,10 +23,19 @@ interface AffiliateData {
 }
 
 export default function AffiliatesDashboardPage() {
+  const router = useRouter();
   const [data, setData] = useState<AffiliateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/sites")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.sites?.[0]?.tier) router.replace("/dashboard");
+      });
+  }, [router]);
 
   async function load() {
     const res = await fetch("/api/affiliates");
@@ -58,8 +67,8 @@ export default function AffiliatesDashboardPage() {
 
   if (loading) {
     return (
-      <AppShell actions={<DashboardNav />}>
-        <p className="app-loading">Loading affiliate dashboard…</p>
+      <AppShell>
+        <p className="app-loading">Loading…</p>
       </AppShell>
     );
   }
@@ -71,7 +80,6 @@ export default function AffiliatesDashboardPage() {
     <AppShell
       title="Affiliate dashboard"
       subtitle="Share your link and earn competitive commission on every package sale."
-      actions={<DashboardNav />}
     >
       {!affiliate ? (
         <MicCard glass glow className="dash-empty">

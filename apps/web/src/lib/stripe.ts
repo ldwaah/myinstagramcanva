@@ -57,7 +57,7 @@ export async function createAiSubscriptionCheckout(
 ) {
   const stripe = getStripe();
   if (!stripe) {
-    return { url: `${env.appUrl}/dashboard/collaborator?checkout=mock&plan=${plan}` };
+    return { url: `${env.appUrl}/dashboard?collaborator=success&checkout=mock&plan=${plan}` };
   }
 
   const priceId = plan === "BYOK" ? env.stripePrices.aiByok : env.stripePrices.aiManaged;
@@ -77,8 +77,8 @@ export async function createAiSubscriptionCheckout(
     mode: "subscription",
     customer_email: email,
     line_items: lineItems,
-    success_url: `${env.appUrl}/dashboard/collaborator?success=1`,
-    cancel_url: `${env.appUrl}/dashboard/collaborator?canceled=1`,
+    success_url: `${env.appUrl}/dashboard?collaborator=success`,
+    cancel_url: `${env.appUrl}/dashboard?collaborator=canceled`,
     metadata: { userId, plan, type: "ai_subscription" },
   });
 

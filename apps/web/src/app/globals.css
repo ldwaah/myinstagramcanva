@@ -2136,3 +2136,317 @@ a {
   .landing-pricing-min { grid-template-columns: 1fr; }
   .collab-plans { grid-template-columns: 1fr; }
 }
+
+/* —— Minimal dashboard —— */
+.dash-minimal {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dash-minimal__loading {
+  margin: auto;
+  color: var(--muted);
+}
+
+.dash-minimal__header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+}
+
+.dash-minimal__logo {
+  font-size: 0;
+}
+
+.dash-minimal__logo .landing-logo__mark {
+  width: 2rem;
+  height: 2rem;
+}
+
+.dash-minimal__admin {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.dash-minimal__admin:hover { color: var(--accent); }
+
+.dash-minimal__back {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.dash-minimal__back:hover { color: var(--text); }
+
+.dash-minimal__main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 8rem;
+  position: relative;
+  z-index: 1;
+}
+
+.dash-minimal__card {
+  width: min(420px, 100%);
+  text-align: center;
+  padding: 2.75rem 2rem !important;
+  border-radius: 1.5rem;
+}
+
+.dash-minimal__welcome {
+  margin: 0 0 2rem;
+  font-size: 1.05rem;
+  color: var(--muted);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.dash-minimal__username-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.dash-minimal__username {
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dash-minimal__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.dash-minimal__arrow:hover {
+  border-color: var(--accent);
+  transform: translateX(2px);
+}
+
+.dash-minimal__view-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #0a0a0f;
+  background: linear-gradient(135deg, #f0abfc 0%, #c084fc 50%, #818cf8 100%);
+  box-shadow: 0 8px 32px rgba(192, 132, 252, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dash-minimal__view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(192, 132, 252, 0.45);
+}
+
+.dash-minimal__generating {
+  margin: 0 0 1.25rem;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.dash-minimal__domain-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dash-minimal__domain-link:hover { color: var(--accent); }
+
+.dash-minimal__footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 1.5rem 6.5rem;
+}
+
+/* Collaborator dock */
+.collab-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.95) 60%, transparent);
+}
+
+.collab-dock__inner {
+  display: block;
+  width: min(520px, 100%);
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  background: rgba(20, 18, 30, 0.85);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  color: inherit;
+  font: inherit;
+}
+
+.collab-dock__inner:hover {
+  border-color: rgba(192, 132, 252, 0.4);
+  transform: translateY(-1px);
+}
+
+.collab-dock__inner--active {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.collab-dock__badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #c084fc, #818cf8);
+  color: #0a0a0f;
+}
+
+.collab-dock__title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 0.35rem;
+}
+
+.collab-dock__inner--active .collab-dock__title {
+  display: inline;
+  margin: 0;
+  flex: 1;
+}
+
+.collab-dock__sub {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+.collab-dock__cta {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-left: auto;
+}
+
+/* Modals */
+.domain-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.domain-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  cursor: pointer;
+}
+
+.domain-modal__panel {
+  position: relative;
+  width: min(400px, 100%);
+  padding: 1.75rem !important;
+  text-align: left;
+}
+
+.domain-modal__panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.domain-modal__panel p {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.domain-modal__steps {
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.domain-modal__steps code {
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.collab-key-modal__sub {
+  margin-bottom: 1rem !important;
+}
+
+.collab-editor-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.collab-editor-card__sub {
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.collab-editor-card__msg {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.dash-minimal--editor .dash-minimal__card {
+  text-align: left;
+}
+
+.dash-minimal--editor .mic-input {
+  width: 100%;
+  margin-bottom: 0.75rem;
+}

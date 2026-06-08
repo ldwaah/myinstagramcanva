@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Lead {
@@ -15,6 +16,7 @@ interface Lead {
 }
 
 export default function CrmPage() {
+  const router = useRouter();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [campaignName, setCampaignName] = useState("");
   const [campaignBody, setCampaignBody] = useState("");
@@ -24,8 +26,13 @@ export default function CrmPage() {
   useEffect(() => {
     fetch("/api/leads").then((r) => r.json()).then((d) => setLeads(d.leads || []));
     fetch("/api/sites").then((r) => r.json()).then((d) => {
+      const site = d.sites?.[0];
+      if (!site?.tier) {
+        router.replace("/dashboard");
+        return;
+      }
       setSites(d.sites || []);
-      if (d.sites?.[0]) setSiteId(d.sites[0].id);
+      if (site) setSiteId(site.id);
     });
   }, []);
 
