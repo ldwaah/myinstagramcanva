@@ -38,7 +38,7 @@ export default function LoginPage() {
       }
       router.push("/onboarding");
     } catch {
-      setError("Network error — try again.");
+      setError("Network error. Try again.");
     } finally {
       setLoading(false);
     }

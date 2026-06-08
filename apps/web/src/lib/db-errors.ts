@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
 
 const FRIENDLY_UNAVAILABLE =
-  "Sign-in is temporarily unavailable. The server database is not configured — contact support if this persists.";
+  "Sign-in is temporarily unavailable. The server database is not configured. Contact support if this persists.";
 
 /** Map Prisma / infra errors to safe user-facing messages (no stack traces or env names). */
 export function sanitizeAuthError(err: unknown, fallback: string): string {

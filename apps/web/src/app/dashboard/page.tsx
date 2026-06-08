@@ -154,7 +154,7 @@ function DashboardContent() {
           </div>
 
           {goLiveSuccess && (
-            <p className="dash-minimal__generating">You&apos;re live — enjoy your free trial.</p>
+            <p className="dash-minimal__generating">You&apos;re live. Enjoy your free trial.</p>
           )}
 
           {generating ? (
@@ -165,7 +165,7 @@ function DashboardContent() {
                 Preview website
               </a>
               <button type="button" className="dash-minimal__view-btn" onClick={startGoLive}>
-                Go live — start free trial
+                Go live and start your free trial
               </button>
             </>
           ) : (

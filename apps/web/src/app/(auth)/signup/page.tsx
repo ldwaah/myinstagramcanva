@@ -53,7 +53,7 @@ function SignupForm() {
         router.push("/onboarding?welcome=1");
       }
     } catch {
-      setError("Network error — try again.");
+      setError("Network error. Try again.");
     } finally {
       setLoading(false);
     }

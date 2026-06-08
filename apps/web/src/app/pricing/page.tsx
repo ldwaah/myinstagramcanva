@@ -61,8 +61,8 @@ export default function PricingPage() {
         <div className="mic-container pricing-page__inner">
           <h1 className="pricing-page__title">Simple, transparent pricing</h1>
           <p className="pricing-page__sub">
-            Every plan starts with a {TRIAL_DAYS}-day free trial. Go live anytime — card on file, cancel
-            before the trial ends and you won&apos;t be charged.
+            Every plan starts with a {TRIAL_DAYS}-day free trial. Go live anytime. Put a card on file,
+            cancel before the trial ends, and you won&apos;t be charged.
           </p>
 
           <div className="pricing-page__grid">

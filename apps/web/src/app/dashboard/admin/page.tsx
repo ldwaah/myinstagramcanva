@@ -43,7 +43,7 @@ export default function AdminPage() {
       <div style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
         {sites.map((site) => (
           <article key={site.id} className="mic-card">
-            <p><strong>@{site.username}</strong> — {site.user.email}</p>
+            <p><strong>@{site.username}</strong> · {site.user.email}</p>
             <a href={`/site/${site.username}`} target="_blank" rel="noopener noreferrer">Preview</a>
             <button className="mic-btn mic-btn-primary" style={{ marginLeft: "0.75rem" }} onClick={() => markDone(site.id)}>
               Mark tweaks done

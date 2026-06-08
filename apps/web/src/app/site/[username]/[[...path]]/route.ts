@@ -70,7 +70,7 @@ function mimeFor(file: string) {
 
 function expiredHtml(username: string) {
   return `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;background:#fafafa;color:#262626;display:grid;place-items:center;min-height:100vh;text-align:center;padding:2rem">
-  <div><h1 style="background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent">@${username}</h1><p>Trial ended — purchase a package to keep this site live.</p>
+  <div><h1 style="background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent">@${username}</h1><p>Trial ended. Purchase a package to keep this site live.</p>
   <a href="${env.appUrl}/dashboard" style="color:#e1306c;font-weight:600">Go to dashboard</a></div></body></html>`;
 }
 

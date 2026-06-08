@@ -39,7 +39,7 @@ export function CollaboratorKeyModal({ open, onClose, onSaved }: CollaboratorKey
       <div className="domain-modal__panel mic-card mic-card--glass mic-card--glow">
         <h2>Connect your OpenAI key</h2>
         <p className="collab-key-modal__sub">
-          AI Collaborator uses your key for unlimited edits. Paste it once — we store it encrypted.
+          AI Collaborator uses your key for unlimited edits. Paste it once and we store it encrypted.
         </p>
         <input
           className="mic-input"

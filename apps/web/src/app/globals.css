@@ -1915,7 +1915,7 @@ a {
 
 .hero-basics__sponsor { margin-top: 1.75rem; }
 
-/* Artistic landing — minimal copy */
+/* Artistic landing: minimal copy */
 .landing--art { background: var(--bg); }
 
 .hero-basics--short { min-height: 70vh; }
@@ -2179,7 +2179,7 @@ a {
   .collab-plans { grid-template-columns: 1fr; }
 }
 
-/* —— Minimal dashboard —— */
+/* Minimal dashboard */
 .dash-minimal {
   position: relative;
   min-height: 100dvh;
@@ -2504,7 +2504,7 @@ a {
   background: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* —— Site header —— */
+/* Site header */
 .site-header {
   position: relative;
   z-index: 20;
@@ -2541,7 +2541,7 @@ a {
   border-radius: 999px;
 }
 
-/* —— Home step flow —— */
+/* Home step flow */
 .hero-basics__content--wide {
   width: min(560px, 100%);
   margin: 0 auto;
@@ -2768,7 +2768,7 @@ a {
   color: var(--muted);
 }
 
-/* —— Pricing page —— */
+/* Pricing page */
 .pricing-page {
   padding: 4rem 1.5rem 6rem;
   min-height: 80dvh;

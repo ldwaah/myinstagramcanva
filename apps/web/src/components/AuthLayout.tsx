@@ -26,8 +26,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
             <span className="auth-layout__headline-accent"> stunning website</span>
           </h1>
           <p className="auth-layout__pitch">
-            AI-built sites with your photos, fonts, and brand colors. {TRIAL_DAYS}-day free trial —
-            no credit card required.
+            AI-built sites with your photos, fonts, and brand colors. {TRIAL_DAYS}-day free trial, no
+            credit card required.
           </p>
           <ul className="auth-layout__perks">
             <li>Live in under 5 minutes</li>

@@ -200,7 +200,7 @@ export function renderFunnelHtml(content: SiteContentData, siteId: string, _apiB
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${escapeHtml(content.brandName)} — Offer</title>
+  <title>${escapeHtml(content.brandName)} | Offer</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>

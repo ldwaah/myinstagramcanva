@@ -53,7 +53,7 @@ export function generateSiteContent(input: GenerateInput): SiteContentData {
     servicesTitle: labels.services,
     services: buildServices(input.niche),
     contactTitle: labels.action,
-    contactSubtitle: `Follow on Instagram or send a message — we'll get back to you.`,
+    contactSubtitle: `Follow on Instagram or send a message. We'll get back to you.`,
     instagramHandle: input.username,
     phone: input.profile?.businessPhone,
     email: input.profile?.businessEmail,
@@ -258,7 +258,7 @@ function buildAboutTitle(niche: Niche): string {
 }
 
 function buildDefaultAbout(name: string, niche: Niche): string {
-  return `${name} brings a professional, authentic presence to every project — with content shaped for the platforms where your audience already lives.`;
+  return `${name} brings a professional, authentic presence to every project, with content shaped for the platforms where your audience already lives.`;
 }
 
 function buildBullets(niche: Niche, bio: string): string[] {
