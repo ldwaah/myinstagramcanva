@@ -6,6 +6,7 @@ import { Suspense, useEffect, useState } from "react";
 import { CollaboratorDock } from "@/components/CollaboratorDock";
 import { CollaboratorKeyModal } from "@/components/CollaboratorKeyModal";
 import { DomainModal } from "@/components/DomainModal";
+import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 import { SponsorCredit } from "@/components/SponsorCredit";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
 
@@ -126,7 +127,7 @@ function DashboardContent() {
 
       <header className="dash-minimal__header">
         <Link href="/" className="landing-logo dash-minimal__logo">
-          <span className="landing-logo__mark" aria-hidden />
+          <InstagramCanvaLogo size={28} className="landing-logo__mark" />
         </Link>
         {isAdmin && (
           <Link href="/dashboard/admin" className="dash-minimal__admin">

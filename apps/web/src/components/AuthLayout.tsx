@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
 import { MicCard } from "./MicCard";
 
@@ -17,8 +18,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
       <div className="auth-layout__grid">
         <aside className="auth-layout__brand">
           <Link href="/" className="landing-logo auth-layout__logo">
-            <span className="landing-logo__mark" aria-hidden />
-            My Instagram Canva
+            <InstagramCanvaLogo size={28} className="landing-logo__mark" />
+            Instagram Canva
           </Link>
           <h1 className="auth-layout__headline">
             Turn your Instagram into a
@@ -33,8 +34,6 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
             <li>Instagram-inspired design</li>
             <li>Hosted on your own subdomain</li>
           </ul>
-          <div className="auth-layout__float auth-layout__float--1" aria-hidden />
-          <div className="auth-layout__float auth-layout__float--2" aria-hidden />
         </aside>
         <section className="auth-layout__panel">
           <MicCard glass glow padding="lg">

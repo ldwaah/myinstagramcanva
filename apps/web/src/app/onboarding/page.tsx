@@ -45,6 +45,7 @@ export default function OnboardingPage() {
     <main className="onboarding-screen">
       <HeroVisualScene />
       <div className="landing-aurora hero-basics__aurora" aria-hidden />
+      <div className="landing-grain" aria-hidden />
 
       <div className="onboarding-screen__card mic-card mic-card--glass mic-card--glow">
         <h1>Your @username</h1>

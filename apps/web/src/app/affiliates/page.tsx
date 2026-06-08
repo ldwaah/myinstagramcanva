@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
 import { SponsorCredit } from "@/components/SponsorCredit";
 
@@ -10,8 +11,8 @@ export default function AffiliatesPage() {
       <header className="landing-header landing-header--minimal">
         <div className="mic-container landing-header__inner">
           <Link href="/" className="landing-logo">
-            <span className="landing-logo__mark" aria-hidden />
-            Home
+            <InstagramCanvaLogo size={28} className="landing-logo__mark" />
+            Instagram Canva
           </Link>
           <nav className="landing-nav landing-nav--minimal">
             <Link href="/login">Log in</Link>
@@ -22,6 +23,7 @@ export default function AffiliatesPage() {
       <section className="hero-basics hero-basics--art hero-basics--short">
         <HeroVisualScene />
         <div className="landing-aurora hero-basics__aurora" aria-hidden />
+        <div className="landing-grain" aria-hidden />
 
         <div className="hero-basics__content">
           <h1 className="hero-basics__title hero-basics__title--solo">

@@ -8,6 +8,12 @@ import { TRIAL_DAYS } from "@/lib/trial-constants";
 
 type Step = 1 | 2 | 3;
 
+const STEPS = [
+  { num: 1, title: "Enter your username", subtitle: "Type your public Instagram handle" },
+  { num: 2, title: "AI builds your site", subtitle: "We match your posts, colours & style" },
+  { num: 3, title: "Go live", subtitle: "Preview it, then publish when ready" },
+] as const;
+
 export function HomeStepFlow() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
@@ -95,20 +101,28 @@ export function HomeStepFlow() {
 
   return (
     <div className="home-step-flow">
-      <div className="home-step-flow__steps" aria-label="Create your site">
-        <span className={`home-step-flow__dot${step >= 1 ? " is-on" : ""}`}>1</span>
-        <span className="home-step-flow__line" />
-        <span className={`home-step-flow__dot${step >= 2 ? " is-on" : ""}`}>2</span>
-        <span className="home-step-flow__line" />
-        <span className={`home-step-flow__dot${step >= 3 ? " is-on" : ""}`}>3</span>
+      <div className="home-step-flow__steps" aria-label="Create your site in three steps">
+        {STEPS.map((s, i) => (
+          <div key={s.num} className="home-step-flow__step">
+            {i > 0 && <span className="home-step-flow__line" aria-hidden />}
+            <div className={`home-step-flow__step-inner${step >= s.num ? " is-on" : ""}`}>
+              <span className="home-step-flow__dot">{s.num}</span>
+              <span className="home-step-flow__step-title">{s.title}</span>
+              <span className="home-step-flow__step-sub">{s.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {step === 1 && (
         <form className="home-step-flow__panel mic-card mic-card--glass" onSubmit={handleUsername}>
-          <p className="home-step-flow__label">Step 1 — Enter your Instagram username</p>
+          <label className="home-step-flow__panel-heading" htmlFor="ig-username">
+            Your Instagram username
+          </label>
           <div className="home-step-flow__input-row">
             <span className="home-step-flow__at">@</span>
             <input
+              id="ig-username"
               className="mic-input home-step-flow__input"
               value={username}
               onChange={(e) => setUsername(e.target.value.replace(/^@/, ""))}
@@ -126,22 +140,22 @@ export function HomeStepFlow() {
 
       {step === 2 && (
         <div className="home-step-flow__panel mic-card mic-card--glass home-step-flow__loading">
-          <p className="home-step-flow__label">Step 2 — Your website is loading</p>
+          <p className="home-step-flow__panel-heading">Building your site…</p>
           <div className="home-step-flow__spinner" aria-hidden />
-          <p className="home-step-flow__muted">Pulling your posts, colours &amp; vibe…</p>
+          <p className="home-step-flow__muted">This usually takes a minute or two.</p>
         </div>
       )}
 
       {step === 3 && (
         <div className="home-step-flow__panel mic-card mic-card--glass home-step-flow__done">
-          <p className="home-step-flow__label">Step 3 — Here&apos;s your website</p>
+          <p className="home-step-flow__panel-heading">Your site is ready</p>
           <p className="home-step-flow__username">@{username.replace(/^@/, "")}</p>
           {previewUrl && (
             <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="home-step-flow__link">
               {previewUrl} →
             </a>
           )}
-          <p className="home-step-flow__trial">{TRIAL_DAYS}-day free trial</p>
+          <p className="home-step-flow__trial">{TRIAL_DAYS}-day free trial when you go live</p>
         </div>
       )}
 

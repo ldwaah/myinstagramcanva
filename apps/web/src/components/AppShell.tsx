@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 
 interface AppShellProps {
   children: ReactNode;
@@ -16,8 +17,8 @@ export function AppShell({ children, title, subtitle, actions }: AppShellProps) 
       <header className="app-shell__header">
         <div className="mic-container app-shell__header-inner">
           <Link href="/dashboard" className="landing-logo">
-            <span className="landing-logo__mark" aria-hidden />
-            My Instagram Canva
+            <InstagramCanvaLogo size={28} className="landing-logo__mark" />
+            Instagram Canva
           </Link>
           {actions}
         </div>
