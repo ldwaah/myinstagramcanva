@@ -1,0 +1,17 @@
+{
+  "name": "@mic/generator",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "echo ok"
+  },
+  "dependencies": {
+    "@mic/instagram": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,10 @@
+# Dev scripts and API cache (not needed in production)
+images/download_photos.py
+images/profile.json
+images/portfolio-manifest.json
+videos/download_instagram.py
+videos/profile.json
+videos/manifest.json
+
+# Duplicate hero source (site uses images/hero.png)
+Screenshot*.png

@@ -1,0 +1,21 @@
+{
+  "name": "myinstagramcanva",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "db:generate": "npm run generate -w @mic/db",
+    "db:push": "npm run push -w @mic/db",
+    "db:studio": "npm run studio -w @mic/db"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  }
+}

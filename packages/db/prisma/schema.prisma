@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  passwordHash  String?
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sites            Site[]
+  orders           Order[]
+  aiSubscription   AiSubscription?
+  aiCredits        AiCredits?
+  aiApiKey         AiApiKey?
+  aiEditLogs       AiEditLog[]
+  generationJobs   GenerationJob[]
+}
+
+model Site {
+  id              String     @id @default(cuid())
+  userId          String
+  username        String     @unique
+  subdomain       String     @unique
+  customDomain    String?    @unique
+  status          SiteStatus @default(DRAFT)
+  niche           Niche      @default(PHOTOGRAPHER)
+  tier            SiteTier?
+  trialEndsAt     DateTime?
+  githubPath      String?
+  tagline         String?
+  needsAdminTweak Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  publishedAt     DateTime?
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instagramProfile  InstagramProfile?
+  siteContent       SiteContent?
+  mediaAssets       MediaAsset[]
+  leads             Lead[]
+  bookings          Booking[]
+  campaigns         Campaign[]
+  generationJobs    GenerationJob[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model InstagramProfile {
+  id           String   @id @default(cuid())
+  siteId       String   @unique
+  username     String
+  fullName     String?
+  biography    String?
+  profilePicUrl String?
+  followers    Int?
+  rawPayload   String?
+  lastSyncedAt DateTime @default(now())
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  siteId    String   @unique
+  content   String
+  version   Int      @default(1)
+  commitSha String?
+  updatedAt DateTime @updatedAt
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  siteId    String
+  type      MediaType
+  storageKey String
+  publicUrl String
+  altText   String?
+  sortOrder Int       @default(0)
+  instagramId String?
+  createdAt DateTime  @default(now())
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  userId          String
+  siteId          String?
+  stripeSessionId String?  @unique
+  stripePaymentId String?
+  tier            SiteTier
+  amount          Int
+  currency        String   @default("gbp")
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AiSubscription {
+  id               String        @id @default(cuid())
+  userId           String        @unique
+  plan             AiPlan
+  stripeSubId      String?       @unique
+  status           String        @default("active")
+  currentPeriodEnd DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiCredits {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  freeEditsRemaining  Int      @default(3)
+  editsRemaining      Int      @default(0)
+  editsUsedThisPeriod Int      @default(0)
+  periodResetAt       DateTime?
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiApiKey {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  encryptedKey     String
+  keyLastFour      String?
+  isValid          Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiEditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  siteId    String?
+  prompt    String
+  model     String?
+  tokensIn  Int?
+  tokensOut Int?
+  commitSha String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  siteId    String
+  name      String
+  email     String
+  phone     String?
+  message   String?
+  source    String     @default("contact_form")
+  status    LeadStatus @default(NEW)
+  tags      String?
+  notes     String?
+  smsOptIn  Boolean    @default(false)
+  emailOptIn Boolean   @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([status])
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  siteId      String
+  leadId      String?
+  guestName   String
+  guestEmail  String
+  guestPhone  String?
+  startTime   DateTime
+  endTime     DateTime
+  notes       String?
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([startTime])
+}
+
+model Campaign {
+  id          String         @id @default(cuid())
+  siteId      String
+  name        String
+  type        CampaignType
+  subject     String?
+  body        String
+  status      CampaignStatus @default(DRAFT)
+  sentCount   Int            @default(0)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model GenerationJob {
+  id        String    @id @default(cuid())
+  siteId    String
+  userId    String
+  status    JobStatus @default(PENDING)
+  error     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+enum SiteStatus {
+  DRAFT
+  GENERATING
+  TRIAL
+  LIVE
+  EXPIRED
+}
+
+enum SiteTier {
+  STARTER
+  TAILORED
+  PRO
+  STUDIO
+}
+
+enum Niche {
+  PHOTOGRAPHER
+  MUSICIAN
+  ACTOR
+  COACH
+  TRAINER
+  OTHER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum AiPlan {
+  BYOK
+  MANAGED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  WON
+  LOST
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum CampaignType {
+  EMAIL
+  SMS
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}

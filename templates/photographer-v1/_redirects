@@ -1,0 +1,2 @@
+# SPA-style fallback: serve index.html for unknown paths (assets still resolve first)
+/*    /index.html   200

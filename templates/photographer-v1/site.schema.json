@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SiteContentData",
+  "description": "Parameterized content slots for photographer-v1 template",
+  "type": "object",
+  "required": ["brandName", "heroTitle", "instagramHandle"],
+  "properties": {
+    "brandName": { "type": "string" },
+    "ownerName": { "type": "string" },
+    "tagline": { "type": "string" },
+    "heroEyebrow": { "type": "string" },
+    "heroTitle": { "type": "array", "items": { "type": "string" } },
+    "heroSubtitle": { "type": "string" },
+    "accentColor": { "type": "string", "default": "#c8ff00" },
+    "instagramHandle": { "type": "string" },
+    "showContactForm": { "type": "boolean" },
+    "showCalendar": { "type": "boolean" },
+    "showFunnel": { "type": "boolean" }
+  }
+}

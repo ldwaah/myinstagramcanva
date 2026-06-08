@@ -1,0 +1,28 @@
+name: Deploy tenant sites
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sites/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect changed sites
+        id: changes
+        run: |
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^sites/' | cut -d/ -f2 | sort -u | tr '\n' ' ')
+          echo "sites=$CHANGED" >> $GITHUB_OUTPUT
+      - name: Sync to R2
+        if: steps.changes.outputs.sites != ''
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          echo "Deploy changed site folders: ${{ steps.changes.outputs.sites }}"
+          echo "Configure rclone or aws s3 sync with Cloudflare R2 credentials in repo secrets."
