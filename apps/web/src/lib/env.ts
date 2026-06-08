@@ -39,7 +39,7 @@ export const env = {
   },
   hostingMonthlyPence: Number(process.env.HOSTING_MONTHLY_PENCE || "999"),
   openaiKey: process.env.OPENAI_API_KEY || "",
-  encryptionKey: process.env.ENCRYPTION_KEY || "0123456789abcdef0123456789abcdef",
+  encryptionKey: process.env.ENCRYPTION_KEY ?? "",
   githubToken: process.env.GITHUB_TOKEN || "",
   githubRepo: process.env.GITHUB_SITES_REPO || "",
   githubBranch: process.env.GITHUB_SITES_BRANCH || "main",
