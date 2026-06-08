@@ -17,6 +17,7 @@ import { injectThemeIntoCss } from "../packages/generator/src/theme.ts";
 
 const APP_URL = process.env.PUSH_APP_URL || "https://myinstagramcanva.com";
 const SKIP_BUNDLE = process.env.PUSH_SKIP_BUNDLE === "1";
+const MAX_BUNDLED_IMAGES = Number(process.env.MAX_BUNDLED_IMAGES ?? 24);
 const usernames = process.argv.slice(2);
 
 if (!usernames.length) {
