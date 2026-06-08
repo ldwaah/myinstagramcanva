@@ -21,11 +21,14 @@ const isDeployBuild =
   Boolean(process.env.VERCEL) ||
   Boolean(process.env.CI) ||
   process.env.NODE_ENV === "production";
+const isNetlifyProduction =
+  process.env.CONTEXT === "production" ||
+  process.env.NETLIFY === "true" ||
+  Boolean(process.env.NETLIFY);
 
-// Serverless deploys require PostgreSQL. SQLite file URLs are local-only and must not
-// drive the generated client on Netlify/Vercel (even if misconfigured in env).
+// Serverless deploys require PostgreSQL. SQLite file URLs are local-only.
 const isServerless =
-  Boolean(process.env.NETLIFY) || Boolean(process.env.VERCEL);
+  isNetlifyProduction || Boolean(process.env.VERCEL);
 const usePostgres =
   isPostgresUrl ||
   isServerless ||
