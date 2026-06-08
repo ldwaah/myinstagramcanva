@@ -2357,13 +2357,14 @@ a {
   background: rgba(20, 18, 30, 0.85);
   backdrop-filter: blur(16px);
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s;
-  color: inherit;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  color: rgba(255, 255, 255, 0.95);
   font: inherit;
 }
 
 .collab-dock__inner:hover {
   border-color: rgba(192, 132, 252, 0.4);
+  background: rgba(28, 24, 42, 0.92);
   transform: translateY(-1px);
 }
 
@@ -2391,6 +2392,7 @@ a {
   font-size: 0.95rem;
   font-weight: 600;
   margin-top: 0.35rem;
+  color: #fff;
 }
 
 .collab-dock__inner--active .collab-dock__title {
@@ -2399,17 +2401,29 @@ a {
   flex: 1;
 }
 
+.collab-dock__inner:hover .collab-dock__title {
+  color: #fff;
+}
+
 .collab-dock__sub {
   display: block;
   font-size: 0.8rem;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.78);
   margin-top: 0.15rem;
+}
+
+.collab-dock__inner:hover .collab-dock__sub {
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .collab-dock__cta {
   font-size: 0.85rem;
-  color: var(--accent);
+  color: #f472b6;
   margin-left: auto;
+}
+
+.collab-dock__inner:hover .collab-dock__cta {
+  color: #fb7185;
 }
 
 /* Modals */
