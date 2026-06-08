@@ -1,0 +1,3 @@
+.el-btn--icon{background:var(--el-accent,#2d5a4a);color:#fff;gap:8px}
+.el-btn--icon svg{transition:transform .2s}
+.el-btn--icon:hover svg{transform:translateX(3px)}

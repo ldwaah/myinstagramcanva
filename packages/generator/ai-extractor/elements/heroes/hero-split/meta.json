@@ -1,8 +1,17 @@
 {
   "id": "hero-split",
   "category": "heroes",
-  "tags": ["creator", "photographer", "portfolio"],
+  "tags": [
+    "creator",
+    "photographer",
+    "portfolio"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Two-column hero: copy left, portrait image right"
+  "description": "Two-column hero: copy left, portrait image right",
+  "niche": [
+    "business",
+    "fashion",
+    "fitness"
+  ]
 }

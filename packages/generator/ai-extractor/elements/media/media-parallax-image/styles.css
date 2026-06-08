@@ -1,0 +1,6 @@
+.el-media-parallax{position:relative;min-height:60vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.el-media-parallax__bg{position:absolute;inset:0;background-size:cover;background-position:center;background-attachment:fixed}
+.el-media-parallax__bg::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.el-media-parallax__caption{position:relative;z-index:1;text-align:center;padding:24px;max-width:600px}
+.el-media-parallax__caption p{font-family:var(--el-font-display,Georgia,serif);font-size:clamp(1.5rem,4vw,2.25rem);font-style:italic;color:#fff;line-height:1.35;margin-bottom:16px}
+.el-media-parallax__caption cite{font-size:.8125rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}

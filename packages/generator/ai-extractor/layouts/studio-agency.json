@@ -1,0 +1,17 @@
+{
+  "id": "studio-agency",
+  "name": "Studio Agency",
+  "description": "Multi-column footer, logo strip, split contact — studios and agencies",
+  "palette": "charcoal-gold",
+  "tags": ["studio", "agency", "business"],
+  "elements": [
+    "nav-sticky-blur",
+    "hero-announcement",
+    "section-logo-strip",
+    "gallery-featured-row",
+    "about-services-numbered",
+    "section-testimonial-row",
+    "contact-split-panel",
+    "footer-columns"
+  ]
+}

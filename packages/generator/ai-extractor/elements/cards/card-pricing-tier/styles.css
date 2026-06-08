@@ -1,0 +1,6 @@
+.el-card-pricing{padding:40px 32px;background:var(--el-bg,#faf9f7);border:1px solid var(--el-border,rgba(26,26,26,.12));border-radius:4px;text-align:center}
+.el-card-pricing__tier{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--el-accent,#2d5a4a);display:block;margin-bottom:16px}
+.el-card-pricing__price{font-family:var(--el-font-display,Georgia,serif);font-size:3rem;color:var(--el-text,#1a1a1a);margin-bottom:24px}
+.el-card-pricing__price span{font-size:1.5rem;vertical-align:super}
+.el-card-pricing__features{list-style:none;padding:0;margin:0 0 32px;text-align:left}
+.el-card-pricing__features li{padding:8px 0;font-size:.9375rem;color:var(--el-muted,#6b6560);border-bottom:1px solid var(--el-border,rgba(26,26,26,.06))}

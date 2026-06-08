@@ -1,0 +1,17 @@
+{
+  "id": "card-stat-highlight",
+  "category": "cards",
+  "tags": [
+    "stat",
+    "metric",
+    "proof"
+  ],
+  "niche": [
+    "fitness",
+    "business",
+    "creator"
+  ],
+  "style": "stat-card",
+  "tokens": "low",
+  "description": "Large stat number with label in bordered card"
+}

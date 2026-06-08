@@ -1,0 +1,17 @@
+{
+  "id": "section-logo-strip",
+  "category": "sections",
+  "tags": [
+    "logos",
+    "brands",
+    "trust"
+  ],
+  "niche": [
+    "business",
+    "studio",
+    "agency"
+  ],
+  "style": "logo-cloud",
+  "tokens": "low",
+  "description": "Row of placeholder brand logos as SVG shapes"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "hero-announcement",
+  "category": "heroes",
+  "tags": [
+    "business",
+    "creator",
+    "launch"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "ecommerce"
+  ],
+  "style": "saas-landing",
+  "tokens": "low",
+  "description": "Top announcement bar plus centred hero with pill CTAs"
+}

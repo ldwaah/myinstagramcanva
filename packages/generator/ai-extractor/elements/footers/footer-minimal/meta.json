@@ -1,8 +1,16 @@
 {
   "id": "footer-minimal",
   "category": "footers",
-  "tags": ["creator", "minimal"],
+  "tags": [
+    "creator",
+    "minimal"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Single-line copyright footer"
+  "description": "Single-line copyright footer",
+  "niche": [
+    "creator",
+    "business",
+    "minimal"
+  ]
 }

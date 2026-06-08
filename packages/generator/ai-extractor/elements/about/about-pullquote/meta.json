@@ -1,0 +1,17 @@
+{
+  "id": "about-pullquote",
+  "category": "about",
+  "tags": [
+    "editorial",
+    "creator",
+    "quote"
+  ],
+  "niche": [
+    "photographer",
+    "writer",
+    "coach"
+  ],
+  "style": "editorial-quote",
+  "tokens": "low",
+  "description": "Large pull quote with attribution and accent rule"
+}

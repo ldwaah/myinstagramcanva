@@ -1,0 +1,17 @@
+{
+  "id": "card-testimonial-quote",
+  "category": "cards",
+  "tags": [
+    "testimonial",
+    "quote",
+    "social-proof"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "testimonial-card",
+  "tokens": "low",
+  "description": "Testimonial card with quote, avatar placeholder, and name"
+}

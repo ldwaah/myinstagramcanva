@@ -1,0 +1,17 @@
+{
+  "id": "contact-newsletter",
+  "category": "contact",
+  "tags": [
+    "creator",
+    "email",
+    "minimal"
+  ],
+  "niche": [
+    "creator",
+    "coach",
+    "writer"
+  ],
+  "style": "squarespace-cta",
+  "tokens": "low",
+  "description": "Centred newsletter CTA with single email field"
+}

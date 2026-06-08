@@ -1,0 +1,17 @@
+{
+  "id": "hero-asymmetric",
+  "category": "heroes",
+  "tags": [
+    "fashion",
+    "business",
+    "editorial"
+  ],
+  "niche": [
+    "fashion",
+    "business",
+    "beauty"
+  ],
+  "style": "framer-asymmetric",
+  "tokens": "medium",
+  "description": "Left-aligned headline with decorative accent block and stat row"
+}

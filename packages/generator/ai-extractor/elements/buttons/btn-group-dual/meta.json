@@ -1,0 +1,17 @@
+{
+  "id": "btn-group-dual",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "group",
+    "dual"
+  ],
+  "niche": [
+    "creator",
+    "business",
+    "fitness"
+  ],
+  "style": "dual-cta",
+  "tokens": "low",
+  "description": "Primary + ghost button group with consistent spacing"
+}

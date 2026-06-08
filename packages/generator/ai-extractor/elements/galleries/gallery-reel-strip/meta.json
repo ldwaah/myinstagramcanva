@@ -1,0 +1,17 @@
+{
+  "id": "gallery-reel-strip",
+  "category": "galleries",
+  "tags": [
+    "instagram",
+    "reels",
+    "video"
+  ],
+  "niche": [
+    "creator",
+    "fitness",
+    "food"
+  ],
+  "style": "instagram-native",
+  "tokens": "medium",
+  "description": "Horizontal reel strip with 9:16 cards and play affordance"
+}

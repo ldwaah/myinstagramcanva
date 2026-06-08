@@ -1,0 +1,7 @@
+.el-contact-newsletter{padding:clamp(64px,10vw,96px) 24px;text-align:center;background:var(--el-surface,#f3f2ef)}
+.el-contact-newsletter__inner{max-width:520px;margin:0 auto}
+.el-contact-newsletter__inner h2{font-family:var(--el-font-display,Georgia,serif);font-size:clamp(1.75rem,4vw,2.25rem);margin-bottom:12px;color:var(--el-text,#1a1a1a)}
+.el-contact-newsletter__inner p{color:var(--el-muted,#6b6560);margin-bottom:28px;line-height:1.6}
+.el-contact-newsletter__form{display:flex;gap:8px;max-width:400px;margin:0 auto}
+.el-contact-newsletter__form input{flex:1;padding:12px 16px;border:1px solid var(--el-border,rgba(26,26,26,.12));border-radius:999px;font-size:.875rem}
+@media(max-width:480px){.el-contact-newsletter__form{flex-direction:column}}

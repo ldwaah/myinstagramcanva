@@ -1,0 +1,17 @@
+{
+  "id": "fashion-editorial",
+  "name": "Fashion Editorial",
+  "description": "Asymmetric hero, staggered gallery, pull quote — fashion and beauty creators",
+  "palette": "blush-editorial",
+  "tags": ["fashion", "beauty", "editorial"],
+  "elements": [
+    "nav-split-logo",
+    "hero-asymmetric",
+    "section-divider-rule",
+    "gallery-staggered",
+    "about-pullquote",
+    "gallery-featured-row",
+    "contact-link-grid",
+    "footer-minimal"
+  ]
+}

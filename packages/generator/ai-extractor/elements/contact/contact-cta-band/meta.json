@@ -1,8 +1,17 @@
 {
   "id": "contact-cta-band",
   "category": "contact",
-  "tags": ["instagram", "creator", "photographer"],
+  "tags": [
+    "instagram",
+    "creator",
+    "photographer"
+  ],
   "style": "editorial-dark",
   "tokens": "low",
-  "description": "Dark contact band with link rows and primary CTA"
+  "description": "Dark contact band with link rows and primary CTA",
+  "niche": [
+    "business",
+    "fitness",
+    "creator"
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "id": "hero-editorial-tag",
+  "category": "heroes",
+  "tags": [
+    "editorial",
+    "photographer",
+    "fashion"
+  ],
+  "niche": [
+    "photographer",
+    "fashion",
+    "editorial"
+  ],
+  "style": "squarespace-editorial",
+  "tokens": "low",
+  "description": "Numbered eyebrow, oversized serif headline, single accent CTA"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "btn-text-link",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "text",
+    "link"
+  ],
+  "niche": [
+    "editorial",
+    "fashion",
+    "writer"
+  ],
+  "style": "editorial-link",
+  "tokens": "low",
+  "description": "Text link with arrow icon and hover shift"
+}

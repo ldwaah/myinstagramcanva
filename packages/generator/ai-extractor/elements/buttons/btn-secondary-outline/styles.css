@@ -1,0 +1,2 @@
+.el-btn--secondary{background:transparent;color:var(--el-text,#1a1a1a);border:1.5px solid var(--el-border,rgba(26,26,26,.2))}
+.el-btn--secondary:hover{border-color:var(--el-accent,#2d5a4a);color:var(--el-accent,#2d5a4a)}

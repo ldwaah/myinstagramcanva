@@ -1,0 +1,17 @@
+{
+  "id": "nav-overlay-mobile",
+  "category": "navigation",
+  "tags": [
+    "creator",
+    "portfolio",
+    "mobile"
+  ],
+  "niche": [
+    "creator",
+    "photographer",
+    "fashion"
+  ],
+  "style": "squarespace-mobile",
+  "tokens": "medium",
+  "description": "Minimal bar with full-screen mobile overlay menu"
+}

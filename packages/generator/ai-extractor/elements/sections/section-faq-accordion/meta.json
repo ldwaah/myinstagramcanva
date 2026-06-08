@@ -1,0 +1,17 @@
+{
+  "id": "section-faq-accordion",
+  "category": "sections",
+  "tags": [
+    "faq",
+    "accordion",
+    "business"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "ecommerce"
+  ],
+  "style": "faq-section",
+  "tokens": "medium",
+  "description": "FAQ section with details/summary accordion pattern"
+}

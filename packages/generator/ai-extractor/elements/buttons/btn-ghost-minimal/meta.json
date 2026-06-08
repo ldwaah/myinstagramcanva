@@ -1,0 +1,17 @@
+{
+  "id": "btn-ghost-minimal",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "ghost",
+    "minimal"
+  ],
+  "niche": [
+    "creator",
+    "minimal",
+    "editorial"
+  ],
+  "style": "minimal-ghost",
+  "tokens": "low",
+  "description": "Ghost button with underline on hover"
+}

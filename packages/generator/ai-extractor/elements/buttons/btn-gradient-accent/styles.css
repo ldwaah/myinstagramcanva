@@ -1,0 +1,2 @@
+.el-btn--gradient{background:linear-gradient(135deg,var(--el-accent,#2d5a4a),var(--el-accent-dim,#8fb5a8));color:#fff;border-radius:4px}
+.el-btn--gradient:hover{filter:brightness(1.08);transform:translateY(-2px)}

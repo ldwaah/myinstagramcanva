@@ -1,0 +1,16 @@
+{
+  "id": "lifestyle-minimal",
+  "name": "Lifestyle Minimal",
+  "description": "Clean minimal layout for lifestyle creators — profile hero, grid, link contact",
+  "palette": "sand-minimal",
+  "tags": ["lifestyle", "creator", "minimal"],
+  "elements": [
+    "nav-overlay-mobile",
+    "hero-profile",
+    "section-marquee-ticker",
+    "gallery-grid",
+    "about-bio",
+    "contact-link-grid",
+    "footer-social"
+  ]
+}

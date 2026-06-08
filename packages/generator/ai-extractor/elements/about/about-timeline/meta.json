@@ -1,0 +1,17 @@
+{
+  "id": "about-timeline",
+  "category": "about",
+  "tags": [
+    "business",
+    "coach",
+    "story"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "kadence-timeline",
+  "tokens": "medium",
+  "description": "Vertical timeline with milestone entries"
+}

@@ -1,0 +1,4 @@
+.el-card-feature{padding:32px;background:var(--el-surface,#f3f2ef);border-radius:4px;border:1px solid var(--el-border,rgba(26,26,26,.08))}
+.el-card-feature__icon{color:var(--el-accent,#2d5a4a);margin-bottom:20px}
+.el-card-feature h3{font-family:var(--el-font-display,Georgia,serif);font-size:1.25rem;margin-bottom:12px;color:var(--el-text,#1a1a1a)}
+.el-card-feature p{font-size:.9375rem;line-height:1.6;color:var(--el-muted,#6b6560)}

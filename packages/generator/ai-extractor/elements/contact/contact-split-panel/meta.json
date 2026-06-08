@@ -1,0 +1,17 @@
+{
+  "id": "contact-split-panel",
+  "category": "contact",
+  "tags": [
+    "business",
+    "studio",
+    "form"
+  ],
+  "niche": [
+    "business",
+    "studio",
+    "coach"
+  ],
+  "style": "webflow-split",
+  "tokens": "medium",
+  "description": "Split layout: copy left, form right on surface panel"
+}

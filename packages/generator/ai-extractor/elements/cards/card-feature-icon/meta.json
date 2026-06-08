@@ -1,0 +1,17 @@
+{
+  "id": "card-feature-icon",
+  "category": "cards",
+  "tags": [
+    "feature",
+    "icon",
+    "saas"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "tech"
+  ],
+  "style": "saas-feature",
+  "tokens": "low",
+  "description": "Feature card with SVG icon placeholder and title + description"
+}

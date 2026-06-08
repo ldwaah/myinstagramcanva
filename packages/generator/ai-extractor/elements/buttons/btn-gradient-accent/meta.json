@@ -1,0 +1,17 @@
+{
+  "id": "btn-gradient-accent",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "gradient",
+    "modern"
+  ],
+  "niche": [
+    "tech",
+    "business",
+    "creator"
+  ],
+  "style": "gradient-cta",
+  "tokens": "low",
+  "description": "Subtle gradient fill button using accent colours"
+}

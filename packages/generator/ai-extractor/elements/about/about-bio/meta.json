@@ -1,8 +1,17 @@
 {
   "id": "about-bio",
   "category": "about",
-  "tags": ["creator", "minimal", "coach"],
+  "tags": [
+    "creator",
+    "minimal",
+    "coach"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Simple centered bio block with tagline"
+  "description": "Simple centered bio block with tagline",
+  "niche": [
+    "creator",
+    "coach",
+    "business"
+  ]
 }

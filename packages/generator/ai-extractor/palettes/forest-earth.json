@@ -1,0 +1,20 @@
+{
+  "id": "forest-earth",
+  "name": "Forest Earth",
+  "style": "kadence-natural",
+  "description": "Earthy greens on cream — wellness, outdoor, food niches",
+  "tokens": {
+    "--el-bg": "#f7f5f0",
+    "--el-surface": "#ede9e1",
+    "--el-text": "#1c1917",
+    "--el-muted": "#78716c",
+    "--el-accent": "#3d5c47",
+    "--el-accent-dim": "#8faa96",
+    "--el-border": "rgba(28, 25, 23, 0.08)"
+  },
+  "fonts": {
+    "display": "Fraunces",
+    "body": "Source Sans 3",
+    "googleUrl": "Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;500;600"
+  }
+}

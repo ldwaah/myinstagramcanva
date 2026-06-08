@@ -1,0 +1,17 @@
+{
+  "id": "section-testimonial-row",
+  "category": "sections",
+  "tags": [
+    "testimonial",
+    "social-proof",
+    "reviews"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "testimonial-section",
+  "tokens": "medium",
+  "description": "Three-column testimonial row with quote cards"
+}

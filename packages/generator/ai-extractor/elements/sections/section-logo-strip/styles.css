@@ -1,0 +1,3 @@
+.el-logo-strip{padding:48px 24px;text-align:center}
+.el-logo-strip__label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--el-muted,#6b6560);margin-bottom:24px}
+.el-logo-strip__row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:48px;color:var(--el-text,#1a1a1a)}

@@ -1,0 +1,20 @@
+{
+  "id": "sand-minimal",
+  "name": "Sand Minimal",
+  "style": "framer-light",
+  "description": "Warm sand tones with terracotta accent — lifestyle and travel",
+  "tokens": {
+    "--el-bg": "#faf6f1",
+    "--el-surface": "#f0e9df",
+    "--el-text": "#1c1917",
+    "--el-muted": "#a8a29e",
+    "--el-accent": "#b45309",
+    "--el-accent-dim": "#d4a574",
+    "--el-border": "rgba(28, 25, 23, 0.08)"
+  },
+  "fonts": {
+    "display": "Cormorant Garamond",
+    "body": "DM Sans",
+    "googleUrl": "Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500"
+  }
+}

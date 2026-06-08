@@ -1,0 +1,17 @@
+{
+  "id": "footer-newsletter",
+  "category": "footers",
+  "tags": [
+    "creator",
+    "business",
+    "email"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "ecommerce"
+  ],
+  "style": "saas-footer",
+  "tokens": "medium",
+  "description": "Footer with inline newsletter signup and social links"
+}

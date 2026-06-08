@@ -1,0 +1,20 @@
+{
+  "id": "ink-mono",
+  "name": "Ink Mono",
+  "style": "editorial-mono",
+  "description": "High-contrast black and white with single red accent — photographers",
+  "tokens": {
+    "--el-bg": "#ffffff",
+    "--el-surface": "#f5f5f5",
+    "--el-text": "#0a0a0a",
+    "--el-muted": "#737373",
+    "--el-accent": "#dc2626",
+    "--el-accent-dim": "#fca5a5",
+    "--el-border": "rgba(10, 10, 10, 0.1)"
+  },
+  "fonts": {
+    "display": "Playfair Display",
+    "body": "Inter",
+    "googleUrl": "Playfair+Display:wght@400;600&family=Inter:wght@400;500"
+  }
+}

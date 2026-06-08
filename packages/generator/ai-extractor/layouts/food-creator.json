@@ -1,0 +1,16 @@
+{
+  "id": "food-creator",
+  "name": "Food Creator",
+  "description": "Warm earthy palette with bento gallery and reel strip — food bloggers and chefs",
+  "palette": "forest-earth",
+  "tags": ["food", "creator", "lifestyle"],
+  "elements": [
+    "nav-minimal",
+    "hero-editorial-tag",
+    "gallery-bento",
+    "gallery-reel-strip",
+    "about-bio",
+    "contact-newsletter",
+    "footer-social"
+  ]
+}

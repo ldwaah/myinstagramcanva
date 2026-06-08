@@ -1,0 +1,17 @@
+{
+  "id": "nav-sticky-blur",
+  "category": "navigation",
+  "tags": [
+    "business",
+    "saas",
+    "modern"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "tech"
+  ],
+  "style": "webflow-sticky",
+  "tokens": "low",
+  "description": "Sticky header with backdrop blur and pill CTA"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "gallery-staggered",
+  "category": "galleries",
+  "tags": [
+    "fashion",
+    "photographer",
+    "editorial"
+  ],
+  "niche": [
+    "fashion",
+    "photographer",
+    "beauty"
+  ],
+  "style": "editorial-offset",
+  "tokens": "medium",
+  "description": "Two-column staggered grid with alternating vertical offset"
+}

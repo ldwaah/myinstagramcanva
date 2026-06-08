@@ -1,0 +1,17 @@
+{
+  "id": "business-consultant",
+  "name": "Business Consultant",
+  "description": "SaaS-style landing for coaches and consultants — features, pricing, FAQ",
+  "palette": "slate-cool",
+  "tags": ["business", "coach", "consultant"],
+  "elements": [
+    "nav-sticky-blur",
+    "hero-gradient-mesh",
+    "section-logo-strip",
+    "card-feature-icon",
+    "section-pricing-table",
+    "section-faq-accordion",
+    "contact-split-panel",
+    "footer-newsletter"
+  ]
+}

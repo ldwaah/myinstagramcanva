@@ -1,0 +1,17 @@
+<section class="el-contact-split" id="contact" aria-label="Contact">
+  <div class="el-contact-split__grid">
+    <div class="el-contact-split__copy">
+      <span class="el-section-tag">Contact</span>
+      <h2>{{CONTACT_TITLE}}</h2>
+      <p>{{CONTACT_SUBTITLE}}</p>
+      <a class="el-contact-split__ig" href="{{IG_URL}}" target="_blank" rel="noopener noreferrer">@{{HANDLE}}</a>
+    </div>
+    <form class="el-contact-split__form lead-form" data-site-id="{{SITE_ID}}">
+      <input type="hidden" name="siteId" value="{{SITE_ID}}" />
+      <input type="text" name="name" placeholder="Your name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <textarea name="message" placeholder="Your message" rows="4"></textarea>
+      <button type="submit" class="el-btn el-btn--primary">Send message</button>
+    </form>
+  </div>
+</section>

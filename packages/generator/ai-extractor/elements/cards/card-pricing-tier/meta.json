@@ -1,0 +1,17 @@
+{
+  "id": "card-pricing-tier",
+  "category": "cards",
+  "tags": [
+    "pricing",
+    "tier",
+    "business"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "pricing-card",
+  "tokens": "medium",
+  "description": "Pricing tier card with price, features list, and CTA"
+}

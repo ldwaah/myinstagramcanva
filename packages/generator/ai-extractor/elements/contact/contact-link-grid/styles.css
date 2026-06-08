@@ -1,0 +1,6 @@
+.el-contact-links{padding:clamp(64px,10vw,96px) 24px;max-width:720px;margin:0 auto}
+.el-contact-links__grid{display:grid;gap:16px}
+.el-contact-links__card{display:flex;flex-direction:column;padding:24px 32px;background:var(--el-surface,#f3f2ef);border:1px solid var(--el-border,rgba(26,26,26,.08));border-radius:4px;text-decoration:none;transition:border-color .2s,transform .2s}
+.el-contact-links__card:hover{border-color:var(--el-accent,#2d5a4a);transform:translateY(-2px)}
+.el-contact-links__label{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--el-muted,#6b6560);margin-bottom:8px}
+.el-contact-links__value{font-size:1.125rem;color:var(--el-text,#1a1a1a);font-weight:500}

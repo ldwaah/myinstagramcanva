@@ -1,0 +1,17 @@
+{
+  "id": "media-parallax-image",
+  "category": "media",
+  "tags": [
+    "parallax",
+    "image",
+    "visual"
+  ],
+  "niche": [
+    "photographer",
+    "travel",
+    "visual"
+  ],
+  "style": "parallax-section",
+  "tokens": "medium",
+  "description": "Fixed-background image section with centred caption"
+}

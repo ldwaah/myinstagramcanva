@@ -1,0 +1,4 @@
+.el-about-timeline{padding:clamp(64px,10vw,96px) 24px;max-width:720px;margin:0 auto}
+.el-about-timeline__list{list-style:none;padding:0;margin:48px 0 0;border-left:2px solid var(--el-border,rgba(26,26,26,.12));padding-left:32px}
+.el-about-timeline__list li{position:relative;padding-bottom:32px;font-size:1rem;line-height:1.65;color:var(--el-muted,#6b6560)}
+.el-about-timeline__list li::before{content:"";position:absolute;left:-39px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--el-accent,#2d5a4a);border:2px solid var(--el-bg,#faf9f7)}

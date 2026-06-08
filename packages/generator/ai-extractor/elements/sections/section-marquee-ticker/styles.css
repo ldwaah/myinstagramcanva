@@ -1,0 +1,4 @@
+.el-marquee{overflow:hidden;padding:16px 0;background:var(--el-surface,#f3f2ef);border-block:1px solid var(--el-border,rgba(26,26,26,.08))}
+.el-marquee__track{display:flex;gap:48px;animation:el-marquee-scroll 25s linear infinite;width:max-content}
+.el-marquee__track span{font-size:.8125rem;letter-spacing:.12em;text-transform:uppercase;color:var(--el-muted,#6b6560);white-space:nowrap}
+@keyframes el-marquee-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}

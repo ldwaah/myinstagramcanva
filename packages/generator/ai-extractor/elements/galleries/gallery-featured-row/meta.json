@@ -1,0 +1,17 @@
+{
+  "id": "gallery-featured-row",
+  "category": "galleries",
+  "tags": [
+    "photographer",
+    "visual",
+    "portfolio"
+  ],
+  "niche": [
+    "photographer",
+    "fashion",
+    "food"
+  ],
+  "style": "squarespace-portfolio",
+  "tokens": "medium",
+  "description": "One large featured image plus horizontal row of smaller cells"
+}

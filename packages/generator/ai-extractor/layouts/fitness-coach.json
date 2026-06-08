@@ -1,0 +1,17 @@
+{
+  "id": "fitness-coach",
+  "name": "Fitness Coach",
+  "description": "Energetic layout for trainers and wellness creators — stats, services, strong CTAs",
+  "palette": "ocean-fresh",
+  "tags": ["fitness", "coach", "wellness"],
+  "elements": [
+    "nav-sticky-blur",
+    "hero-overlap-portrait",
+    "about-stats",
+    "about-services-numbered",
+    "gallery-reel-strip",
+    "section-testimonial-row",
+    "contact-split-panel",
+    "footer-columns"
+  ]
+}

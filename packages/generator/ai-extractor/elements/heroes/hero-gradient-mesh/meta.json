@@ -1,0 +1,17 @@
+{
+  "id": "hero-gradient-mesh",
+  "category": "heroes",
+  "tags": [
+    "saas",
+    "tech",
+    "creator"
+  ],
+  "niche": [
+    "business",
+    "tech",
+    "coach"
+  ],
+  "style": "webflow-modern",
+  "tokens": "low",
+  "description": "Soft mesh gradient backdrop with centred headline and dual CTAs"
+}

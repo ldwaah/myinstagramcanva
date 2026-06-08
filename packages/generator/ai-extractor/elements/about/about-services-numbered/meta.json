@@ -1,0 +1,17 @@
+{
+  "id": "about-services-numbered",
+  "category": "about",
+  "tags": [
+    "business",
+    "coach",
+    "services"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "generatepress-cards",
+  "tokens": "medium",
+  "description": "Numbered service cards in a three-column grid"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "midnight-saas",
+  "name": "Midnight SaaS",
+  "style": "webflow-dark",
+  "description": "Dark navy background with teal accent — tech and business coaches",
+  "tokens": {
+    "--el-bg": "#0f1117",
+    "--el-surface": "#1a1d27",
+    "--el-text": "#f5f5f4",
+    "--el-muted": "#9ca3af",
+    "--el-accent": "#4a7c6f",
+    "--el-accent-dim": "#8fb5a8",
+    "--el-border": "rgba(245, 245, 244, 0.08)"
+  },
+  "fonts": {
+    "display": "Syne",
+    "body": "Inter",
+    "googleUrl": "Syne:wght@400;500;600;700&family=Inter:wght@400;500;600"
+  }
+}

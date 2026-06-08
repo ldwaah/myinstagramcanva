@@ -1,0 +1,17 @@
+{
+  "id": "btn-icon-arrow",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "icon",
+    "arrow"
+  ],
+  "niche": [
+    "business",
+    "saas",
+    "coach"
+  ],
+  "style": "saas-icon-btn",
+  "tokens": "low",
+  "description": "Primary button with trailing arrow icon"
+}

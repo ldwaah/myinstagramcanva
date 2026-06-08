@@ -1,0 +1,6 @@
+.el-media-video-hero{position:relative;min-height:80vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.el-media-video-hero__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.el-media-video-hero__overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.3) 50%,rgba(0,0,0,.4) 100%)}
+.el-media-video-hero__content{position:relative;z-index:1;text-align:center;padding:24px;max-width:720px}
+.el-media-video-hero__content h1{font-family:var(--el-font-display,Georgia,serif);font-size:clamp(2.5rem,7vw,4rem);color:#fff;line-height:1.1;margin-bottom:20px}
+.el-media-video-hero__content p{font-size:1.125rem;color:rgba(255,255,255,.8);margin-bottom:32px;line-height:1.6}

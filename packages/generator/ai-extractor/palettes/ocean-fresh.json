@@ -1,0 +1,20 @@
+{
+  "id": "ocean-fresh",
+  "name": "Ocean Fresh",
+  "style": "fitness-fresh",
+  "description": "Clean white with ocean blue accent — fitness and wellness",
+  "tokens": {
+    "--el-bg": "#ffffff",
+    "--el-surface": "#f0f9ff",
+    "--el-text": "#0c4a6e",
+    "--el-muted": "#64748b",
+    "--el-accent": "#0284c7",
+    "--el-accent-dim": "#7dd3fc",
+    "--el-border": "rgba(12, 74, 110, 0.08)"
+  },
+  "fonts": {
+    "display": "Outfit",
+    "body": "Nunito Sans",
+    "googleUrl": "Outfit:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600"
+  }
+}

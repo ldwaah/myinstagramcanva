@@ -1,0 +1,17 @@
+{
+  "id": "nav-split-logo",
+  "category": "navigation",
+  "tags": [
+    "editorial",
+    "fashion",
+    "luxury"
+  ],
+  "niche": [
+    "fashion",
+    "beauty",
+    "editorial"
+  ],
+  "style": "editorial-split",
+  "tokens": "low",
+  "description": "Centred logo with split left/right navigation links"
+}

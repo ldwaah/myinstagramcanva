@@ -1,0 +1,17 @@
+{
+  "id": "section-pricing-table",
+  "category": "sections",
+  "tags": [
+    "pricing",
+    "packages",
+    "business"
+  ],
+  "niche": [
+    "business",
+    "coach",
+    "fitness"
+  ],
+  "style": "pricing-section",
+  "tokens": "medium",
+  "description": "Three-tier pricing table section with highlighted middle tier"
+}

@@ -1,0 +1,2 @@
+.el-btn--ghost{background:transparent;color:var(--el-muted,#6b6560);padding:14px 20px}
+.el-btn--ghost:hover{color:var(--el-text,#1a1a1a);text-decoration:underline;text-underline-offset:4px}

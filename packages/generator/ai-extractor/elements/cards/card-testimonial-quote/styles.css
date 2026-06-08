@@ -1,0 +1,7 @@
+.el-card-testimonial{padding:32px;background:var(--el-surface,#f3f2ef);border-radius:4px;border:1px solid var(--el-border,rgba(26,26,26,.08))}
+.el-card-testimonial blockquote{margin:0 0 24px}
+.el-card-testimonial blockquote p{font-size:1rem;line-height:1.65;color:var(--el-text,#1a1a1a);font-style:italic}
+.el-card-testimonial__author{display:flex;align-items:center;gap:16px}
+.el-card-testimonial__avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--el-accent-dim,#8fb5a8),var(--el-accent,#2d5a4a))}
+.el-card-testimonial__author strong{display:block;font-size:.875rem;color:var(--el-text,#1a1a1a)}
+.el-card-testimonial__author span{font-size:.75rem;color:var(--el-muted,#6b6560)}

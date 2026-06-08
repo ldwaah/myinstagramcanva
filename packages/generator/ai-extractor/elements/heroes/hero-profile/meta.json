@@ -1,8 +1,18 @@
 {
   "id": "hero-profile",
   "category": "heroes",
-  "tags": ["instagram", "creator", "influencer", "profile"],
+  "tags": [
+    "instagram",
+    "creator",
+    "influencer",
+    "profile"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Profile-centric hero with avatar ring, stats row, and action buttons"
+  "description": "Profile-centric hero with avatar ring, stats row, and action buttons",
+  "niche": [
+    "creator",
+    "instagram",
+    "lifestyle"
+  ]
 }

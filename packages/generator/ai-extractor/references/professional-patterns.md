@@ -1,75 +1,80 @@
-# What makes WordPress / Squarespace / Wix sites look professional
+# Professional web design patterns
 
-Notes distilled from high-quality creator and small-business sites (including internal reference builds). Use these as quality checks — not as templates to copy.
+Research notes distilled from Squarespace templates, WordPress premium themes (Astra, Kadence, GeneratePress), Webflow showcases, Framer sites, and modern SaaS landing pages. Use as quality checks — **do not copy copyrighted themes wholesale**.
 
 ## Whitespace
 
-- Generous vertical rhythm between sections (64–96px minimum).
-- Content never touches viewport edges on mobile — 16–24px horizontal padding.
-- Headlines breathe: margin-bottom 16–24px before body copy.
-- Grids have consistent gutters; avoid cramming more columns than the content supports.
+- Section padding: `clamp(64px, 10vw, 96px)` vertical minimum.
+- Mobile horizontal padding: 16–24px; content never touches edges.
+- Headline margin-bottom: 16–24px before body copy.
+- Grid gutters: 16px (dense) or 24px (editorial).
+- One "breathing" section (divider or pull quote) per 3–4 content blocks.
 
-## Typography
+## Typography hierarchy
 
-- **Restraint wins**: one distinctive display face + one readable body face.
-- Squarespace sites often use: large serif or geometric sans headings, neutral sans body.
-- WordPress premium themes: strong h1, muted meta text (eyebrows, captions), limited font weights (400, 500, 600 — not every weight loaded).
-- Wix: centered hero type with generous letter-spacing on uppercase labels.
-- Avoid: Inter + purple gradient (the "AI default" look).
+- Eyebrow (12px uppercase, letter-spacing 0.12–0.16em) → H1 (clamp 2.5–4.5rem) → H2 (clamp 1.75–2.5rem) → body (16–18px).
+- Squarespace: centred hero type, generous letter-spacing on labels.
+- WordPress premium: strong H1, muted meta text, weights 400/500/600 only.
+- Webflow/Framer: asymmetric headlines with offset visual blocks.
+- **Avoid**: Inter + purple gradient (the generic AI default).
 
-## Image treatment
+## Hero patterns
 
-- Hero images: full-bleed or contained in a deliberate frame — never floating without context.
-- Portfolio grids: uniform cell size OR intentional size variation (masonry), not random.
-- Overlays: subtle gradient vignette for text-on-photo legibility — not heavy black boxes.
-- Reels/video: poster frame + play affordance; aspect-ratio locked with `object-fit: cover`.
+| Pattern | Platform inspiration | Best niche |
+|---------|---------------------|------------|
+| Centred minimal + dual CTA | Squarespace Bedford | Coaches, consultants |
+| Split image/text | Kadence, Astra | Personal brands |
+| Full-bleed + vignette | Webflow portfolio | Photographers |
+| Gradient mesh (no photo) | SaaS landings | Tech, business |
+| Overlap portrait panel | GeneratePress | Fitness, lifestyle |
+| Numbered editorial tag | Magazine templates | Fashion, editorial |
 
-## Navigation
-
-- Sticky header, 56–72px height, logo left, links center or right, one primary CTA.
-- Mobile: full-screen overlay menu or slide-down — not cramped hamburger dropdowns.
-- Active section optional; at minimum: Work/Posts, About, Contact, social link.
-
-## Section patterns (from reference builds)
+## Gallery patterns
 
 | Pattern | Use when |
 |---------|----------|
-| Eyebrow + split headline + sub + dual CTAs | Strong brand voice, visual niche |
-| Stats strip (3 numbers) | Social proof without clutter |
-| Horizontal film rail / carousel | Photography, fashion, sports portfolios |
-| Split about (image + copy + bullet list) | Personal brands, coaches, photographers |
-| Numbered service cards | Clear offer breakdown |
-| Contact link rows (label + value) | Low-friction booking without heavy forms |
-| Minimal footer + legal links | Every site |
+| Uniform 3-col grid | Instagram feed mirror |
+| Masonry offset | Portrait-heavy portfolios |
+| Horizontal carousel/film rail | Fashion, sports, sequential work |
+| Bento asymmetric | Creative directors, food |
+| Featured + row | Campaign highlight |
+| Reel strip (9:16) | Video-first creators |
 
-## Color
+## Navigation
 
-- Dark editorial (near-black bg, warm off-white text, one sharp accent) reads premium for visual creators.
-- Light neutral (warm gray bg, charcoal text, muted accent) reads trustworthy for coaches and consultants.
-- Accent used sparingly: CTAs, one headline word, section tags — not backgrounds.
+- Sticky header: 56–72px, blur backdrop on scroll (Webflow standard).
+- Mobile: full-screen overlay, not cramped dropdowns.
+- Editorial split-nav: logo centred, links split (Squarespace supply templates).
+- One primary CTA in nav (pill or solid).
 
-## What to avoid (AI slop signals)
+## Cards and sections
 
-- Gradient text on white backgrounds
-- "Trusted by thousands" with no real data
-- Generic stock-photo placeholders with no alt text
-- 6+ font families loaded
-- Inconsistent border-radius (mixing 4px, 12px, 24px, full pill everywhere)
-- Center-aligned everything with no visual anchor
-- Fake testimonial carousels
+- Feature cards: icon + title + 2-line description (SaaS pattern).
+- Stat cards: large number, small uppercase label.
+- Pricing: 3 tiers, middle emphasised with border/shadow.
+- Testimonials: real quotes only; gradient avatar placeholder if no photo.
+- FAQ: native `<details>` accordion — accessible, no JS.
 
-## Kane-site patterns (extracted, not copied)
+## Colour systems
 
-The Khiago Visuals reference build demonstrates:
+- Neutral base + one accent extracted from user IG palette.
+- Dark editorial: `#0f1117` bg, `#f5f5f4` text — photographers, luxury.
+- Warm stone: `#faf9f7` bg — coaches, food, lifestyle.
+- Accent on CTAs and one headline word — not backgrounds.
 
-1. **Section indexing** — `01 · Portfolio`, `02 · About` tags create editorial rhythm.
-2. **Cinematic hero** — full-bleed photo, vignette, multi-line display title, ticker marquee.
-3. **Stats strip** — three concise metrics between hero and work.
-4. **Film rail gallery** — horizontal scroll with frame meta (category + number).
-5. **Reel grid** — video cards with overlay play + IG deep link.
-6. **About split** — framed image, location badge, bullet list, phone CTA.
-7. **Service cards** — numbered, equal-height, short descriptions.
-8. **Contact block** — large heading, link rows, single primary action.
-9. **Restrained footer** — copyright, terms/privacy only.
+## Motion (CSS only)
 
-These patterns are reimplemented as original elements in `elements/` with generic tokens and distinct CSS — not a theme clone.
+- Fade-in on scroll: `opacity` + `translateY(16px)`, 0.6s ease.
+- Hover lift: `translateY(-2px)` on buttons, `scale(1.04)` on images.
+- Marquee ticker: duplicated text, 25s linear infinite.
+- **Respect** `prefers-reduced-motion`.
+
+## Anti-AI-slop checklist
+
+- [ ] No purple gradient on white
+- [ ] No "Welcome to my website" copy
+- [ ] Max 2 font families
+- [ ] Consistent border-radius (2px or 4px, not mixed)
+- [ ] Real padding on every section
+- [ ] Accessible labels on all sections
+- [ ] Placeholder gradients/SVG — no copyrighted theme screenshots

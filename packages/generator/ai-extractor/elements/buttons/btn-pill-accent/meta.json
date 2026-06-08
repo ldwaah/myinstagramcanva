@@ -1,0 +1,17 @@
+{
+  "id": "btn-pill-accent",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "pill",
+    "rounded"
+  ],
+  "niche": [
+    "fitness",
+    "lifestyle",
+    "food"
+  ],
+  "style": "pill-button",
+  "tokens": "low",
+  "description": "Full pill-shaped accent button"
+}

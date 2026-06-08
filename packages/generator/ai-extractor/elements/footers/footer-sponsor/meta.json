@@ -1,8 +1,17 @@
 {
   "id": "footer-sponsor",
   "category": "footers",
-  "tags": ["platform", "instagram", "creator"],
+  "tags": [
+    "platform",
+    "instagram",
+    "creator"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Footer with copyright, legal links, and sponsor credit slot"
+  "description": "Footer with copyright, legal links, and sponsor credit slot",
+  "niche": [
+    "business",
+    "creator",
+    "sports"
+  ]
 }

@@ -1,0 +1,72 @@
+/**
+ * Reusable keyframes and utility classes — CSS only, performant
+ */
+
+@keyframes el-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes el-fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes el-marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes el-pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Scroll reveal — add .el-reveal to elements; JS toggles .is-visible */
+.el-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--el-ease, ease), transform 0.6s var(--el-ease, ease);
+}
+
+.el-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.el-reveal--delay-1 { transition-delay: 0.1s; }
+.el-reveal--delay-2 { transition-delay: 0.2s; }
+.el-reveal--delay-3 { transition-delay: 0.3s; }
+
+/* Hover utilities */
+.el-hover-lift {
+  transition: transform var(--el-duration, 250ms) var(--el-ease, ease);
+}
+
+.el-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.el-hover-scale img,
+.el-hover-scale video {
+  transition: transform var(--el-duration-slow, 400ms) var(--el-ease, ease);
+}
+
+.el-hover-scale:hover img,
+.el-hover-scale:hover video {
+  transform: scale(1.04);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .el-reveal,
+  .el-marquee__track,
+  .el-hover-lift,
+  .el-hover-scale img,
+  .el-hover-scale video {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

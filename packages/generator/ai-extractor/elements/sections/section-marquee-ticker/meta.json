@@ -1,0 +1,17 @@
+{
+  "id": "section-marquee-ticker",
+  "category": "sections",
+  "tags": [
+    "marquee",
+    "ticker",
+    "motion"
+  ],
+  "niche": [
+    "sports",
+    "fashion",
+    "creator"
+  ],
+  "style": "marquee-strip",
+  "tokens": "low",
+  "description": "Infinite horizontal ticker with duplicated text"
+}

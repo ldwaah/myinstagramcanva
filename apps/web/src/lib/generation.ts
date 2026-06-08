@@ -7,6 +7,7 @@ import {
   renderFunnelHtml,
   buildThemedInput,
   injectThemeIntoCss,
+  suggestLayoutForNiche,
   type SiteContentData,
 } from "@mic/generator";
 import { env } from "./env";
@@ -146,7 +147,10 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       body: content.fontBody,
     });
     const js = await readTemplateFile("js/main.js");
-    const html = renderSiteHtml(content, siteId, env.appUrl);
+    const html = renderSiteHtml(content, siteId, env.appUrl, {
+      useElementLibrary: true,
+      layoutId: suggestLayoutForNiche(content.niche),
+    });
     const siteJson = JSON.stringify(content, null, 2);
 
     const files: Record<string, string> = {

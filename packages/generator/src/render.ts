@@ -2,7 +2,7 @@ import type { SiteContentData } from "./types";
 import { themeCssVariables } from "./theme";
 import {
   composeFromLayout,
-  suggestLayout,
+  suggestLayoutForNiche,
   type ElementTokenMap,
 } from "./element-library";
 
@@ -11,8 +11,16 @@ import {
  *
  * When `useElementLibrary` is true, the generator composes HTML from
  * ai-extractor snippets instead of the inline template below.
- * Future LLM step (llm.ts): pick layout id + write copy tokens only —
- * no full HTML/CSS generation required.
+ *
+ * Full composition flow:
+ * 1. suggestLayoutForNiche(content.niche) → layoutId (or LLM via element-selection.md)
+ * 2. resolveLayout(layoutId) → ordered element snippets + palette preset
+ * 3. getDesignSystem() → tokens.css + animations.css injected first
+ * 4. buildElementTokens(content) → {{PLACEHOLDER}} map from IG data
+ * 5. composeFromLayout() → scoped CSS + hydrated HTML
+ * 6. themeCssVariables() → user IG accent overrides on top
+ *
+ * LLM step (future): pick layout + write copy tokens only — no HTML/CSS generation.
  */
 export interface RenderSiteOptions {
   useElementLibrary?: boolean;
@@ -82,7 +90,7 @@ export function renderSiteHtmlFromLibrary(
   siteId: string,
   options: RenderSiteOptions = {},
 ): string | undefined {
-  const layoutId = options.layoutId ?? suggestLayout([content.niche.toLowerCase(), "instagram"]);
+  const layoutId = options.layoutId ?? suggestLayoutForNiche(content.niche);
   const tokens = buildElementTokens(content, siteId);
   const composed = composeFromLayout(layoutId, tokens);
   if (!composed) return undefined;

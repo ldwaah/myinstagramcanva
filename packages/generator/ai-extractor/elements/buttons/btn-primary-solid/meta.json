@@ -1,0 +1,17 @@
+{
+  "id": "btn-primary-solid",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "primary",
+    "button"
+  ],
+  "niche": [
+    "business",
+    "creator",
+    "fitness"
+  ],
+  "style": "squarespace-button",
+  "tokens": "low",
+  "description": "Primary solid button with hover lift"
+}

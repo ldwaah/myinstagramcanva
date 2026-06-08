@@ -1,0 +1,17 @@
+{
+  "id": "gallery-bento",
+  "category": "galleries",
+  "tags": [
+    "visual",
+    "creative",
+    "portfolio"
+  ],
+  "niche": [
+    "designer",
+    "photographer",
+    "food"
+  ],
+  "style": "webflow-bento",
+  "tokens": "medium",
+  "description": "Bento-style asymmetric grid with varied cell sizes"
+}

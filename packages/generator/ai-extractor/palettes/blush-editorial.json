@@ -1,0 +1,20 @@
+{
+  "id": "blush-editorial",
+  "name": "Blush Editorial",
+  "style": "fashion-editorial",
+  "description": "Soft blush surface with deep rose accent — beauty and fashion",
+  "tokens": {
+    "--el-bg": "#fdf8f6",
+    "--el-surface": "#f5ebe6",
+    "--el-text": "#292524",
+    "--el-muted": "#78716c",
+    "--el-accent": "#9f4f63",
+    "--el-accent-dim": "#d4a5b0",
+    "--el-border": "rgba(41, 37, 36, 0.08)"
+  },
+  "fonts": {
+    "display": "Playfair Display",
+    "body": "Lato",
+    "googleUrl": "Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@400;500"
+  }
+}

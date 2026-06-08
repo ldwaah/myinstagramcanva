@@ -1,0 +1,17 @@
+{
+  "id": "photographer-dark",
+  "name": "Photographer Dark",
+  "description": "Dark editorial portfolio with cinematic hero and parallax break",
+  "palette": "editorial-dark",
+  "tags": ["photographer", "visual", "editorial"],
+  "elements": [
+    "nav-centered",
+    "hero-cinematic",
+    "about-stats",
+    "gallery-carousel",
+    "media-parallax-image",
+    "about-split",
+    "contact-cta-band",
+    "footer-minimal"
+  ]
+}

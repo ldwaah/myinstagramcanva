@@ -1,8 +1,18 @@
 {
   "id": "hero-cinematic",
   "category": "heroes",
-  "tags": ["photographer", "visual", "sports", "cinematic"],
+  "tags": [
+    "photographer",
+    "visual",
+    "sports",
+    "cinematic"
+  ],
   "style": "editorial-dark",
   "tokens": "medium",
-  "description": "Full-bleed hero with multi-line display title, ticker marquee, and dual CTAs"
+  "description": "Full-bleed hero with multi-line display title, ticker marquee, and dual CTAs",
+  "niche": [
+    "photographer",
+    "sports",
+    "visual"
+  ]
 }

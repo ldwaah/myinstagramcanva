@@ -1,0 +1,17 @@
+{
+  "id": "travel-visual",
+  "name": "Travel Visual",
+  "description": "Full-bleed hero with masonry gallery and video section — travel and adventure",
+  "palette": "sand-minimal",
+  "tags": ["travel", "photographer", "visual"],
+  "elements": [
+    "nav-minimal",
+    "hero-full-bleed",
+    "gallery-masonry",
+    "media-parallax-image",
+    "about-timeline",
+    "gallery-reel-strip",
+    "contact-cta-band",
+    "footer-minimal"
+  ]
+}

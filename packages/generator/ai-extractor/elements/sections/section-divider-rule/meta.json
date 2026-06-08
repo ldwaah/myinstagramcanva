@@ -1,0 +1,17 @@
+{
+  "id": "section-divider-rule",
+  "category": "sections",
+  "tags": [
+    "divider",
+    "separator",
+    "editorial"
+  ],
+  "niche": [
+    "editorial",
+    "fashion",
+    "photographer"
+  ],
+  "style": "editorial-divider",
+  "tokens": "low",
+  "description": "Centred ornamental divider with optional label"
+}

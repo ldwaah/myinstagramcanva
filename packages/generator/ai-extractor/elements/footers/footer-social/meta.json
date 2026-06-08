@@ -1,8 +1,17 @@
 {
   "id": "footer-social",
   "category": "footers",
-  "tags": ["instagram", "creator", "social"],
+  "tags": [
+    "instagram",
+    "creator",
+    "social"
+  ],
   "style": "squarespace-minimal",
   "tokens": "low",
-  "description": "Footer with copyright and social links row"
+  "description": "Footer with copyright and social links row",
+  "niche": [
+    "creator",
+    "lifestyle",
+    "fashion"
+  ]
 }

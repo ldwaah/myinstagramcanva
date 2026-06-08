@@ -11,6 +11,7 @@ export interface ElementMeta {
   id: string;
   category: string;
   tags: string[];
+  niche?: string[];
   style: string;
   tokens: ElementTokenBudget;
   description?: string;
@@ -185,6 +186,9 @@ export function composeFromLayout(
   const { layout, elements, palette } = resolved;
   const cssParts: string[] = [];
   const htmlParts: string[] = [];
+  const ds = getDesignSystem(options);
+  if (ds.tokensCss) cssParts.push(ds.tokensCss);
+  if (ds.animationsCss) cssParts.push(ds.animationsCss);
 
   if (palette) {
     const vars = Object.entries(palette.tokens)
@@ -209,12 +213,74 @@ export function composeFromLayout(
   };
 }
 
+/** Niche keyword → layout id mapping (see references/composition-rules.md) */
+const NICHE_LAYOUT_MAP: Array<{ keywords: string[]; layoutId: string }> = [
+  { keywords: ["fitness", "trainer", "gym", "wellness", "hyrox"], layoutId: "fitness-coach" },
+  { keywords: ["fashion", "beauty", "model", "stylist"], layoutId: "fashion-editorial" },
+  { keywords: ["business", "consultant", "agency", "corporate"], layoutId: "business-consultant" },
+  { keywords: ["food", "chef", "recipe", "restaurant", "baker"], layoutId: "food-creator" },
+  { keywords: ["photographer", "photography", "visual", "sports"], layoutId: "photographer-dark" },
+  { keywords: ["lifestyle", "influencer", "creator"], layoutId: "lifestyle-minimal" },
+  { keywords: ["studio", "design", "creative agency"], layoutId: "studio-agency" },
+  { keywords: ["travel", "adventure", "outdoor"], layoutId: "travel-visual" },
+  { keywords: ["coach", "coaching", "mentor"], layoutId: "split-landing" },
+];
+
+/** Suggest a layout id from a niche string (primary heuristic entry point) */
+export function suggestLayoutForNiche(niche: string): string {
+  const n = niche.toLowerCase();
+  for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
+    if (keywords.some((k) => n.includes(k))) return layoutId;
+  }
+  return "profile-minimal";
+}
+
 /** Suggest a layout id from niche/tags heuristics (no LLM required) */
 export function suggestLayout(tags: string[]): string {
   const t = tags.map((x) => x.toLowerCase());
+  for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
+    if (keywords.some((k) => t.some((tag) => tag.includes(k)))) return layoutId;
+  }
   if (t.some((x) => ["photographer", "visual", "sports"].includes(x))) return "creator-portfolio";
   if (t.some((x) => ["coach", "trainer", "business"].includes(x))) return "split-landing";
   return "profile-minimal";
+}
+
+export interface DesignSystemBundle {
+  tokensCss: string;
+  animationsCss: string;
+  typographyMd: string;
+  colorsMd: string;
+}
+
+/** Load design-system CSS and documentation for AI / generator context */
+export function getDesignSystem(options: ElementLibraryOptions = {}): DesignSystemBundle {
+  const root = options.root ?? AI_EXTRACTOR_ROOT;
+  const ds = join(root, "design-system");
+  return {
+    tokensCss: readText(join(ds, "tokens.css")),
+    animationsCss: readText(join(ds, "animations.css")),
+    typographyMd: readText(join(ds, "typography.md")),
+    colorsMd: readText(join(ds, "colors.md")),
+  };
+}
+
+export interface CompositionGuide {
+  compositionRules: string;
+  elementSelectionPrompt: string;
+  copyTone: string;
+  professionalPatterns: string;
+}
+
+/** Load composition guides and LLM prompt fragments */
+export function getCompositionGuide(options: ElementLibraryOptions = {}): CompositionGuide {
+  const root = options.root ?? AI_EXTRACTOR_ROOT;
+  return {
+    compositionRules: readText(join(root, "references", "composition-rules.md")),
+    elementSelectionPrompt: readText(join(root, "prompts", "element-selection.md")),
+    copyTone: readText(join(root, "prompts", "copy-tone.md")),
+    professionalPatterns: readText(join(root, "references", "professional-patterns.md")),
+  };
 }
 
 /** Clear in-memory cache (useful in tests) */

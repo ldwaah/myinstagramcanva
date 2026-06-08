@@ -1,0 +1,17 @@
+{
+  "id": "footer-columns",
+  "category": "footers",
+  "tags": [
+    "business",
+    "studio",
+    "multi-page"
+  ],
+  "niche": [
+    "business",
+    "studio",
+    "agency"
+  ],
+  "style": "wordpress-columns",
+  "tokens": "low",
+  "description": "Three-column footer with brand, links, and contact"
+}

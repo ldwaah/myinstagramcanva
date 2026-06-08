@@ -1,0 +1,17 @@
+{
+  "id": "btn-secondary-outline",
+  "category": "buttons",
+  "tags": [
+    "cta",
+    "secondary",
+    "button"
+  ],
+  "niche": [
+    "business",
+    "fashion",
+    "editorial"
+  ],
+  "style": "editorial-outline",
+  "tokens": "low",
+  "description": "Outlined secondary button with border transition"
+}

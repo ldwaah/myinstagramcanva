@@ -1,0 +1,17 @@
+{
+  "id": "media-video-hero",
+  "category": "media",
+  "tags": [
+    "video",
+    "hero",
+    "cinematic"
+  ],
+  "niche": [
+    "creator",
+    "fitness",
+    "travel"
+  ],
+  "style": "video-hero",
+  "tokens": "high",
+  "description": "Full-bleed video background hero with overlay text"
+}

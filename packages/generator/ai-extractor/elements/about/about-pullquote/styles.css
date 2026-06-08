@@ -1,0 +1,5 @@
+.el-about-quote{padding:clamp(80px,12vw,120px) 24px;background:var(--el-surface,#f3f2ef)}
+.el-about-quote__block{max-width:800px;margin:0 auto;text-align:center;border:none;padding:0}
+.el-about-quote__block p{font-family:var(--el-font-display,Georgia,serif);font-size:clamp(1.5rem,4vw,2.25rem);font-style:italic;line-height:1.4;color:var(--el-text,#1a1a1a);margin-bottom:24px}
+.el-about-quote__block p::before{content:"";display:block;width:48px;height:2px;background:var(--el-accent,#2d5a4a);margin:0 auto 32px}
+.el-about-quote__block cite{font-size:.875rem;font-style:normal;letter-spacing:.08em;text-transform:uppercase;color:var(--el-muted,#6b6560)}

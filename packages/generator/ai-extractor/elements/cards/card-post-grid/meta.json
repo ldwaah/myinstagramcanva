@@ -1,0 +1,17 @@
+{
+  "id": "card-post-grid",
+  "category": "cards",
+  "tags": [
+    "instagram",
+    "post",
+    "grid"
+  ],
+  "niche": [
+    "creator",
+    "food",
+    "fashion"
+  ],
+  "style": "instagram-card",
+  "tokens": "medium",
+  "description": "Single post card with image, caption excerpt, and IG link"
+}

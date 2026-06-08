@@ -1,0 +1,2 @@
+.el-btn--pill{border-radius:999px;background:var(--el-accent,#2d5a4a);color:#fff;padding:14px 32px}
+.el-btn--pill:hover{transform:translateY(-2px);box-shadow:0 6px 20px color-mix(in srgb,var(--el-accent,#2d5a4a) 30%,transparent)}
