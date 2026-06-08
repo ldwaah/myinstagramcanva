@@ -2,13 +2,19 @@
  * Generates static OG PNGs (1200×630) and apple-touch-icon in public/.
  * Run: node scripts/generate-og-images.mjs
  */
-import { writeFileSync } from "fs";
+import { writeFileSync, existsSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { Resvg } from "@resvg/resvg-js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(__dirname, "../public");
+
+if (process.env.NETLIFY && existsSync(join(publicDir, "og-default.png"))) {
+  console.log("[generate-og] Skipping on Netlify — committed OG assets present");
+  process.exit(0);
+}
+
 
 const LOGO = `<svg width="88" height="88" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
