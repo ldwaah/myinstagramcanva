@@ -3,12 +3,11 @@
 # Root netlify.toml only — do not add netlify.toml under templates/ (use .example).
 
 [build]
-  command = "npm ci --include=optional && npm run db:generate && npm run build -w web"
+  command = "NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm run db:generate && npm run build -w web"
   publish = "apps/web/.next"
 
 [build.environment]
   NODE_VERSION = "20"
-  # Netlify sets NODE_ENV=production during build; keep devDependencies for prebuild (OG images via @resvg/resvg-js).
   NPM_CONFIG_PRODUCTION = "false"
 
 [[plugins]]
