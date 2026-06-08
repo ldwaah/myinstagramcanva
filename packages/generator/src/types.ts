@@ -6,10 +6,27 @@ export type Niche =
   | "TRAINER"
   | "OTHER";
 
+export interface SiteThemeVars {
+  accent: string;
+  accent2: string;
+  accentDim: string;
+  gradient: string;
+  bg: string;
+  surface: string;
+  surface2: string;
+  text: string;
+  muted: string;
+  border: string;
+  isDark: boolean;
+}
+
 export interface SiteContentData {
   brandName: string;
   ownerName: string;
   profilePicUrl: string;
+  heroImageUrl: string;
+  layoutVariant: "profile" | "cinematic";
+  followers: number;
   tagline: string;
   heroEyebrow: string;
   heroTitle: string[];
@@ -45,6 +62,7 @@ export interface SiteContentData {
   phone?: string;
   email?: string;
   accentColor: string;
+  theme: SiteThemeVars;
   fontDisplay: string;
   fontBody: string;
   fontGoogleUrl: string;
@@ -82,4 +100,5 @@ export interface GenerateInput {
     carouselCount?: number;
   }[];
   reels: { videoUrl: string; posterUrl?: string; caption: string; shortcode: string }[];
+  theme?: SiteThemeVars;
 }
