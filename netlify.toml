@@ -1,10 +1,11 @@
 # My Instagram Canva — Netlify monorepo deploy (apps/web)
 # https://docs.netlify.com/configure-builds/monorepos/
-# Root netlify.toml only — do not add netlify.toml under templates/ (use .example).
+# base = apps/web selects the web workspace on CI (avoids "Projects detected" exit 2).
 
 [build]
-  command = "NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
-  publish = "apps/web/.next"
+  base = "apps/web"
+  command = "cd ../.. && NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
