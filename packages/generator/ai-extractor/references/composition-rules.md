@@ -6,17 +6,33 @@ How the AI (or heuristic picker) should select layouts and elements per Instagra
 
 | Niche keywords | Layout ID | Palette |
 |----------------|-----------|---------|
+| musician, music, artist, band | musician-promo | midnight-saas |
+| influencer, lifestyle, creator (shop) | influencer-shop | sand-minimal |
+| photographer, visual, sports | photographer-dark | editorial-dark |
+| coach, life coach, mentor | coach-services | neutral-warm |
 | fitness, trainer, gym, wellness | fitness-coach | ocean-fresh |
 | fashion, beauty, model, stylist | fashion-editorial | blush-editorial |
-| business, coach, consultant, agency | business-consultant | slate-cool |
+| business, consultant, agency | business-consultant | slate-cool |
 | food, chef, recipe, restaurant | food-creator | forest-earth |
-| photographer, visual, sports | photographer-dark | editorial-dark |
-| lifestyle, creator, influencer | lifestyle-minimal | sand-minimal |
 | studio, agency, design | studio-agency | charcoal-gold |
 | travel, adventure, outdoor | travel-visual | sand-minimal |
 | default / general creator | creator-portfolio | editorial-dark |
-| coach / landing page | split-landing | neutral-warm |
 | minimal profile | profile-minimal | neutral-cool |
+
+### Quiz-driven tailoring
+
+Brand quiz answers map to niche + layout:
+
+- **brandType: musician** → `musician-promo` (album-promo, link-grid, gallery)
+- **brandType: influencer** → `influencer-shop` (product-grid, featured posts)
+- **brandType: photographer** → `photographer-dark` (masonry/grid gallery)
+- **brandType: coach** → `coach-services` (services-list, testimonials, booking-cta)
+- **brandType: fitness** → `fitness-coach`
+- **brandType: food** → `food-creator`
+- **brandType: fashion** → `fashion-editorial`
+- **brandType: business** → `business-consultant`
+
+Use `primaryGoal`, `promoting`, and `externalLink` quiz answers to tune copy tokens (album title, shop CTA, booking URL).
 
 ## Element selection per section
 

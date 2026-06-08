@@ -25,10 +25,16 @@ import {
 export interface RenderSiteOptions {
   useElementLibrary?: boolean;
   layoutId?: string;
+  layoutHint?: string;
+  quizAnswers?: Record<string, string>;
 }
 
 /** Build placeholder tokens from IG-derived content for library hydration */
-export function buildElementTokens(content: SiteContentData, siteId: string): ElementTokenMap {
+export function buildElementTokens(
+  content: SiteContentData,
+  siteId: string,
+  quizAnswers?: Record<string, string>,
+): ElementTokenMap {
   const ig = `https://www.instagram.com/${content.instagramHandle}/`;
   const heroLines = content.heroTitle
     .map((line, i) => {
@@ -53,6 +59,64 @@ export function buildElementTokens(content: SiteContentData, siteId: string): El
   const phoneLink = content.phone
     ? `<a class="el-contact-band__link" href="tel:${content.phone.replace(/\s/g, "")}"><span class="el-contact-band__label">Phone</span><span class="el-contact-band__value">${escapeHtml(content.phone)}</span></a>`
     : "";
+
+  const servicesItems = content.services
+    .map(
+      (s, i) =>
+        `<article class="el-services-list__card"><span class="num">${String(i + 1).padStart(2, "0")}</span><h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.description)}</p></article>`,
+    )
+    .join("\n  ");
+
+  const productsItems = content.portfolioItems
+    .slice(0, 3)
+    .map(
+      (item, i) =>
+        `<article class="el-product-grid__card"><img src="${item.imageUrl}" alt="${escapeHtml(item.alt)}" loading="lazy" /><div class="el-product-grid__card-body"><h3>${escapeHtml(item.label || `Featured ${i + 1}`)}</h3><p>Shop the look · @${escapeHtml(content.instagramHandle)}</p></div></article>`,
+    )
+    .join("\n  ");
+
+  const testimonialItems = [
+    { quote: "Genuinely transformative — clear, practical, and encouraging.", name: "Client" },
+    { quote: "Exactly what I needed to move forward with confidence.", name: "Coaching client" },
+    { quote: "Professional, warm, and brilliantly organised.", name: "Workshop attendee" },
+  ]
+    .map(
+      (t) =>
+        `<blockquote class="el-testimonials__card"><p>"${escapeHtml(t.quote)}"</p><cite>— ${escapeHtml(t.name)}</cite></blockquote>`,
+    )
+    .join("\n  ");
+
+  const external = quizAnswers?.externalLink ?? "none";
+  const primaryGoal = quizAnswers?.primaryGoal ?? "contact";
+  const promoting = quizAnswers?.promoting ?? "nothing";
+
+  const streamUrl = external === "spotify" ? ig : ig;
+  const shopUrl = external === "shop" ? ig : ig;
+  const bookingUrl = external === "booking" || primaryGoal === "book" ? "#contact" : ig;
+
+  const albumTitle =
+    promoting === "album"
+      ? `${content.brandName} — latest release`
+      : `${content.brandName}`;
+  const albumSubtitle =
+    promoting === "album"
+      ? "Stream the new project — links below."
+      : content.heroSubtitle;
+
+  const shopCta =
+    primaryGoal === "buy" || quizAnswers?.offering === "products"
+      ? "Shop now"
+      : "View featured picks";
+
+  const bookingCta = primaryGoal === "book" ? "Book a session" : "Get in touch";
+  const bookingTitle =
+    content.niche === "COACH" || content.niche === "TRAINER"
+      ? "Ready to start?"
+      : content.contactTitle;
+  const bookingSubtitle =
+    content.niche === "COACH"
+      ? "Book a discovery call and let's talk about your goals."
+      : content.contactSubtitle;
 
   return {
     BRAND_NAME: content.brandName,
@@ -80,7 +144,22 @@ export function buildElementTokens(content: SiteContentData, siteId: string): El
     SITE_ID: siteId,
     STATS_ROW: statsRow,
     STATS_ITEMS: statsItems,
-    ITEMS: "",
+    ITEMS: testimonialItems,
+    SERVICES_TITLE: content.servicesTitle,
+    SERVICES_SUBTITLE: `How ${content.ownerName} works with clients.`,
+    SERVICES_ITEMS: servicesItems,
+    PRODUCTS_TITLE: "Featured picks",
+    PRODUCTS_SUBTITLE: `Curated from @${content.instagramHandle} — tap to shop.`,
+    PRODUCTS_ITEMS: productsItems,
+    SHOP_URL: shopUrl,
+    SHOP_CTA: shopCta,
+    ALBUM_TITLE: albumTitle,
+    ALBUM_SUBTITLE: albumSubtitle,
+    STREAM_URL: streamUrl,
+    BOOKING_TITLE: bookingTitle,
+    BOOKING_SUBTITLE: bookingSubtitle,
+    BOOKING_URL: bookingUrl,
+    BOOKING_CTA: bookingCta,
   };
 }
 
@@ -90,8 +169,10 @@ export function renderSiteHtmlFromLibrary(
   siteId: string,
   options: RenderSiteOptions = {},
 ): string | undefined {
-  const layoutId = options.layoutId ?? suggestLayoutForNiche(content.niche);
-  const tokens = buildElementTokens(content, siteId);
+  const layoutId =
+    options.layoutId ??
+    suggestLayoutForNiche(content.niche, options.layoutHint ?? options.quizAnswers?.layoutHint);
+  const tokens = buildElementTokens(content, siteId, options.quizAnswers);
   const composed = composeFromLayout(layoutId, tokens);
   if (!composed) return undefined;
 

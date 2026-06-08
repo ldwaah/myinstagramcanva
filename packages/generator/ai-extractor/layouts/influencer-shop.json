@@ -1,0 +1,17 @@
+{
+  "id": "influencer-shop",
+  "name": "Influencer Shop",
+  "description": "Featured products, post grid, and shop CTAs for creators and influencers",
+  "palette": "sand-minimal",
+  "tags": ["influencer", "creator", "lifestyle", "shop"],
+  "elements": [
+    "nav-overlay-mobile",
+    "hero-profile",
+    "section-marquee-ticker",
+    "section-product-grid",
+    "gallery-grid",
+    "about-bio",
+    "contact-link-grid",
+    "footer-social"
+  ]
+}

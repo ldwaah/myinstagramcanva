@@ -1,4 +1,4 @@
-import { prisma, SiteStatus, SiteTier, JobStatus, MediaType } from "@mic/db";
+import { prisma, SiteStatus, SiteTier, JobStatus, MediaType, type Niche } from "@mic/db";
 import { fetchInstagramProfile, type InstagramMediaItem, type InstagramProfile } from "@mic/instagram";
 import {
   generateSiteContent,
@@ -8,6 +8,7 @@ import {
   buildThemedInput,
   injectThemeIntoCss,
   suggestLayoutForNiche,
+  layoutHintFromQuiz,
   type SiteContentData,
 } from "@mic/generator";
 import { env } from "./env";
@@ -32,6 +33,54 @@ type ProcessedMediaItem = {
   caption: string;
   carouselCount?: number;
 };
+
+const QUIZ_WAIT_MS = 45_000;
+
+async function resolveQuizContext(
+  siteId: string,
+  isPreview: boolean,
+  existingQuiz: string | null | undefined,
+  currentNiche: Niche
+) {
+  let quizRaw = existingQuiz;
+
+  if (isPreview && !quizRaw) {
+    const deadline = Date.now() + QUIZ_WAIT_MS;
+    while (Date.now() < deadline) {
+      const row = await prisma.site.findUnique({
+        where: { id: siteId },
+        select: { quizAnswers: true },
+      });
+      if (row?.quizAnswers) {
+        quizRaw = row.quizAnswers;
+        break;
+      }
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+
+  let quizAnswers: Record<string, string> = {};
+  if (quizRaw) {
+    try {
+      quizAnswers = JSON.parse(quizRaw) as Record<string, string>;
+    } catch {
+      quizAnswers = {};
+    }
+  }
+
+  const layoutHint = quizAnswers.layoutHint ?? layoutHintFromQuiz(quizAnswers);
+
+  const fresh = await prisma.site.findUnique({
+    where: { id: siteId },
+    select: { niche: true },
+  });
+
+  return {
+    niche: fresh?.niche ?? currentNiche,
+    quizAnswers,
+    layoutHint,
+  };
+}
 
 export async function runSiteGeneration(siteId: string, userId: string, options?: { sync?: boolean }) {
   const site = await prisma.site.findUnique({
@@ -102,9 +151,13 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     const postsWithUrls = await processImagePosts(site.username, siteId, profile.posts, bundleAssets);
     const reelsWithUrls = await processReels(site.username, siteId, profile.reels, bundleAssets);
 
+    const quizData = await resolveQuizContext(siteId, site.isPreview, site.quizAnswers, site.niche);
+
     const input = await buildThemedInput({
       username: site.username,
-      niche: site.niche,
+      niche: quizData.niche,
+      quizAnswers: quizData.quizAnswers,
+      layoutHint: quizData.layoutHint,
       tagline: site.tagline || undefined,
       accentColor: undefined,
       profile: {
@@ -149,7 +202,9 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     const js = await readTemplateFile("js/main.js");
     const html = renderSiteHtml(content, siteId, env.appUrl, {
       useElementLibrary: true,
-      layoutId: suggestLayoutForNiche(content.niche),
+      layoutId: suggestLayoutForNiche(content.niche, quizData.layoutHint),
+      layoutHint: quizData.layoutHint,
+      quizAnswers: quizData.quizAnswers,
     });
     const siteJson = JSON.stringify(content, null, 2);
 
@@ -210,6 +265,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       where: { id: siteId },
       data: {
         ...statusUpdate,
+        niche: quizData.niche,
         githubPath: `sites/${site.username}`,
         publishedAt: new Date(),
       },

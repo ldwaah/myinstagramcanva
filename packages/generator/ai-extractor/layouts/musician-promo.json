@@ -1,0 +1,17 @@
+{
+  "id": "musician-promo",
+  "name": "Musician Promo",
+  "description": "Album promo, link strip, music posts grid — built for artists and musicians",
+  "palette": "midnight-saas",
+  "tags": ["musician", "music", "artist"],
+  "elements": [
+    "nav-minimal",
+    "hero-cinematic",
+    "section-album-promo",
+    "section-marquee-ticker",
+    "contact-link-grid",
+    "gallery-grid",
+    "about-bio",
+    "footer-social"
+  ]
+}

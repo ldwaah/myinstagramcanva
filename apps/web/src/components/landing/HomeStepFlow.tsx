@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
 import { TRIAL_DAYS } from "@/lib/trial-constants";
+import { BrandQuiz } from "@/components/landing/BrandQuiz";
+import type { QuizAnswers } from "@/lib/brand-quiz";
 
 type Step = 1 | 2 | 3;
 
@@ -12,7 +14,7 @@ type SessionState = { loggedIn: boolean };
 
 const STEPS = [
   { num: 1, title: "Enter your username", subtitle: "Type your public Instagram handle" },
-  { num: 2, title: "AI builds your site", subtitle: "We match your posts, colours & style" },
+  { num: 2, title: "AI builds your site", subtitle: "Quick quiz whilst we tailor your layout" },
   { num: 3, title: "Go live", subtitle: "Preview it, then publish when ready" },
 ] as const;
 
@@ -25,6 +27,8 @@ export function HomeStepFlow() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [goLiveLoading, setGoLiveLoading] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [quizDone, setQuizDone] = useState(false);
+  const pollRef = useRef(false);
 
   useEffect(() => {
     fetch("/api/auth/session")
@@ -59,9 +63,22 @@ export function HomeStepFlow() {
     setStep(1);
   }, []);
 
+  const startPolling = useCallback(
+    (id: string, uname: string) => {
+      if (pollRef.current) return;
+      pollRef.current = true;
+      void pollUntilReady(id, uname).finally(() => {
+        pollRef.current = false;
+      });
+    },
+    [pollUntilReady]
+  );
+
   async function handleUsername(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setQuizDone(false);
+    pollRef.current = false;
     setStep(2);
 
     const res = await fetch("/api/preview/generate", {
@@ -77,7 +94,15 @@ export function HomeStepFlow() {
     }
 
     setSiteId(data.siteId);
-    await pollUntilReady(data.siteId, data.username);
+    startPolling(data.siteId, data.username);
+  }
+
+  function handleQuizComplete(_answers: QuizAnswers) {
+    setQuizDone(true);
+  }
+
+  function handleQuizSkip() {
+    setQuizDone(true);
   }
 
   async function handleGoLive() {
@@ -158,11 +183,15 @@ export function HomeStepFlow() {
         </form>
       )}
 
-      {step === 2 && (
-        <div className="home-step-flow__panel mic-card mic-card--glass home-step-flow__loading">
-          <p className="home-step-flow__panel-heading">Building your site…</p>
-          <div className="home-step-flow__spinner" aria-hidden />
-          <p className="home-step-flow__muted">This usually takes a minute or two.</p>
+      {step === 2 && siteId && (
+        <div className="home-step-flow__panel mic-card mic-card--glass home-step-flow__building">
+          <div className="home-step-flow__building-status">
+            <div className="home-step-flow__spinner" aria-hidden />
+            <p className="home-step-flow__muted">
+              {quizDone ? "Tailoring your site…" : "Fetching your Instagram whilst you answer a few questions"}
+            </p>
+          </div>
+          <BrandQuiz siteId={siteId} onComplete={handleQuizComplete} onSkip={handleQuizSkip} />
         </div>
       )}
 

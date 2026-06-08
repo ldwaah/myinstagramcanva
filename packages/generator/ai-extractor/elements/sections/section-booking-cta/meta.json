@@ -1,0 +1,9 @@
+{
+  "id": "section-booking-cta",
+  "category": "sections",
+  "tags": ["booking", "cta", "coach", "contact"],
+  "niche": ["coach", "fitness", "business", "trainer"],
+  "style": "cta-band",
+  "tokens": "low",
+  "description": "Booking call-to-action band with primary action button"
+}

@@ -215,19 +215,40 @@ export function composeFromLayout(
 
 /** Niche keyword → layout id mapping (see references/composition-rules.md) */
 const NICHE_LAYOUT_MAP: Array<{ keywords: string[]; layoutId: string }> = [
+  { keywords: ["musician", "music", "artist", "band", "singer"], layoutId: "musician-promo" },
+  { keywords: ["influencer", "lifestyle", "creator"], layoutId: "influencer-shop" },
+  { keywords: ["photographer", "photography", "visual", "sports"], layoutId: "photographer-dark" },
+  { keywords: ["coach", "coaching", "mentor", "life coach"], layoutId: "coach-services" },
   { keywords: ["fitness", "trainer", "gym", "wellness", "hyrox"], layoutId: "fitness-coach" },
   { keywords: ["fashion", "beauty", "model", "stylist"], layoutId: "fashion-editorial" },
   { keywords: ["business", "consultant", "agency", "corporate"], layoutId: "business-consultant" },
   { keywords: ["food", "chef", "recipe", "restaurant", "baker"], layoutId: "food-creator" },
-  { keywords: ["photographer", "photography", "visual", "sports"], layoutId: "photographer-dark" },
-  { keywords: ["lifestyle", "influencer", "creator"], layoutId: "lifestyle-minimal" },
   { keywords: ["studio", "design", "creative agency"], layoutId: "studio-agency" },
   { keywords: ["travel", "adventure", "outdoor"], layoutId: "travel-visual" },
-  { keywords: ["coach", "coaching", "mentor"], layoutId: "split-landing" },
 ];
 
+const NICHE_ENUM_LAYOUT: Record<string, string> = {
+  MUSICIAN: "musician-promo",
+  INFLUENCER: "influencer-shop",
+  PHOTOGRAPHER: "photographer-dark",
+  COACH: "coach-services",
+  TRAINER: "fitness-coach",
+  ACTOR: "creator-portfolio",
+  OTHER: "profile-minimal",
+};
+
 /** Suggest a layout id from a niche string (primary heuristic entry point) */
-export function suggestLayoutForNiche(niche: string): string {
+export function suggestLayoutForNiche(niche: string, layoutHint?: string): string {
+  const upper = niche.toUpperCase();
+  if (NICHE_ENUM_LAYOUT[upper] && upper !== "OTHER") {
+    return NICHE_ENUM_LAYOUT[upper];
+  }
+
+  const hint = (layoutHint ?? niche).toLowerCase();
+  for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
+    if (keywords.some((k) => hint.includes(k))) return layoutId;
+  }
+
   const n = niche.toLowerCase();
   for (const { keywords, layoutId } of NICHE_LAYOUT_MAP) {
     if (keywords.some((k) => n.includes(k))) return layoutId;

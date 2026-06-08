@@ -1,0 +1,9 @@
+{
+  "id": "section-album-promo",
+  "category": "sections",
+  "tags": ["music", "album", "promo", "release"],
+  "niche": ["musician", "music", "artist"],
+  "style": "editorial-promo",
+  "tokens": "medium",
+  "description": "Featured album or release block with cover art and streaming CTA"
+}

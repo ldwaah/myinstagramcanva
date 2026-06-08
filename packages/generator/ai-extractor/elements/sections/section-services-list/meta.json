@@ -1,0 +1,9 @@
+{
+  "id": "section-services-list",
+  "category": "sections",
+  "tags": ["services", "coach", "business", "offerings"],
+  "niche": ["coach", "business", "fitness", "consultant"],
+  "style": "numbered-services",
+  "tokens": "medium",
+  "description": "Numbered services list for coaches and consultants"
+}

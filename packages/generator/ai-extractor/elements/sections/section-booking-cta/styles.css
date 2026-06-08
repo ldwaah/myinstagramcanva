@@ -1,0 +1,5 @@
+.el-booking-cta{padding:clamp(48px,8vw,80px) 24px;text-align:center;background:var(--el-accent,#2d5a4a);color:#fff}
+.el-booking-cta__inner{max-width:640px;margin:0 auto}
+.el-booking-cta h2{font-family:var(--el-font-display,Georgia,serif);font-size:clamp(1.5rem,4vw,2rem);margin-bottom:12px}
+.el-booking-cta p{font-size:1rem;opacity:.9;margin-bottom:24px;line-height:1.5}
+.el-booking-cta .el-btn--primary{background:#fff;color:var(--el-accent,#2d5a4a)}

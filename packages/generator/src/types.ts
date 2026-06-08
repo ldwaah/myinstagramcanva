@@ -1,6 +1,7 @@
 export type Niche =
   | "PHOTOGRAPHER"
   | "MUSICIAN"
+  | "INFLUENCER"
   | "ACTOR"
   | "COACH"
   | "TRAINER"
@@ -77,6 +78,8 @@ export interface SiteContentData {
 export interface GenerateInput {
   username: string;
   niche: Niche;
+  quizAnswers?: Record<string, string>;
+  layoutHint?: string;
   tagline?: string;
   accentColor?: string;
   profile?: {

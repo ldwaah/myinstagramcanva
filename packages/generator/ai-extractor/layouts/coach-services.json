@@ -1,0 +1,18 @@
+{
+  "id": "coach-services",
+  "name": "Coach Services",
+  "description": "Services, testimonials, booking CTA — for life coaches and mentors",
+  "palette": "neutral-warm",
+  "tags": ["coach", "mentor", "consultant"],
+  "elements": [
+    "nav-centered",
+    "hero-split",
+    "about-stats",
+    "section-services-list",
+    "section-testimonial-row",
+    "section-booking-cta",
+    "about-bio",
+    "contact-cta-band",
+    "footer-minimal"
+  ]
+}

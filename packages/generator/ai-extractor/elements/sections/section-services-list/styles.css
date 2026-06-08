@@ -1,0 +1,7 @@
+.el-services-list{padding:clamp(64px,10vw,96px) 24px;max-width:1120px;margin:0 auto}
+.el-services-list__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:768px){.el-services-list__grid{grid-template-columns:1fr}}
+.el-services-list__card{padding:32px;background:var(--el-surface,#f3f2ef);border-radius:4px;border:1px solid var(--el-border,rgba(26,26,26,.08))}
+.el-services-list__card .num{font-size:.75rem;letter-spacing:.12em;color:var(--el-accent,#2d5a4a);margin-bottom:16px;display:block}
+.el-services-list__card h3{font-family:var(--el-font-display,Georgia,serif);font-size:1.25rem;margin-bottom:12px;color:var(--el-text,#1a1a1a)}
+.el-services-list__card p{font-size:.9375rem;line-height:1.6;color:var(--el-muted,#6b6560)}

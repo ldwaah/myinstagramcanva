@@ -1,0 +1,9 @@
+{
+  "id": "section-product-grid",
+  "category": "sections",
+  "tags": ["shop", "products", "influencer", "ecommerce"],
+  "niche": ["influencer", "creator", "fashion", "lifestyle"],
+  "style": "shop-grid",
+  "tokens": "medium",
+  "description": "Product or featured post grid with shop CTAs for influencers"
+}

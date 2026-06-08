@@ -1,4 +1,5 @@
 import type { GenerateInput, Niche, SiteContentData, SiteThemeVars } from "./types";
+import { quizContextForPrompt } from "./quiz";
 import {
   accentFromUsername,
   fontPairForUsername,
@@ -12,6 +13,7 @@ const NICHE_LABELS: Record<Niche, { services: string; portfolio: string; action:
   ACTOR: { services: "What I offer", portfolio: "Showreel stills", action: "Get in touch" },
   COACH: { services: "How I help", portfolio: "Client moments", action: "Book a call" },
   TRAINER: { services: "Training programs", portfolio: "Transformations", action: "Start training" },
+  INFLUENCER: { services: "What I create", portfolio: "Featured content", action: "Work with me" },
   OTHER: { services: "What I offer", portfolio: "Featured work", action: "Contact me" },
 };
 
@@ -131,6 +133,9 @@ export async function generateSiteContentWithAI(
             content: JSON.stringify({
               task: "Enhance website copy from real Instagram data",
               niche: input.niche,
+              quizAnswers: input.quizAnswers,
+              layoutHint: input.layoutHint,
+              quizContext: quizContextForPrompt(input.quizAnswers),
               username: input.username,
               biography: input.profile?.biography,
               followers: input.profile?.followers,
@@ -206,6 +211,7 @@ function buildMarquee(brand: string, username: string, bio: string, niche: Niche
     ACTOR: "Stage · Screen · Character · Auditions ·",
     COACH: "Mindset · Growth · Clarity · Sessions ·",
     TRAINER: "Strength · Form · Results · Coaching ·",
+    INFLUENCER: "Content · Brand · Collabs · Growth ·",
     OTHER: `${brand.toUpperCase()} · CREATIVE · PROFESSIONAL ·`,
   };
   return `${nicheBits[niche]} @${username.toUpperCase()} · `;
@@ -220,6 +226,7 @@ function buildEyebrow(niche: Niche, bio: string): string {
     ACTOR: "Stage · Screen · Character",
     COACH: "Mindset · Growth · Clarity",
     TRAINER: "Strength · Form · Results",
+    INFLUENCER: "Content · Brand · Audience",
     OTHER: "Creative · Professional · Ready",
   };
   return map[niche];
@@ -241,6 +248,7 @@ function buildHeroLines(tagline: string, niche: Niche): string[] {
     ACTOR: ["Every role.", "Every frame.", "Authentic."],
     COACH: ["Clarity.", "Confidence.", "Forward."],
     TRAINER: ["Stronger.", "Fitter.", "You."],
+    INFLUENCER: ["Your voice.", "Your reach.", "Amplified."],
     OTHER: ["Your brand.", "Your story.", "Online."],
   };
   return defaults[niche];
@@ -254,6 +262,7 @@ function buildHeroSubtitle(name: string, bio: string, niche: Niche): string {
     ACTOR: `${name}. Compelling performances across stage and screen.`,
     COACH: `${name}. Practical coaching for people ready to move forward with confidence.`,
     TRAINER: `${name}. Training programs designed around your goals and your schedule.`,
+    INFLUENCER: `${name}. Authentic content and brand partnerships built for your audience.`,
     OTHER: `${name}. A professional presence built from your Instagram story.`,
   };
   return map[niche];
@@ -314,6 +323,11 @@ function buildStats(
       { value: 12, label: "week programs" },
       { value: 100, label: "% tailored" },
     ],
+    INFLUENCER: [
+      { value: 100, label: "posts curated" },
+      { value: 50, label: "brand collabs" },
+      { value: 100, label: "% authentic" },
+    ],
     OTHER: [
       { value: 100, label: "posts curated" },
       { value: 1, label: "brand story" },
@@ -330,6 +344,7 @@ function buildAboutTitle(niche: Niche): string {
     ACTOR: "Craft and presence.<br /><em>Every role.</em>",
     COACH: "Real talk.<br /><em>Real progress.</em>",
     TRAINER: "Form and focus.<br /><em>Your results.</em>",
+    INFLUENCER: "Your voice.<br /><em>Your audience.</em>",
     OTHER: "Your story.<br /><em>Your way.</em>",
   };
   return map[niche];
@@ -354,6 +369,7 @@ function buildBullets(niche: Niche, bio: string): string[] {
     ACTOR: ["Theatre & screen", "Self-tape support", "Headshots & press", "Showreel content"],
     COACH: ["1:1 coaching", "Group sessions", "Online programs", "Accountability support"],
     TRAINER: ["1:1 training", "Online coaching", "Nutrition guidance", "Progress tracking"],
+    INFLUENCER: ["Brand partnerships", "Content creation", "Audience growth", "Campaign delivery"],
     OTHER: ["Brand content", "Social campaigns", "Professional presence", "Fast turnaround"],
   };
   return map[niche];
@@ -385,6 +401,11 @@ function buildServices(niche: Niche): { title: string; description: string }[] {
       { title: "Personal training", description: "Custom programs built around your body and schedule." },
       { title: "Online coaching", description: "Remote support with clear accountability." },
       { title: "Nutrition", description: "Practical guidance that fits real life." },
+    ],
+    INFLUENCER: [
+      { title: "Content", description: "Authentic posts and stories that resonate with your audience." },
+      { title: "Brand deals", description: "Partnerships aligned with your voice and values." },
+      { title: "Growth", description: "Strategies to expand reach and engagement." },
     ],
     OTHER: [
       { title: "Content", description: "Professional assets drawn from your existing body of work." },
