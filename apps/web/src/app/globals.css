@@ -1969,7 +1969,7 @@ a {
 /* Auth layout */
 .auth-layout {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   padding: 2rem 0;
@@ -2189,7 +2189,7 @@ a {
 
 /* Onboarding */
 .onboarding-screen {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 2rem;

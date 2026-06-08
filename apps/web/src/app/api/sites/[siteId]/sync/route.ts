@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
+import { runInBackground } from "@/lib/background-task";
 import { prisma } from "@mic/db";
 import { getSession } from "@/lib/auth";
 import { runSiteGeneration } from "@/lib/generation";
@@ -27,7 +27,7 @@ export async function POST(
     return NextResponse.json({ error: "Sync already in progress" }, { status: 409 });
   }
 
-  waitUntil(
+  runInBackground(
     runSiteGeneration(siteId, session.id, { sync: true }).catch((err) => {
       console.error("[sync]", siteId, err);
     })

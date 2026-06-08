@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { waitUntil } from "@vercel/functions";
+import { runInBackground } from "@/lib/background-task";
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { prisma, Niche } from "@mic/db";
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
 
     if (needsGeneration && latestJob?.status !== "RUNNING") {
       const ownerId = session?.id ?? site.userId;
-      waitUntil(
+      runInBackground(
         runSiteGeneration(site.id, ownerId).catch((err) => {
           console.error("[preview/generate]", site!.id, err);
         })
