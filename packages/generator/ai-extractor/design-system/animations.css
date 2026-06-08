@@ -1,9 +1,28 @@
 /**
- * Reusable keyframes and utility classes — CSS only, performant
+ * World-class motion system — CSS only, transform + opacity
+ * Inspired by premium Squarespace / Webflow / Framer patterns
  */
 
+:root {
+  --el-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --el-ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
+  --el-ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --el-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --el-duration-micro: 150ms;
+  --el-duration: 250ms;
+  --el-duration-slow: 400ms;
+  --el-duration-reveal: 600ms;
+}
+
+/* ─── Keyframes ─── */
+
 @keyframes el-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes el-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -12,61 +31,410 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes el-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @keyframes el-marquee-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 @keyframes el-pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(0.92); }
 }
 
-/* Scroll reveal — add .el-reveal to elements; JS toggles .is-visible */
-.el-reveal {
+@keyframes el-stat-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes el-mesh-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(2%, -1.5%) scale(1.03); }
+}
+
+/* ─── Scroll reveal (.is-visible via main.js) ─── */
+
+.el-reveal,
+[data-reveal] {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s var(--el-ease, ease), transform 0.6s var(--el-ease, ease);
+  transform: translateY(18px);
+  transition:
+    opacity var(--el-duration-reveal) var(--el-ease-out),
+    transform var(--el-duration-reveal) var(--el-ease-out);
+  will-change: opacity, transform;
 }
 
-.el-reveal.is-visible {
+.el-reveal.is-visible,
+[data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.el-reveal--delay-1 { transition-delay: 0.1s; }
-.el-reveal--delay-2 { transition-delay: 0.2s; }
-.el-reveal--delay-3 { transition-delay: 0.3s; }
+.el-reveal--delay-1,
+[data-reveal-delay="1"] { transition-delay: 80ms; }
+.el-reveal--delay-2,
+[data-reveal-delay="2"] { transition-delay: 160ms; }
+.el-reveal--delay-3,
+[data-reveal-delay="3"] { transition-delay: 240ms; }
+.el-reveal--delay-4,
+[data-reveal-delay="4"] { transition-delay: 320ms; }
 
-/* Hover utilities */
+/* ─── Hero entrance (load, no JS) ─── */
+
+.el-hero-cine__content > *,
+.el-hero-announce__inner > *,
+.el-hero-overlap__panel > *,
+.el-hero-asym__content > *,
+.el-hero-mesh__inner > *,
+.el-hero-editorial__inner > *,
+.el-hero-profile__inner > *,
+.el-hero-bleed__content > *,
+.el-hero-split__copy > *,
+.el-hero-minimal__inner > * {
+  opacity: 0;
+  animation: el-fade-up 0.65s var(--el-ease-out) both;
+}
+
+.el-hero-cine__content > *:nth-child(1),
+.el-hero-announce__inner > *:nth-child(1),
+.el-hero-overlap__panel > *:nth-child(1),
+.el-hero-asym__content > *:nth-child(1),
+.el-hero-mesh__inner > *:nth-child(1),
+.el-hero-editorial__inner > *:nth-child(1),
+.el-hero-profile__inner > *:nth-child(1),
+.el-hero-bleed__content > *:nth-child(1),
+.el-hero-split__copy > *:nth-child(1),
+.el-hero-minimal__inner > *:nth-child(1) { animation-delay: 0.05s; }
+
+.el-hero-cine__content > *:nth-child(2),
+.el-hero-announce__inner > *:nth-child(2),
+.el-hero-overlap__panel > *:nth-child(2),
+.el-hero-asym__content > *:nth-child(2),
+.el-hero-mesh__inner > *:nth-child(2),
+.el-hero-editorial__inner > *:nth-child(2),
+.el-hero-profile__inner > *:nth-child(2),
+.el-hero-bleed__content > *:nth-child(2),
+.el-hero-split__copy > *:nth-child(2),
+.el-hero-minimal__inner > *:nth-child(2) { animation-delay: 0.12s; }
+
+.el-hero-cine__content > *:nth-child(3),
+.el-hero-announce__inner > *:nth-child(3),
+.el-hero-overlap__panel > *:nth-child(3),
+.el-hero-asym__content > *:nth-child(3),
+.el-hero-mesh__inner > *:nth-child(3),
+.el-hero-editorial__inner > *:nth-child(3),
+.el-hero-profile__inner > *:nth-child(3),
+.el-hero-bleed__content > *:nth-child(3),
+.el-hero-split__copy > *:nth-child(3),
+.el-hero-minimal__inner > *:nth-child(3) { animation-delay: 0.2s; }
+
+.el-hero-cine__content > *:nth-child(4),
+.el-hero-announce__inner > *:nth-child(4),
+.el-hero-overlap__panel > *:nth-child(4),
+.el-hero-asym__content > *:nth-child(4),
+.el-hero-mesh__inner > *:nth-child(4),
+.el-hero-editorial__inner > *:nth-child(4),
+.el-hero-profile__inner > *:nth-child(4),
+.el-hero-bleed__content > *:nth-child(4),
+.el-hero-split__copy > *:nth-child(4),
+.el-hero-minimal__inner > *:nth-child(4) { animation-delay: 0.28s; }
+
+.el-hero-cine__content > *:nth-child(n+5),
+.el-hero-announce__inner > *:nth-child(n+5),
+.el-hero-overlap__panel > *:nth-child(n+5),
+.el-hero-asym__content > *:nth-child(n+5),
+.el-hero-mesh__inner > *:nth-child(n+5),
+.el-hero-editorial__inner > *:nth-child(n+5),
+.el-hero-profile__inner > *:nth-child(n+5),
+.el-hero-bleed__content > *:nth-child(n+5),
+.el-hero-split__copy > *:nth-child(n+5),
+.el-hero-minimal__inner > *:nth-child(n+5) { animation-delay: 0.36s; }
+
+/* ─── Gallery stagger ─── */
+
+.el-gallery-grid__items > *,
+.el-gallery-stagger__col > *,
+.el-gallery-bento__grid > *,
+.el-gallery-masonry__wall > *,
+.el-gallery-reels__track > *,
+.el-gallery-featured__row > *,
+.el-gallery-rail__track > *,
+.el-card-post-grid__items > * {
+  opacity: 0;
+  animation: el-fade-up var(--el-duration-slow) var(--el-ease-out) both;
+}
+
+.el-gallery-grid__items > *:nth-child(1),
+.el-gallery-stagger__col > *:nth-child(1),
+.el-gallery-bento__grid > *:nth-child(1),
+.el-gallery-masonry__wall > *:nth-child(1),
+.el-gallery-reels__track > *:nth-child(1),
+.el-gallery-featured__row > *:nth-child(1),
+.el-gallery-rail__track > *:nth-child(1),
+.el-card-post-grid__items > *:nth-child(1) { animation-delay: 0.05s; }
+
+.el-gallery-grid__items > *:nth-child(2),
+.el-gallery-stagger__col > *:nth-child(2),
+.el-gallery-bento__grid > *:nth-child(2),
+.el-gallery-masonry__wall > *:nth-child(2),
+.el-gallery-reels__track > *:nth-child(2),
+.el-gallery-featured__row > *:nth-child(2),
+.el-gallery-rail__track > *:nth-child(2),
+.el-card-post-grid__items > *:nth-child(2) { animation-delay: 0.1s; }
+
+.el-gallery-grid__items > *:nth-child(3),
+.el-gallery-stagger__col > *:nth-child(3),
+.el-gallery-bento__grid > *:nth-child(3),
+.el-gallery-masonry__wall > *:nth-child(3),
+.el-gallery-reels__track > *:nth-child(3),
+.el-gallery-featured__row > *:nth-child(3),
+.el-gallery-rail__track > *:nth-child(3),
+.el-card-post-grid__items > *:nth-child(3) { animation-delay: 0.15s; }
+
+.el-gallery-grid__items > *:nth-child(4),
+.el-gallery-stagger__col > *:nth-child(4),
+.el-gallery-bento__grid > *:nth-child(4),
+.el-gallery-masonry__wall > *:nth-child(4),
+.el-gallery-reels__track > *:nth-child(4),
+.el-gallery-featured__row > *:nth-child(4),
+.el-gallery-rail__track > *:nth-child(4),
+.el-card-post-grid__items > *:nth-child(4) { animation-delay: 0.2s; }
+
+.el-gallery-grid__items > *:nth-child(5),
+.el-gallery-stagger__col > *:nth-child(5),
+.el-gallery-bento__grid > *:nth-child(5),
+.el-gallery-masonry__wall > *:nth-child(5),
+.el-gallery-reels__track > *:nth-child(5),
+.el-gallery-featured__row > *:nth-child(5),
+.el-gallery-rail__track > *:nth-child(5),
+.el-card-post-grid__items > *:nth-child(5) { animation-delay: 0.25s; }
+
+.el-gallery-grid__items > *:nth-child(6),
+.el-gallery-stagger__col > *:nth-child(6),
+.el-gallery-bento__grid > *:nth-child(6),
+.el-gallery-masonry__wall > *:nth-child(6),
+.el-gallery-reels__track > *:nth-child(6),
+.el-gallery-featured__row > *:nth-child(6),
+.el-gallery-rail__track > *:nth-child(6),
+.el-card-post-grid__items > *:nth-child(6) { animation-delay: 0.3s; }
+
+.el-gallery-grid__items > *:nth-child(n+7),
+.el-gallery-stagger__col > *:nth-child(n+7),
+.el-gallery-bento__grid > *:nth-child(n+7),
+.el-gallery-masonry__wall > *:nth-child(n+7),
+.el-gallery-reels__track > *:nth-child(n+7),
+.el-gallery-featured__row > *:nth-child(n+7),
+.el-gallery-rail__track > *:nth-child(n+7),
+.el-card-post-grid__items > *:nth-child(n+7) { animation-delay: 0.35s; }
+
+/* ─── Stat counter feel ─── */
+
+.el-about-stats__item {
+  animation: el-stat-enter var(--el-duration-slow) var(--el-ease-out) both;
+}
+
+.el-about-stats__item:nth-child(1) { animation-delay: 0.08s; }
+.el-about-stats__item:nth-child(2) { animation-delay: 0.16s; }
+.el-about-stats__item:nth-child(3) { animation-delay: 0.24s; }
+
+.el-about-stats__num,
+.el-card-stat__num {
+  display: inline-block;
+  animation: el-scale-in var(--el-duration-slow) var(--el-ease-out) both;
+  animation-delay: 0.15s;
+}
+
+/* ─── Link underline transitions ─── */
+
+.el-btn--text,
+.el-nav a:not(.el-btn),
+.el-section-head a {
+  position: relative;
+  text-decoration: none;
+}
+
+.el-btn--text::after,
+.el-nav a:not(.el-btn)::after,
+.el-section-head a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--el-duration) var(--el-ease-out);
+}
+
+.el-btn--text:hover::after,
+.el-nav a:not(.el-btn):hover::after,
+.el-section-head a:hover::after {
+  transform: scaleX(1);
+}
+
+.el-btn--text span {
+  transition: transform var(--el-duration) var(--el-ease-out);
+}
+
+.el-btn--text:hover span {
+  transform: translateX(4px);
+}
+
+/* ─── Button micro-interactions ─── */
+
+.el-btn {
+  transition:
+    transform var(--el-duration) var(--el-ease-out),
+    box-shadow var(--el-duration) var(--el-ease-out),
+    background var(--el-duration) var(--el-ease-snap),
+    border-color var(--el-duration) var(--el-ease-snap),
+    opacity var(--el-duration-micro) var(--el-ease-snap);
+}
+
+.el-btn:hover {
+  transform: translateY(-2px);
+}
+
+.el-btn:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: var(--el-duration-micro);
+}
+
+/* ─── Card & gallery hover ─── */
+
 .el-hover-lift {
-  transition: transform var(--el-duration, 250ms) var(--el-ease, ease);
+  transition: transform var(--el-duration) var(--el-ease-out), box-shadow var(--el-duration) var(--el-ease-out);
 }
 
 .el-hover-lift:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 .el-hover-scale img,
-.el-hover-scale video {
-  transition: transform var(--el-duration-slow, 400ms) var(--el-ease, ease);
+.el-hover-scale video,
+.el-gallery-grid__items img,
+.el-gallery-stagger__cell img,
+.el-gallery-bento__grid img,
+.el-card-post-grid__items img {
+  transition: transform var(--el-duration-slow) var(--el-ease-out);
 }
 
 .el-hover-scale:hover img,
-.el-hover-scale:hover video {
+.el-hover-scale:hover video,
+.el-gallery-grid__items a:hover img,
+.el-gallery-stagger__cell:hover img,
+.el-gallery-bento__grid a:hover img,
+.el-card-post-grid__items a:hover img {
   transform: scale(1.04);
 }
 
-/* Reduced motion */
+/* ─── Marquee / ticker ─── */
+
+.el-marquee__track,
+.el-ticker-track {
+  animation: el-marquee-scroll 28s linear infinite;
+}
+
+/* ─── Parallax-lite (CSS only) ─── */
+
+.el-media-parallax__bg,
+.el-parallax-lite {
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  will-change: transform;
+}
+
+.el-hero-mesh__bg {
+  animation: el-mesh-drift 24s var(--el-ease-in-out) infinite alternate;
+}
+
+@media (max-width: 768px) {
+  .el-media-parallax__bg,
+  .el-parallax-lite {
+    background-attachment: scroll;
+  }
+}
+
+/* ─── Utility classes ─── */
+
+.el-animate-fade-in { animation: el-fade-in var(--el-duration-slow) var(--el-ease-out) both; }
+.el-animate-fade-up { animation: el-fade-up var(--el-duration-slow) var(--el-ease-out) both; }
+.el-animate-scale-in { animation: el-scale-in var(--el-duration-slow) var(--el-ease-out) both; }
+
+.el-stagger > * {
+  opacity: 0;
+  animation: el-fade-up var(--el-duration-slow) var(--el-ease-out) both;
+}
+
+.el-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.el-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.el-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.el-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.el-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.el-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.el-stagger > *:nth-child(n+7) { animation-delay: 0.35s; }
+
+/* ─── Reduced motion ─── */
+
 @media (prefers-reduced-motion: reduce) {
   .el-reveal,
-  .el-marquee__track,
-  .el-hover-lift,
-  .el-hover-scale img,
-  .el-hover-scale video {
+  [data-reveal],
+  .el-hero-cine__content > *,
+  .el-hero-announce__inner > *,
+  .el-hero-overlap__panel > *,
+  .el-hero-asym__content > *,
+  .el-hero-mesh__inner > *,
+  .el-hero-editorial__inner > *,
+  .el-hero-profile__inner > *,
+  .el-hero-bleed__content > *,
+  .el-hero-split__copy > *,
+  .el-hero-minimal__inner > *,
+  .el-gallery-grid__items > *,
+  .el-gallery-stagger__col > *,
+  .el-gallery-bento__grid > *,
+  .el-gallery-masonry__wall > *,
+  .el-gallery-reels__track > *,
+  .el-gallery-featured__row > *,
+  .el-gallery-rail__track > *,
+  .el-card-post-grid__items > *,
+  .el-about-stats__item,
+  .el-about-stats__num,
+  .el-card-stat__num,
+  .el-stagger > *,
+  .el-animate-fade-in,
+  .el-animate-fade-up,
+  .el-animate-scale-in {
     animation: none !important;
     transition: none !important;
     transform: none !important;
     opacity: 1 !important;
+  }
+
+  .el-marquee__track,
+  .el-ticker-track,
+  .el-hero-mesh__bg {
+    animation: none !important;
+  }
+
+  .el-hover-lift:hover,
+  .el-btn:hover,
+  .el-btn:active {
+    transform: none !important;
+  }
+
+  .el-hover-scale:hover img,
+  .el-hover-scale:hover video,
+  .el-gallery-grid__items a:hover img,
+  .el-gallery-stagger__cell:hover img,
+  .el-gallery-bento__grid a:hover img,
+  .el-card-post-grid__items a:hover img {
+    transform: none !important;
   }
 }

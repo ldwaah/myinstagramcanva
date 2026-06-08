@@ -40,9 +40,12 @@
 
   /* Transitions */
   --el-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --el-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --el-ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
   --el-duration-fast: 150ms;
   --el-duration: 250ms;
   --el-duration-slow: 400ms;
+  --el-duration-reveal: 600ms;
 
   /* Typography scale (rem) */
   --el-text-xs: 0.75rem;
@@ -65,4 +68,18 @@
   --el-z-nav: 100;
   --el-z-overlay: 200;
   --el-z-modal: 300;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --el-section-x: clamp(16px, 4vw, 24px);
+    --el-grid-gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --el-section-x: 16px;
+    --el-grid-gap: 8px;
+  }
 }

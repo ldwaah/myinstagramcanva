@@ -144,8 +144,35 @@
   var year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();
 
-  // Animated stat counters
-  document.querySelectorAll(".stat-num[data-count]").forEach(function (el) {
+  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Scroll reveal for sections and element-library sites
+  if (!reducedMotion) {
+    var revealEls = document.querySelectorAll("[data-reveal], .el-reveal, .section");
+    if (revealEls.length) {
+      var revealObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      );
+      revealEls.forEach(function (el) {
+        revealObserver.observe(el);
+      });
+    }
+  } else {
+    document.querySelectorAll("[data-reveal], .el-reveal, .stat").forEach(function (el) {
+      el.classList.add("is-visible");
+    });
+  }
+
+  // Animated stat counters — only when visible
+  function animateStat(el) {
     var target = parseFloat(el.getAttribute("data-count") || "0");
     if (!target) {
       el.textContent = "0";
@@ -164,5 +191,33 @@
       if (p < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
+  }
+
+  document.querySelectorAll(".stat-num[data-count]").forEach(function (el) {
+    if (reducedMotion) {
+      var t = parseFloat(el.getAttribute("data-count") || "0");
+      el.textContent = t % 1 !== 0 ? t.toFixed(1) : String(Math.round(t));
+      return;
+    }
+
+    var stat = el.closest(".stat");
+    if (!stat) {
+      animateStat(el);
+      return;
+    }
+
+    var statObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            animateStat(el);
+            statObserver.disconnect();
+          }
+        });
+      },
+      { threshold: 0.3 },
+    );
+    statObserver.observe(stat);
   });
 })();
