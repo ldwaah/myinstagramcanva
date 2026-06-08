@@ -1,7 +1,7 @@
 # My Instagram Canva — Netlify monorepo deploy (apps/web)
 
 [build]
-  command = "NPM_CONFIG_PRODUCTION=false npm ci --include=optional && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
+  command = "bash scripts/netlify-ci-build.sh"
   publish = "apps/web/.next"
 
 [build.environment]
