@@ -1,8 +1,9 @@
 # My Instagram Canva — Netlify monorepo deploy (apps/web)
-# https://docs.netlify.com/frameworks/next-js/overview/
+# https://docs.netlify.com/configure-builds/monorepos/
+# Root netlify.toml only — do not add netlify.toml under templates/ (use .example).
 
 [build]
-  command = "npm install && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
+  command = "npm ci --include=optional && npm run db:generate && npm run build -w web"
   publish = "apps/web/.next"
 
 [build.environment]
