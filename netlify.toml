@@ -1,10 +1,9 @@
 # My Instagram Canva — Netlify monorepo deploy (apps/web)
-# https://docs.netlify.com/configure-builds/monorepos/
-# base = apps/web selects the web workspace on CI (avoids "Projects detected" exit 2).
+# base = apps/web selects the web workspace on CI builders.
 
 [build]
   base = "apps/web"
-  command = "cd ../.. && NPM_CONFIG_PRODUCTION=false npm ci --include=optional --include=dev && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
+  command = "cd ../.. && NPM_CONFIG_PRODUCTION=false npm ci --include=optional && npm install --include=optional -w web && npm run db:generate && npm run build -w web"
   publish = ".next"
 
 [build.environment]
@@ -15,4 +14,3 @@
   package = "@netlify/plugin-nextjs"
 
 # Tenant subdomains ({username}.myinstagramcanva.com) are rewritten by Next.js middleware.
-# Add myinstagramcanva.com, www.myinstagramcanva.com, and *.myinstagramcanva.com in Netlify → Domain management.
