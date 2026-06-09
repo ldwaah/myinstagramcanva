@@ -269,7 +269,7 @@ async function buildBundle(spec: ExampleSiteSpec, options: { root: string; appUr
     bundledCount += 1;
   }
 
-  const bundledPosts = [];
+  const bundledPosts: Array<(typeof posts)[number] & { imageUrl: string }> = [];
   for (let i = 0; i < posts.length; i++) {
     const post = posts[i];
     let imageUrl = post.imageUrl;
@@ -285,7 +285,7 @@ async function buildBundle(spec: ExampleSiteSpec, options: { root: string; appUr
     bundledPosts.push({ ...post, imageUrl });
   }
 
-  const portfolioPosts = [];
+  const portfolioPosts: Array<(typeof bundledPosts)[number]> = [];
   for (let i = 0; i < bundledPosts.length; i++) {
     const post = bundledPosts[i];
     const relPath = `assets/portfolio/portfolio-${String(i + 1).padStart(2, "0")}.jpg`;
