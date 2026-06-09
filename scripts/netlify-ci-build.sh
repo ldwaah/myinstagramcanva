@@ -14,9 +14,9 @@ ls -la netlify.toml scripts/netlify-ci-build.sh 2>&1 || true
 
 npm ci --include=optional
 npm run db:generate
-if [[ -n "${DATABASE_URL:-}" ]]; then
+if [[ "${RUN_DB_MIGRATE_ON_BUILD:-}" == "true" && -n "${DATABASE_URL:-}" ]]; then
   npm run migrate -w @mic/db
 else
-  echo "[netlify-ci-build] DATABASE_URL unset; skipping prisma migrate deploy."
+  echo "[netlify-ci-build] Skipping prisma migrate deploy (set RUN_DB_MIGRATE_ON_BUILD=true to enable)."
 fi
 npm run build -w web
