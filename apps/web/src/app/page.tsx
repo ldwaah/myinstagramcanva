@@ -3,8 +3,9 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HeroWebsitePreview } from "@/components/landing/HeroWebsitePreview";
+import { HomeFaqAccordion } from "@/components/landing/HomeFaqAccordion";
 import { HomeStepFlow } from "@/components/landing/HomeStepFlow";
-import { HOME_EXAMPLES, HOME_FAQ, TRIAL_COPY } from "@/lib/pricing";
+import { HOME_EXAMPLES, TRIAL_COPY } from "@/lib/pricing";
 import { buildHomeMetadata, buildReferralMetadata } from "@/lib/seo";
 
 type PageProps = {
@@ -77,14 +78,7 @@ export default function HomePage() {
       <section className="home-faq">
         <div className="mic-container home-faq__inner">
           <h2 className="home-faq__title">Frequently asked questions</h2>
-          <dl className="home-faq__list">
-            {HOME_FAQ.map((item) => (
-              <div key={item.question} className="home-faq__item">
-                <dt>{item.question}</dt>
-                <dd>{item.answer}</dd>
-              </div>
-            ))}
-          </dl>
+          <HomeFaqAccordion />
           <p className="home-faq__pricing">
             Compare plans on our{" "}
             <Link href="/pricing">pricing page</Link>.
