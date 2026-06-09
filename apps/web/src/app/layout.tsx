@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import "./globals.css";
+import "./landing-premium.css";
 import { ReferralTracker } from "@/components/ReferralTracker";
 import { buildRootMetadata, buildViewport, organizationJsonLd } from "@/lib/seo";
 
