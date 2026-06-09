@@ -29,32 +29,41 @@ export function getTenantPublicUrl(username: string): string {
   return `${protocol}://${buildTenantSubdomain(username)}`;
 }
 
-/** Canonical live tenant URL (subdomain). */
+/** Canonical live tenant URL shown to users. */
 export function getTenantLiveUrl(username: string): string {
-  return getTenantPublicUrl(username);
+  return getTenantResolvableUrl(username);
+}
+
+/** True when *.rootDomain wildcard DNS is configured (set in Netlify env). */
+export function tenantSubdomainsEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_TENANT_SUBDOMAINS_ENABLED === "true";
 }
 
 function shouldUsePathFallback(): boolean {
+  if (tenantSubdomainsEnabled()) return false;
   try {
     const appHost = new URL(env.appUrl).host;
-    if (isVercelAppHost(appHost)) return true;
+    return isMainAppHost(appHost);
   } catch {
-    /* fall through */
+    return env.rootDomain.includes("localhost");
   }
-  return env.rootDomain.includes("localhost");
 }
 
-/**
- * Preview link shown in the dashboard.
- * Production: https://{username}.{rootDomain}
- * Vercel / local dev fallback: {appUrl}/site/{username}
- */
-export function getTenantPreviewUrl(username: string): string {
+/** URL that always resolves in the browser for the current deployment. */
+export function getTenantResolvableUrl(username: string): string {
   if (shouldUsePathFallback()) {
     return `${env.appUrl}/site/${username}`;
   }
-
   return getTenantPublicUrl(username);
+}
+
+/**
+ * Preview link shown in the dashboard and generation flow.
+ * Path fallback: {appUrl}/site/{username} (works without wildcard DNS)
+ * Subdomain: https://{username}.{rootDomain} (requires *.rootDomain on Netlify)
+ */
+export function getTenantPreviewUrl(username: string): string {
+  return getTenantResolvableUrl(username);
 }
 
 export function parseTenantUsernameFromHost(host: string, rootDomain: string): string | null {

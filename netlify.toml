@@ -11,4 +11,7 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Tenant subdomains ({username}.myinstagramcanva.com) are rewritten by Next.js middleware.
+# Tenant subdomains ({username}.myinstagramcanva.com) need wildcard DNS + Netlify domain alias.
+# Until NEXT_PUBLIC_TENANT_SUBDOMAINS_ENABLED=true, the app shows /site/{username} URLs.
+# DNS (at registrar or Cloudflare): CNAME * -> <site-name>.netlify.app
+# Netlify UI: Domain management -> Add domain alias -> *.myinstagramcanva.com
