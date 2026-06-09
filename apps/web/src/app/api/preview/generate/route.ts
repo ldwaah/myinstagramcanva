@@ -7,7 +7,7 @@ import {
   sanitizeInstagramUsername,
   validateInstagramUsername,
 } from "@/lib/instagram-username";
-import { buildTenantSubdomain } from "@/lib/site-urls";
+import { buildTenantSubdomain, getTenantPreviewUrl } from "@/lib/site-urls";
 import { getOrCreatePreviewUser } from "@/lib/preview-user";
 import { runInBackground } from "@/lib/background-task";
 import { assertDatabaseReady, formatDbError } from "@/lib/db-health";
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
       ready,
       failed: job?.status === JobStatus.FAILED,
       error: job?.status === JobStatus.FAILED ? job.error : undefined,
-      previewUrl: ready ? `/site/${site.username}/` : undefined,
+      previewUrl: ready ? getTenantPreviewUrl(site.username) : undefined,
     });
   } catch (err) {
     console.error("[preview/generate]", err);

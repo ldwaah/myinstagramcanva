@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getTenantPreviewUrl, tenantSubdomainsEnabled } from "@/lib/site-urls";
 
 interface DomainModalProps {
   open: boolean;
@@ -14,8 +15,11 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
   const rootDomain =
     process.env.NEXT_PUBLIC_ROOT_DOMAIN?.trim() || "myinstagramcanva.com";
   const cnameTarget = "sites.myinstagramcanva.com";
+  const liveUrl = username ? getTenantPreviewUrl(username) : undefined;
   const defaultHost = username
-    ? `${username}.${rootDomain}`
+    ? tenantSubdomainsEnabled()
+      ? `${username}.${rootDomain}`
+      : liveUrl ?? `https://${rootDomain}/site/${username}`
     : `you.${rootDomain}`;
 
   return (

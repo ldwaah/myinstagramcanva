@@ -125,7 +125,10 @@ export default function AffiliatesPage() {
               <Link href="/terms#affiliates">Terms &amp; Conditions (affiliates section)</Link>.
             </p>
             <div className="affiliate-cta">
-              <Link href="/signup?intent=affiliate" className="hero-create-btn landing-cta-shimmer">
+              <Link
+                href="/signup?intent=affiliate"
+                className="hero-create-btn landing-cta-shimmer affiliate-cta__btn"
+              >
                 <span className="hero-create-btn__text">Get your referral link</span>
               </Link>
               <p className="affiliate-cta__note">
