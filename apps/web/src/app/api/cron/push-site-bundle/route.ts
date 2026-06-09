@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@mic/db";
 import { publishSiteBundle } from "@/lib/storage";
-import { commitSiteFiles } from "@/lib/github";
+import { bundleUnchanged, commitSiteFiles, publishCommitMessage } from "@/lib/github";
 
 /**
  * Push a pre-generated site bundle (from local IG fetch / scripts/push-site-bundle.mjs).
@@ -41,11 +41,19 @@ export async function POST(req: Request) {
     /* optional on serverless */
   }
 
-  const commitSha = await commitSiteFiles(
-    username,
-    Object.entries(body.files).map(([path, content]) => ({ path, content })),
-    `Push bundle for @${username} (local IG sync)`,
-  );
+  const nextVersion = (site.siteContent?.version ?? 0) + 1;
+  let commitSha = site.siteContent?.commitSha ?? null;
+
+  if (!bundleUnchanged(site.siteContent?.bundle, body.files)) {
+    commitSha = await commitSiteFiles(
+      username,
+      Object.entries(body.files).map(([path, content]) => ({ path, content })),
+      publishCommitMessage(username, nextVersion)
+    );
+    if (!commitSha) {
+      console.warn(`[push-site-bundle] GitHub publish unavailable for @${username} — saving to database`);
+    }
+  }
 
   await prisma.siteContent.upsert({
     where: { siteId: site.id },
@@ -71,7 +79,7 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     username,
-    version: (site.siteContent?.version ?? 0) + 1,
+    version: nextVersion,
     mediaInBundle: Object.keys(body.files).filter((k) => k.startsWith("assets/")).length,
   });
 }

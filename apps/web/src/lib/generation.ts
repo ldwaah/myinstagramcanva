@@ -19,7 +19,7 @@ import {
 import { classifyNiche } from "./niche";
 import { env } from "./env";
 import { publishSiteBundle, downloadUrl } from "./storage";
-import { commitSiteFiles } from "./github";
+import { bundleUnchanged, commitSiteFiles, publishCommitMessage } from "./github";
 import { readTemplateFile } from "./template-assets";
 import { bundleRemoteAsset } from "./bundle-media";
 
@@ -347,11 +347,23 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       /* filesystem optional on serverless */
     }
 
-    const commitSha = await commitSiteFiles(
-      site.username,
-      Object.entries(files).map(([p, c]) => ({ path: p, content: c })),
-      `${options?.sync ? "Sync" : "Generate"} site for @${site.username}`
-    );
+    const nextVersion = (existingContent?.version ?? 0) + 1;
+    let commitSha = existingContent?.commitSha ?? null;
+
+    if (!bundleUnchanged(existingContent?.bundle, files)) {
+      commitSha = await commitSiteFiles(
+        site.username,
+        Object.entries(files).map(([p, c]) => ({ path: p, content: c })),
+        publishCommitMessage(site.username, nextVersion)
+      );
+      if (!commitSha) {
+        console.warn(
+          `[generation] GitHub publish unavailable for @${site.username} — site saved to database`
+        );
+      }
+    } else {
+      console.log(`[generation] Bundle unchanged for @${site.username}, skipping GitHub commit`);
+    }
 
     await prisma.siteContent.upsert({
       where: { siteId },
@@ -394,7 +406,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
       username: site.username,
       mediaCount: mediaItems.length,
       syncedAt: new Date().toISOString(),
-      version: (existingContent?.version ?? 0) + 1,
+      version: nextVersion,
     };
   } catch (err) {
     await prisma.generationJob.update({

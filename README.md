@@ -68,6 +68,9 @@ Create **two** repositories:
    | `NEXT_PUBLIC_APP_URL` | `https://myinstagramcanva.com` (main app) |
    | `NEXT_PUBLIC_ROOT_DOMAIN` | `myinstagramcanva.com` (tenant subdomains) |
    | `INSTAGRAM_PROXY_URL` | **Recommended on Netlify.** Instagram blocks datacenter IPs; set a proxy that accepts `?url=` (see `.env.example`). Without it, first-time previews may be sparse; existing bundles are preserved on failed sync. |
+   | `GITHUB_TOKEN` | PAT with `repo` scope — publishes `sites/{username}/` after each generation |
+   | `GITHUB_SITES_REPO` | e.g. `youruser/myinstagramcanva-sites` (see [`docs/publish-architecture.md`](docs/publish-architecture.md)) |
+   | `GITHUB_SITES_BRANCH` | Usually `main` |
 
 5. **Apply the database schema** (once, from your machine):
    ```bash

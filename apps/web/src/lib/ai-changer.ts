@@ -1,7 +1,7 @@
 import { prisma } from "@mic/db";
 import { decrypt } from "./encryption";
 import { env } from "./env";
-import { commitSiteFiles } from "./github";
+import { bundleUnchanged, commitSiteFiles, publishCommitMessage } from "./github";
 import { publishSiteBundle } from "./storage";
 import { renderSiteHtml, renderFunnelHtml, type SiteContentData } from "@mic/generator";
 import fs from "fs/promises";
@@ -110,16 +110,43 @@ export async function applyAiEdit(
     files["offer/index.html"] = renderFunnelHtml(updated, siteId, env.appUrl);
   }
 
-  await publishSiteBundle(site.username, files);
-  const commitSha = await commitSiteFiles(
-    site.username,
-    Object.entries(files).map(([p, c]) => ({ path: p, content: c })),
-    `AI edit: ${prompt.slice(0, 80)}`
-  );
+  try {
+    await publishSiteBundle(site.username, files);
+  } catch {
+    /* filesystem optional on serverless */
+  }
+
+  const nextVersion = (site.siteContent.version ?? 0) + 1;
+  let commitSha = site.siteContent.commitSha ?? null;
+  let existingBundle: Record<string, string> = {};
+  if (site.siteContent.bundle) {
+    try {
+      existingBundle = JSON.parse(site.siteContent.bundle) as Record<string, string>;
+    } catch {
+      existingBundle = {};
+    }
+  }
+  const mergedBundle = { ...existingBundle, ...files };
+
+  if (!bundleUnchanged(site.siteContent.bundle, mergedBundle)) {
+    commitSha = await commitSiteFiles(
+      site.username,
+      Object.entries(mergedBundle).map(([p, c]) => ({ path: p, content: c })),
+      publishCommitMessage(site.username, nextVersion)
+    );
+    if (!commitSha) {
+      console.warn(`[ai-changer] GitHub publish unavailable for @${site.username} — saving to database`);
+    }
+  }
 
   await prisma.siteContent.update({
     where: { siteId },
-    data: { content: siteJson, version: { increment: 1 }, commitSha: commitSha || undefined },
+    data: {
+      content: siteJson,
+      bundle: JSON.stringify(mergedBundle),
+      version: { increment: 1 },
+      commitSha: commitSha || undefined,
+    },
   });
 
   if (access.usePlatformKey) {

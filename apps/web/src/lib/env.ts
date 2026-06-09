@@ -44,8 +44,8 @@ export const env = {
   openaiKey: process.env.OPENAI_API_KEY || "",
   encryptionKey: process.env.ENCRYPTION_KEY ?? "",
   githubToken: process.env.GITHUB_TOKEN || "",
-  githubRepo: process.env.GITHUB_SITES_REPO || "",
-  githubBranch: process.env.GITHUB_SITES_BRANCH || "main",
+  githubRepo: process.env.GITHUB_SITES_REPO || process.env.GITHUB_REPO || "",
+  githubBranch: process.env.GITHUB_SITES_BRANCH || process.env.GITHUB_BRANCH || "main",
   r2: {
     accountId: process.env.R2_ACCOUNT_ID || "",
     accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
