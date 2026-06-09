@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
-import { TRIAL_DAYS } from "@/lib/trial-constants";
+import { TRIAL_TAGLINE } from "@/lib/trial-constants";
 import { BrandQuiz } from "@/components/landing/BrandQuiz";
 import type { QuizAnswers } from "@/lib/brand-quiz";
 
@@ -226,9 +226,7 @@ export function HomeStepFlow() {
             </a>
           )}
           <p className="home-step-flow__trial">
-            {loggedIn
-              ? "Ready to publish from your dashboard"
-              : `${TRIAL_DAYS}-day free trial when you go live`}
+            {loggedIn ? "Ready to publish from your dashboard" : TRIAL_TAGLINE}
           </p>
         </div>
       )}
@@ -251,8 +249,7 @@ export function HomeStepFlow() {
               </>
             ) : (
               <>
-                Card on file · cancel anytime before trial ends ·{" "}
-                <Link href="/pricing">see pricing</Link>
+                {TRIAL_TAGLINE} · <Link href="/pricing">see pricing</Link>
               </>
             )}
           </p>

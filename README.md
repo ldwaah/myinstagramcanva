@@ -35,10 +35,10 @@ Starter (£27) does **not** include the embedded lead form.
 
 | Tier | Price | Includes |
 |------|-------|----------|
-| **Starter** | £27 | AI-generated site, subdomain hosting |
-| **Tailored** | £54 | Embedded lead capture form, lead dashboard, email alert on new lead, **we design it for you** (48h) |
-| **Pro** | £101 | Tailored + booking calendar + marketing funnel page |
-| **Studio** | £299 | Pro + CRM + mass email & SMS campaigns (opt-in leads only) |
+| **Starter** | £27 | AI-generated site from Instagram, subdomain hosting |
+| **Creator** | £59 | Typeform enquiry form, email notifications, extra sections |
+| **Pro** | £149 | Done-for-you setup, custom domain, booking link or embed |
+| **Studio** | £499 | Full setup, lead capture journey, CRM and basic email automation |
 | AI Changer BYOK | £10/mo | Unlimited AI edits with your OpenAI key |
 | AI Changer Managed | £18/mo | 30 AI edits/month (platform key) |
 | AI edit top-up | £5 | 10 extra edits |

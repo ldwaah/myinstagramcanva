@@ -10,7 +10,7 @@ export type FeatureKey =
   | "ai_collaborator"
   | "domains";
 
-const TAILORED_PLUS: (SiteTier | null | undefined)[] = ["TAILORED", "PRO", "STUDIO"];
+const CREATOR_PLUS: (SiteTier | null | undefined)[] = ["CREATOR", "PRO", "STUDIO"];
 const PRO_PLUS: (SiteTier | null | undefined)[] = ["PRO", "STUDIO"];
 
 export function hasPaidTier(tier: SiteTier | string | null | undefined): boolean {
@@ -26,17 +26,19 @@ export function canUseFeature(
     case "website":
       return true;
     case "contact_form":
+      return CREATOR_PLUS.includes(tier as SiteTier);
     case "crm":
-      return TAILORED_PLUS.includes(tier as SiteTier);
+      return tier === "STUDIO";
     case "calendar":
-    case "campaigns":
       return PRO_PLUS.includes(tier as SiteTier);
+    case "campaigns":
+      return tier === "STUDIO";
     case "affiliates":
       return hasPaidTier(tier);
     case "ai_collaborator":
       return hasCollaboratorSub;
     case "domains":
-      return hasPaidTier(tier);
+      return PRO_PLUS.includes(tier as SiteTier);
     default:
       return false;
   }
@@ -48,26 +50,26 @@ export const FEATURE_META: Record<
 > = {
   website: { title: "Your website", description: "Live site with My Posts gallery.", upgradeLabel: "" },
   contact_form: {
-    title: "Contact form",
-    description: "Embedded lead capture on your site.",
-    upgradeLabel: "Upgrade to Tailored",
-    minTier: "TAILORED",
+    title: "Enquiry form",
+    description: "Embedded Typeform enquiry form on your site.",
+    upgradeLabel: "Upgrade to Creator",
+    minTier: "CREATOR",
   },
   crm: {
-    title: "Leads & CRM",
-    description: "View and manage form submissions.",
-    upgradeLabel: "Upgrade to Tailored",
-    minTier: "TAILORED",
+    title: "Leads and CRM",
+    description: "View and manage form submissions and contact lists.",
+    upgradeLabel: "Upgrade to Studio",
+    minTier: "STUDIO",
   },
   calendar: {
-    title: "Booking calendar",
-    description: "Let clients book sessions online.",
+    title: "Booking link",
+    description: "Booking link or embed on your website.",
     upgradeLabel: "Upgrade to Pro",
     minTier: "PRO",
   },
   campaigns: {
-    title: "Email & SMS campaigns",
-    description: "Reach opted-in leads at scale.",
+    title: "Email automation",
+    description: "Basic email automation for opted-in leads.",
     upgradeLabel: "Upgrade to Studio",
     minTier: "STUDIO",
   },
@@ -78,12 +80,13 @@ export const FEATURE_META: Record<
   },
   ai_collaborator: {
     title: "AI Collaborator",
-    description: "Unlimited AI edits to your website copy and design.",
+    description: "AI edits to your website copy and design.",
     upgradeLabel: "Add AI Collaborator",
   },
   domains: {
     title: "Custom domain",
     description: "Connect your own domain name.",
-    upgradeLabel: "Upgrade any package",
+    upgradeLabel: "Upgrade to Pro",
+    minTier: "PRO",
   },
 };

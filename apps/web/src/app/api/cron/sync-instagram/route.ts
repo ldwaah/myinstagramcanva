@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const paidTiers: SiteTier[] = [SiteTier.STARTER, SiteTier.TAILORED, SiteTier.PRO, SiteTier.STUDIO];
+  const paidTiers: SiteTier[] = [SiteTier.STARTER, SiteTier.CREATOR, SiteTier.PRO, SiteTier.STUDIO];
   const sites = await prisma.site.findMany({
     where: { tier: { in: paidTiers } },
     select: { id: true, userId: true, username: true },

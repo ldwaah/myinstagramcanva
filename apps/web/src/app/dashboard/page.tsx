@@ -9,6 +9,7 @@ import { CollaboratorKeyModal } from "@/components/CollaboratorKeyModal";
 import { DomainModal } from "@/components/DomainModal";
 import { InstagramCanvaLogo } from "@/components/InstagramCanvaLogo";
 import { SponsorCredit } from "@/components/SponsorCredit";
+import { parseTierParam } from "@/lib/pricing";
 import { getTenantPreviewUrl } from "@/lib/site-urls";
 
 interface Site {
@@ -45,6 +46,23 @@ function DashboardContent() {
     }
     const pending = params.get("goLive");
     const siteIdParam = params.get("siteId");
+    const tierCheckout = params.get("checkout") === "tier";
+    const siteTier = parseTierParam(params.get("tier"));
+
+    if (tierCheckout && siteIdParam && siteTier) {
+      fetch("/api/checkout/tier", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ siteId: siteIdParam, tier: siteTier }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.url) window.location.href = data.url;
+          else router.replace("/dashboard");
+        });
+      return;
+    }
+
     if (pending === "pending" && siteIdParam) {
       fetch("/api/checkout/go-live", {
         method: "POST",

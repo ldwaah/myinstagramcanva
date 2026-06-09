@@ -2242,6 +2242,8 @@ a {
 }
 
 .affiliate-page__inner {
+  position: relative;
+  z-index: 1;
   max-width: 42rem;
   margin: 0 auto;
   display: grid;
@@ -2292,10 +2294,18 @@ a {
   text-underline-offset: 2px;
 }
 
-.affiliate-section a {
+.affiliate-section a:not(.hero-create-btn) {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+.affiliate-cta__btn {
+  display: inline-flex;
+  color: #fff;
+  text-decoration: none;
+  width: 100%;
+  max-width: 22rem;
 }
 
 /* Onboarding */

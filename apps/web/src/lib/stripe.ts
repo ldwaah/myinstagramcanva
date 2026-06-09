@@ -16,7 +16,7 @@ export function getStripe() {
 export function tierToPriceId(tier: SiteTier): string | null {
   const map: Record<SiteTier, string> = {
     STARTER: env.stripePrices.starter,
-    TAILORED: env.stripePrices.tailored,
+    CREATOR: env.stripePrices.creator,
     PRO: env.stripePrices.pro,
     STUDIO: env.stripePrices.studio,
   };
@@ -78,7 +78,7 @@ export async function createHostingSubscriptionCheckout(
     mode: "subscription",
     customer_email: email,
     line_items: lineItems,
-    payment_method_collection: "always",
+    payment_method_collection: "if_required",
     subscription_data: {
       trial_period_days: TRIAL_DAYS,
       metadata: { userId, siteId, type: "hosting" },

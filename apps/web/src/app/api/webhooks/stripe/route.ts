@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         session.id
       );
 
-      const needsAdmin = tier === SiteTier.TAILORED;
+      const needsAdmin = tier === SiteTier.PRO || tier === SiteTier.STUDIO;
       await prisma.site.update({
         where: { id: meta.siteId },
         data: {

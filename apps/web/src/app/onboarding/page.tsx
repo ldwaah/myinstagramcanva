@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
+import { getPricingTierById, isPricingTierId } from "@/lib/pricing";
 import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
 import { MicButton } from "@/components/MicButton";
 import {
@@ -9,8 +10,11 @@ import {
   validateInstagramUsername,
 } from "@/lib/instagram-username";
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tierParam = searchParams.get("tier");
+  const tierSlug = isPricingTierId(tierParam) ? tierParam : null;
   const [rawUsername, setRawUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -36,6 +40,11 @@ export default function OnboardingPage() {
     if (!res.ok) {
       setError(data.error || "Failed");
       setLoading(false);
+      return;
+    }
+    if (tierSlug) {
+      const siteTier = getPricingTierById(tierSlug).tier;
+      router.push(`/dashboard?siteId=${data.siteId}&tier=${siteTier}&checkout=tier`);
       return;
     }
     router.push(`/dashboard?siteId=${data.siteId}&generating=1&welcome=1`);
@@ -69,5 +78,13 @@ export default function OnboardingPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense>
+      <OnboardingContent />
+    </Suspense>
   );
 }

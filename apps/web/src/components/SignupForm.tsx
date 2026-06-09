@@ -5,13 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { AuthLayout } from "@/components/AuthLayout";
 import { MicButton } from "@/components/MicButton";
-import { TRIAL_DAYS } from "@/lib/trial-constants";
 import { parseJsonError } from "@/lib/db-errors";
+import { getPricingTierById, isPricingTierId } from "@/lib/pricing";
+import { TRIAL_TAGLINE } from "@/lib/trial-constants";
 
 export function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const siteId = searchParams.get("siteId");
+  const tierParam = searchParams.get("tier");
+  const tierSlug = isPricingTierId(tierParam) ? tierParam : null;
   const affiliateIntent = searchParams.get("intent") === "affiliate";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,7 +52,14 @@ export function SignupForm() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ siteId }),
         });
-        router.push(`/dashboard?siteId=${siteId}&goLive=pending`);
+        if (tierSlug) {
+          const siteTier = getPricingTierById(tierSlug).tier;
+          router.push(`/dashboard?siteId=${siteId}&tier=${siteTier}&checkout=tier`);
+        } else {
+          router.push(`/dashboard?siteId=${siteId}&goLive=pending`);
+        }
+      } else if (tierSlug) {
+        router.push(`/onboarding?welcome=1&tier=${tierSlug}`);
       } else if (affiliateIntent) {
         router.push("/dashboard/affiliates");
       } else {
@@ -68,7 +78,7 @@ export function SignupForm() {
       subtitle={
         affiliateIntent
           ? "Create a free account to get your referral link and start sharing."
-          : `${TRIAL_DAYS}-day free trial. No credit card.`
+          : TRIAL_TAGLINE
       }
     >
       <form onSubmit={onSubmit} className="auth-form">

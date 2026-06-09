@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { HeroVisualScene } from "@/components/landing/HeroVisualScene";
+import { HeroWebsitePreview } from "@/components/landing/HeroWebsitePreview";
 import { HomeStepFlow } from "@/components/landing/HomeStepFlow";
-import { SponsorCredit } from "@/components/SponsorCredit";
+import { HOME_EXAMPLES, HOME_FAQ, TRIAL_COPY } from "@/lib/pricing";
 import { buildHomeMetadata, buildReferralMetadata } from "@/lib/seo";
 
 type PageProps = {
@@ -22,27 +24,75 @@ export default function HomePage() {
     <main className="landing landing--art">
       <SiteHeader />
 
-      <section className="hero-basics hero-basics--art hero-basics--steps">
-        <HeroVisualScene />
+      <section className="hero-split">
         <div className="landing-aurora hero-basics__aurora" aria-hidden />
         <div className="landing-grain" aria-hidden />
 
-        <div className="hero-basics__content hero-basics__content--wide">
-          <p className="hero-basics__eyebrow">Instagram-inspired websites for creators</p>
-          <h1 className="hero-basics__title hero-basics__title--solo">
-            Turn your Instagram into a
-            <span className="hero-basics__title-accent"> website</span>
-          </h1>
-          <HomeStepFlow />
+        <div className="mic-container hero-split__inner">
+          <div className="hero-split__left">
+            <h1 className="hero-split__title">
+              Turn your Instagram into a live website in minutes
+            </h1>
+            <p className="hero-split__sub">
+              Paste your handle. Let AI build your site. Customise, preview and publish without
+              coding.
+            </p>
+            <HomeStepFlow />
+            <p className="hero-split__trial">{TRIAL_COPY}</p>
+          </div>
+          <div className="hero-split__right">
+            <HeroWebsitePreview />
+          </div>
         </div>
       </section>
 
-      <footer className="landing-footer landing-footer--minimal">
-        <div className="mic-container landing-footer__inner">
-          <SponsorCredit className="landing-footer__sponsor" />
-          <span className="landing-footer__muted">© {new Date().getFullYear()}</span>
+      <section id="examples" className="home-examples">
+        <div className="mic-container home-examples__inner">
+          <h2 className="home-examples__title">Built for real creators</h2>
+          <p className="home-examples__sub">
+            See how different profiles turn into polished websites with your Instagram at the centre.
+          </p>
+          <div className="home-examples__grid">
+            {HOME_EXAMPLES.map((example) => (
+              <article key={example.title} className="home-example-card">
+                <div className={`home-example-card__preview home-example-card__preview--${example.accent}`}>
+                  <div className="home-example-card__preview-header" />
+                  <div className="home-example-card__preview-grid">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
+                <h3 className="home-example-card__title">{example.title}</h3>
+                <p className="home-example-card__use">{example.useCase}</p>
+                <Link href="/signup" className="home-example-card__cta">
+                  View example
+                </Link>
+              </article>
+            ))}
+          </div>
         </div>
-      </footer>
+      </section>
+
+      <section className="home-faq">
+        <div className="mic-container home-faq__inner">
+          <h2 className="home-faq__title">Frequently asked questions</h2>
+          <dl className="home-faq__list">
+            {HOME_FAQ.map((item) => (
+              <div key={item.question} className="home-faq__item">
+                <dt>{item.question}</dt>
+                <dd>{item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="home-faq__pricing">
+            Compare plans on our{" "}
+            <Link href="/pricing">pricing page</Link>.
+          </p>
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }

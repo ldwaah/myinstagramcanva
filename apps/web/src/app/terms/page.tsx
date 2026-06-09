@@ -203,7 +203,7 @@ export default function TermsPage() {
             Attribution lasts 30 days from the visitor&apos;s most recent click on your referral link.
           </li>
           <li>
-            Commission applies to qualifying package purchases (Starter, Tailored, Pro and Studio) as
+            Commission applies to qualifying package purchases (Starter, Creator, Pro and Studio) as
             displayed in your affiliate dashboard.
           </li>
           <li>

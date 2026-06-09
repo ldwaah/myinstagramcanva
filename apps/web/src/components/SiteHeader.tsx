@@ -16,6 +16,7 @@ type SessionState = {
 export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
   const [session, setSession] = useState<SessionState>({ loggedIn: false });
   const [signingOut, setSigningOut] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/session")
@@ -23,6 +24,15 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
       .then((data: SessionState) => setSession(data))
       .catch(() => setSession({ loggedIn: false }));
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -34,6 +44,62 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
     }
   }
 
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
+  const navLinks = (
+    <>
+      <Link href="/pricing" className="landing-nav__pricing" onClick={closeMenu}>
+        Pricing
+      </Link>
+      <Link href="/#examples" className="landing-nav__examples" onClick={closeMenu}>
+        Examples
+      </Link>
+      <Link href="/affiliates" className="landing-nav__affiliates" onClick={closeMenu}>
+        Affiliates
+      </Link>
+      {session.loggedIn ? (
+        <>
+          <Link href="/dashboard" className="landing-nav__login" onClick={closeMenu}>
+            My account
+          </Link>
+          <button
+            type="button"
+            className="landing-nav__signout"
+            onClick={() => {
+              closeMenu();
+              void handleSignOut();
+            }}
+            disabled={signingOut}
+          >
+            {signingOut ? "Signing out…" : "Sign out"}
+          </button>
+          <Link
+            href="/dashboard"
+            className="landing-nav__cta landing-cta-shimmer"
+            onClick={closeMenu}
+          >
+            <span className="landing-nav__cta-text">My dashboard</span>
+          </Link>
+        </>
+      ) : (
+        <>
+          <Link href="/login" className="landing-nav__login" onClick={closeMenu}>
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="landing-nav__cta landing-cta-shimmer"
+            onClick={closeMenu}
+          >
+            <span className="landing-nav__cta-text">Start free trial</span>
+          </Link>
+        </>
+      )}
+    </>
+  );
+
   return (
     <header className={`landing-header${variant === "minimal" ? " landing-header--minimal" : ""}`}>
       <div className="mic-container landing-header__inner">
@@ -41,40 +107,34 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
           <InstagramCanvaLogo size={28} className="landing-logo__mark" />
           Instagram Canva
         </Link>
-        <nav className={`landing-nav${variant === "minimal" ? " landing-nav--minimal" : ""}`}>
-          <Link href="/pricing" className="landing-nav__pricing">
-            Pricing
-          </Link>
-          <Link href="/affiliates" className="landing-nav__affiliates">
-            Affiliates
-          </Link>
-          {session.loggedIn ? (
-            <>
-              <Link href="/dashboard" className="landing-nav__login">
-                My account
-              </Link>
-              <button
-                type="button"
-                className="landing-nav__signout"
-                onClick={handleSignOut}
-                disabled={signingOut}
-              >
-                {signingOut ? "Signing out…" : "Sign out"}
-              </button>
-              <Link href="/dashboard" className="landing-nav__cta landing-cta-shimmer">
-                <span className="landing-nav__cta-text">My dashboard</span>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="landing-nav__login">
-                Log in
-              </Link>
-              <Link href="/signup" className="landing-nav__cta landing-cta-shimmer">
-                <span className="landing-nav__cta-text">Start free trial</span>
-              </Link>
-            </>
-          )}
+
+        <nav
+          className={`landing-nav landing-nav--desktop${variant === "minimal" ? " landing-nav--minimal" : ""}`}
+          aria-label="Main"
+        >
+          {navLinks}
+        </nav>
+
+        <button
+          type="button"
+          className={`landing-nav__toggle${menuOpen ? " is-open" : ""}`}
+          aria-expanded={menuOpen}
+          aria-controls="landing-nav-mobile"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span className="landing-nav__toggle-bar" />
+          <span className="landing-nav__toggle-bar" />
+          <span className="landing-nav__toggle-bar" />
+        </button>
+
+        <nav
+          id="landing-nav-mobile"
+          className={`landing-nav landing-nav--mobile${menuOpen ? " is-open" : ""}`}
+          aria-label="Mobile"
+          hidden={!menuOpen}
+        >
+          {navLinks}
         </nav>
       </div>
     </header>

@@ -120,7 +120,7 @@ export function buildHomeMetadata(): Metadata {
 export function buildPricingMetadata(): Metadata {
   const title = "Pricing";
   const description =
-    "Simple, transparent pricing. Every plan starts with a free trial — AI-built sites from your Instagram, from £27.";
+    "Four clear plans from £27/month. AI-built websites from your Instagram with a 14-day free trial. No card required.";
   const url = `${env.appUrl}/pricing`;
   const images = ogImages(PRICING_OG, "My Instagram Canva pricing");
   return {
@@ -203,7 +203,7 @@ export function buildReferralMetadata(code: string): Metadata {
 export function buildSignupMetadata(ref?: string | null): Metadata {
   if (ref) return buildReferralMetadata(ref);
   const title = "Create your account";
-  const description = `Sign up for ${SITE_NAME}. Free trial — no credit card required.`;
+  const description = `Sign up for ${SITE_NAME}. 14-day free trial. No card required.`;
   const url = `${env.appUrl}/signup`;
   const images = ogImages(DEFAULT_OG, SITE_TAGLINE);
   return {

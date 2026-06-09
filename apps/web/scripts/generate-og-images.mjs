@@ -101,7 +101,7 @@ function ogSvg({ eyebrow, title, subtitle }) {
 
 const cards = [
   { file: "og-default.png", eyebrow: null, title: "Turn your Instagram into a website", subtitle: "AI-powered sites from your posts, colours & profile — live in minutes." },
-  { file: "og-pricing.png", eyebrow: "Pricing", title: "Simple, transparent plans", subtitle: "Free trial on every plan. Starter from £27 — hosted for you." },
+  { file: "og-pricing.png", eyebrow: "Pricing", title: "Plans from £27/month", subtitle: "14-day free trial. No card required. Starter, Creator, Pro and Studio." },
   { file: "og-affiliates.png", eyebrow: "Affiliate program", title: "Earn on every referral", subtitle: "Share your link · 30-day attribution · commission on every sale." },
   { file: "og-referral.png", eyebrow: "You're invited", title: "Start your free trial", subtitle: "Turn your Instagram into a professional website in minutes." },
 ];

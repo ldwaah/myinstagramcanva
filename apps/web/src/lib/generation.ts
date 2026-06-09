@@ -304,7 +304,7 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     }
 
     content.showContactForm =
-      site.tier === SiteTier.TAILORED || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
+      site.tier === SiteTier.CREATOR || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showCalendar = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
     content.showFunnel = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
 

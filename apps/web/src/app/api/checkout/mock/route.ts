@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       data: {
         tier: body.tier,
         status: SiteStatus.LIVE,
-        needsAdminTweak: body.tier === SiteTier.TAILORED,
+        needsAdminTweak: body.tier === SiteTier.PRO || body.tier === SiteTier.STUDIO,
       },
     });
 

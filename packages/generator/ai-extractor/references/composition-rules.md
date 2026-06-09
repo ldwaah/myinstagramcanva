@@ -77,6 +77,6 @@ Use `primaryGoal`, `promoting`, and `externalLink` quiz answers to tune copy tok
 ## Quality gates before emit
 
 1. At least one gallery or portfolio section if user has ≥ 6 posts.
-2. Contact section matches tier (form for Tailored+, links for Free).
+2. Contact section matches tier (form for Creator+, links for Starter).
 3. No duplicate element categories (one hero, one footer).
 4. Marquee appears max once per page.

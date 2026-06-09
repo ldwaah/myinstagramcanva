@@ -77,7 +77,7 @@ export function isSiteLive(status: SiteStatus) {
 
 export function getFreeEditsForTier(tier: string | null | undefined) {
   switch (tier) {
-    case "TAILORED":
+    case "CREATOR":
       return 10;
     case "PRO":
     case "STUDIO":

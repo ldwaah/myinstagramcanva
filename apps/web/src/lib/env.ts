@@ -29,7 +29,10 @@ export const env = {
   stripePublishable: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
   stripePrices: {
     starter: process.env.STRIPE_PRICE_STARTER || "",
-    tailored: process.env.STRIPE_PRICE_TAILORED || "",
+    creator:
+      process.env.STRIPE_PRICE_CREATOR ||
+      process.env.STRIPE_PRICE_TAILORED ||
+      "",
     pro: process.env.STRIPE_PRICE_PRO || "",
     studio: process.env.STRIPE_PRICE_STUDIO || "",
     aiByok: process.env.STRIPE_PRICE_AI_BYOK || "",
@@ -67,7 +70,7 @@ export const env = {
 
 export const TIER_PRICES: Record<string, number> = {
   STARTER: 2700,
-  TAILORED: 5400,
-  PRO: 10100,
-  STUDIO: 29900,
+  CREATOR: 5900,
+  PRO: 14900,
+  STUDIO: 49900,
 };

@@ -304,7 +304,7 @@ enum SiteStatus {
 
 enum SiteTier {
   STARTER
-  TAILORED
+  CREATOR
   PRO
   STUDIO
 }

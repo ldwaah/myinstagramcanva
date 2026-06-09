@@ -103,7 +103,7 @@ export async function POST(req: Request) {
     const tier = site.tier;
     if (!tier || tier === "STARTER") {
       return NextResponse.json(
-        { error: "Lead capture requires Tailored plan or higher" },
+        { error: "Lead capture requires Creator plan or higher" },
         { status: 403 }
       );
     }
