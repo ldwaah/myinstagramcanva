@@ -19,7 +19,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         <aside className="auth-layout__brand">
           <Link href="/" className="landing-logo auth-layout__logo">
             <InstagramCanvaLogo size={28} className="landing-logo__mark" />
-            Instagram Canva
+            My Instagram Canva
           </Link>
           <h1 className="auth-layout__headline">
             Turn your Instagram into a

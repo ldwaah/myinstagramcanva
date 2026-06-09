@@ -18,7 +18,7 @@ export function AppShell({ children, title, subtitle, actions }: AppShellProps) 
         <div className="mic-container app-shell__header-inner">
           <Link href="/dashboard" className="landing-logo">
             <InstagramCanvaLogo size={28} className="landing-logo__mark" />
-            Instagram Canva
+            My Instagram Canva
           </Link>
           {actions}
         </div>

@@ -121,7 +121,7 @@ export async function POST(req: Request) {
     if (staleRunning && latestJob) {
       await prisma.generationJob.update({
         where: { id: latestJob.id },
-        data: { status: JobStatus.FAILED, error: "Generation timed out — retrying" },
+        data: { status: JobStatus.FAILED, error: "Generation timed out. Retrying." },
       });
     }
 

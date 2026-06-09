@@ -86,7 +86,7 @@ export function buildElementTokens(
   ]
     .map(
       (t) =>
-        `<blockquote class="el-testimonials__card"><p>"${escapeHtml(t.quote)}"</p><cite>— ${escapeHtml(t.name)}</cite></blockquote>`,
+        `<blockquote class="el-testimonials__card"><p>"${escapeHtml(t.quote)}"</p><cite>${escapeHtml(t.name)}</cite></blockquote>`,
     )
     .join("\n  ");
 
@@ -102,11 +102,11 @@ export function buildElementTokens(
 
   const albumTitle =
     promoting === "album"
-      ? `${content.brandName} — latest release`
+      ? `${content.brandName}. Latest release`
       : `${content.brandName}`;
   const albumSubtitle =
     promoting === "album"
-      ? "Stream the new project — links below."
+      ? "Stream the new project. Links below."
       : content.heroSubtitle;
 
   const shopCta =
@@ -157,7 +157,7 @@ export function buildElementTokens(
     SERVICES_SUBTITLE: `How ${content.ownerName} works with clients.`,
     SERVICES_ITEMS: servicesItems,
     PRODUCTS_TITLE: "Featured picks",
-    PRODUCTS_SUBTITLE: `Curated from @${content.instagramHandle} — tap to shop.`,
+    PRODUCTS_SUBTITLE: `Curated from @${content.instagramHandle}. Tap to shop.`,
     PRODUCTS_ITEMS: productsItems,
     SHOP_URL: shopUrl,
     SHOP_CTA: shopCta,

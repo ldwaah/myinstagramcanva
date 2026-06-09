@@ -4,7 +4,7 @@ import { env } from "./env";
 export const SITE_NAME = "My Instagram Canva";
 export const SITE_TAGLINE = "Turn your Instagram into a website in minutes";
 export const SITE_DESCRIPTION =
-  "AI-powered websites built from your Instagram — your colours, posts, and profile style. Mobile-ready, hosted for you.";
+  "AI-powered websites built from your Instagram. Your colours, posts, and profile style. Mobile-ready, hosted for you.";
 
 const DEFAULT_OG = "/og-default.png";
 const PRICING_OG = "/og-pricing.png";
@@ -43,7 +43,7 @@ const twitterDefaults = {
 };
 
 export function buildRootMetadata(overrides: Metadata = {}): Metadata {
-  const images = ogImages(DEFAULT_OG, `${SITE_NAME} — ${SITE_TAGLINE}`);
+  const images = ogImages(DEFAULT_OG, `${SITE_NAME}. ${SITE_TAGLINE}`);
   return {
     metadataBase: new URL(env.appUrl),
     title: {
@@ -91,7 +91,7 @@ export function buildRootMetadata(overrides: Metadata = {}): Metadata {
 
 export function buildViewport() {
   return {
-    themeColor: "#E1306C",
+    themeColor: "#7C3AED",
   };
 }
 

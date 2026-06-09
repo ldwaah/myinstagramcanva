@@ -1,26 +1,57 @@
+import { BRAND_GRADIENT_CSS } from "./brand-mark";
 import { OG_IMAGE_SIZE } from "./seo";
 
 export const ogRuntime = "edge";
 export const ogSize = OG_IMAGE_SIZE;
 export const ogContentType = "image/png";
 
-const GRADIENT = "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)";
-
 function LogoMark({ size = 88 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
       <defs>
-        <linearGradient id="og-grad" x1="4" y1="28" x2="28" y2="4" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f09433" />
-          <stop offset="0.25" stopColor="#e6683c" />
-          <stop offset="0.5" stopColor="#dc2743" />
-          <stop offset="0.75" stopColor="#cc2366" />
-          <stop offset="1" stopColor="#bc1888" />
+        <linearGradient id="og-mic-grad" x1="2" y1="30" x2="30" y2="2" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#7C3AED" />
+          <stop offset="0.5" stopColor="#A855F7" />
+          <stop offset="1" stopColor="#EC4899" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="28" height="28" rx="8" stroke="url(#og-grad)" strokeWidth="2.5" />
-      <circle cx="16" cy="16" r="6.5" stroke="url(#og-grad)" strokeWidth="2" />
-      <circle cx="23.5" cy="8.5" r="1.75" fill="url(#og-grad)" />
+      <rect
+        x="2.5"
+        y="2.5"
+        width="27"
+        height="27"
+        rx="7"
+        stroke="url(#og-mic-grad)"
+        strokeWidth="2"
+        fill="#7C3AED"
+        fillOpacity="0.08"
+      />
+      <path
+        d="M21.5 2.5H29.5V10.5"
+        stroke="url(#og-mic-grad)"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.5 20.5V11.5L10.5 15.5L13.5 11.5V20.5"
+        stroke="url(#og-mic-grad)"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 11.5V20.5"
+        stroke="url(#og-mic-grad)"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M22.5 20.5C19.8 20.5 18 18.4 18 16C18 13.6 19.8 11.5 22.5 11.5"
+        stroke="url(#og-mic-grad)"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -57,7 +88,7 @@ export function OgBrandCard({
           width: 520,
           height: 520,
           borderRadius: "50%",
-          background: GRADIENT,
+          background: BRAND_GRADIENT_CSS,
           opacity: 0.18,
           filter: "blur(80px)",
         }}
@@ -70,7 +101,7 @@ export function OgBrandCard({
           width: 400,
           height: 400,
           borderRadius: "50%",
-          background: GRADIENT,
+          background: BRAND_GRADIENT_CSS,
           opacity: 0.12,
           filter: "blur(60px)",
         }}
@@ -89,7 +120,7 @@ export function OgBrandCard({
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#e1306c",
+              color: "#A855F7",
               margin: "0 0 16px",
             }}
           >

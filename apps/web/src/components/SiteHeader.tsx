@@ -154,7 +154,7 @@ export function SiteHeader({ variant = "landing" }: SiteHeaderProps) {
       <div className="mic-container landing-header__inner">
         <Link href="/" className="landing-logo">
           <InstagramCanvaLogo size={28} className="landing-logo__mark" />
-          Instagram Canva
+          My Instagram Canva
         </Link>
 
         <nav

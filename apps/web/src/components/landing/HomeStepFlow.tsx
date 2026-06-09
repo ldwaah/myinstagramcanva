@@ -95,7 +95,7 @@ export function HomeStepFlow() {
         body: JSON.stringify({ username }),
       });
     } catch {
-      setError("Network error — check your connection and try again.");
+      setError("Network error. Check your connection and try again.");
       setStep(1);
       return;
     }
@@ -207,7 +207,7 @@ export function HomeStepFlow() {
             <div className="home-step-flow__spinner" aria-hidden />
             <p className="home-step-flow__muted">
               {quizDone
-                ? "Tailoring your site — usually ready within 1–2 minutes"
+                ? "Tailoring your site. Usually ready within 1 to 2 minutes"
                 : "Fetching your Instagram whilst you answer a few questions"}
             </p>
           </div>

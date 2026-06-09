@@ -50,8 +50,8 @@ export const BRAND_QUIZ_QUESTIONS: QuizQuestion[] = [
     id: "offering",
     question: "Do you sell products or services?",
     options: [
-      { value: "products", label: "Yes — products", emoji: "📦" },
-      { value: "services", label: "Yes — services", emoji: "🤝" },
+      { value: "products", label: "Yes, products", emoji: "📦" },
+      { value: "services", label: "Yes, services", emoji: "🤝" },
       { value: "both", label: "Both", emoji: "⚡" },
       { value: "neither", label: "Neither right now", emoji: "🙂" },
     ],
@@ -75,7 +75,7 @@ export const BRAND_QUIZ_QUESTIONS: QuizQuestion[] = [
       { value: "shop", label: "Shop / store", emoji: "🛍️" },
       { value: "spotify", label: "Spotify / streaming", emoji: "🎶" },
       { value: "booking", label: "Booking page", emoji: "📆" },
-      { value: "none", label: "None for now", emoji: "—" },
+      { value: "none", label: "None for now", emoji: "○" },
     ],
   },
   {

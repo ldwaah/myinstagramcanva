@@ -60,7 +60,7 @@ export function BrandQuiz({ siteId, onComplete, onSkip }: BrandQuizProps) {
     <div className="brand-quiz" aria-live="polite">
       <div className="brand-quiz__header">
         <p className="brand-quiz__eyebrow">Quick brand quiz</p>
-        <p className="brand-quiz__hint">Tap an answer — we tailor your site whilst it builds</p>
+        <p className="brand-quiz__hint">Tap an answer. We tailor your site whilst it builds</p>
         <div className="brand-quiz__progress" role="progressbar" aria-valuenow={index + 1} aria-valuemin={1} aria-valuemax={total}>
           {BRAND_QUIZ_QUESTIONS.map((q, i) => (
             <span

@@ -1,11 +1,15 @@
+"use client";
+
+import { useId } from "react";
+
 interface InstagramCanvaLogoProps {
   size?: number;
   className?: string;
 }
 
-/** Branded mark — IG-inspired gradient, camera lens + grid motif (not Meta's logo). */
+/** Original MIC monogram: canvas frame with geometric lettermark (not Instagram-branded). */
 export function InstagramCanvaLogo({ size = 28, className = "" }: InstagramCanvaLogoProps) {
-  const id = "ic-logo-grad";
+  const gradId = useId().replace(/:/g, "");
   return (
     <svg
       className={`ic-logo${className ? ` ${className}` : ""}`}
@@ -17,21 +21,49 @@ export function InstagramCanvaLogo({ size = 28, className = "" }: InstagramCanva
       aria-hidden
     >
       <defs>
-        <linearGradient id={id} x1="4" y1="28" x2="28" y2="4" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#f09433" />
-          <stop offset="0.25" stopColor="#e6683c" />
-          <stop offset="0.5" stopColor="#dc2743" />
-          <stop offset="0.75" stopColor="#cc2366" />
-          <stop offset="1" stopColor="#bc1888" />
+        <linearGradient id={gradId} x1="2" y1="30" x2="30" y2="2" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#7C3AED" />
+          <stop offset="0.5" stopColor="#A855F7" />
+          <stop offset="1" stopColor="#EC4899" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="28" height="28" rx="8" stroke={`url(#${id})`} strokeWidth="2.5" />
-      <circle cx="16" cy="16" r="6.5" stroke={`url(#${id})`} strokeWidth="2" />
-      <circle cx="23.5" cy="8.5" r="1.75" fill={`url(#${id})`} />
-      <rect x="6" y="22" width="3" height="3" rx="0.75" fill={`url(#${id})`} opacity="0.7" />
-      <rect x="10.5" y="22" width="3" height="3" rx="0.75" fill={`url(#${id})`} opacity="0.5" />
-      <rect x="6" y="25.5" width="3" height="3" rx="0.75" fill={`url(#${id})`} opacity="0.5" />
-      <rect x="10.5" y="25.5" width="3" height="3" rx="0.75" fill={`url(#${id})`} opacity="0.35" />
+      <rect
+        x="2.5"
+        y="2.5"
+        width="27"
+        height="27"
+        rx="7"
+        stroke={`url(#${gradId})`}
+        strokeWidth="2"
+        fill="#7C3AED"
+        fillOpacity="0.08"
+      />
+      <path
+        d="M21.5 2.5H29.5V10.5"
+        stroke={`url(#${gradId})`}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.5 20.5V11.5L10.5 15.5L13.5 11.5V20.5"
+        stroke={`url(#${gradId})`}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 11.5V20.5"
+        stroke={`url(#${gradId})`}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M22.5 20.5C19.8 20.5 18 18.4 18 16C18 13.6 19.8 11.5 22.5 11.5"
+        stroke={`url(#${gradId})`}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
