@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 const PREVIEW_COOKIE = "mic_preview_token";
-const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
+import { isReservedUsername } from "@/lib/reserved-usernames";
 
 const schema = z.object({
   username: z.string().min(1),
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     if (validationError) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
-    if (RESERVED.has(username)) {
+    if (isReservedUsername(username)) {
       return NextResponse.json({ error: "Username reserved" }, { status: 400 });
     }
 

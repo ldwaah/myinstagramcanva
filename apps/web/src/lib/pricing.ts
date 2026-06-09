@@ -130,29 +130,6 @@ export const TIER_DISPLAY_NAMES: Record<SiteTier, string> = {
 
 export const PLAN_NAMES_LIST = "Starter, Creator, Pro and Studio";
 
-export const HOME_EXAMPLES = [
-  {
-    title: "Photographer",
-    useCase: "Show your portfolio and take booking enquiries from one polished site.",
-    accent: "photo",
-  },
-  {
-    title: "Life Coach",
-    useCase: "Share your story, testimonials and a clear way for clients to get in touch.",
-    accent: "coach",
-  },
-  {
-    title: "Athlete",
-    useCase: "Highlight training, sponsors and socials with a site that feels like your feed.",
-    accent: "athlete",
-  },
-  {
-    title: "Creator / Business",
-    useCase: "Turn your brand Instagram into a proper home for links, offers and leads.",
-    accent: "creator",
-  },
-] as const;
-
 export const HOME_FAQ = [
   {
     question: "Do I need to connect my Instagram?",

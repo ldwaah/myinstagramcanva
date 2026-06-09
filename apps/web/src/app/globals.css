@@ -2704,6 +2704,21 @@ a {
   flex-wrap: wrap;
 }
 
+.collab-dock__inner--active .collab-dock__badge {
+  flex-shrink: 0;
+}
+
+.collab-dock__inner--active .collab-dock__title {
+  flex: 1 1 8rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.collab-dock__inner--active .collab-dock__cta {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .collab-dock__badge {
   display: inline-block;
   font-size: 0.65rem;
@@ -2805,6 +2820,8 @@ a {
 .domain-modal__lede {
   margin: 0 !important;
   font-size: 0.92rem !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .domain-modal__body {
@@ -2869,6 +2886,8 @@ a {
 .domain-modal__step p {
   margin: 0 !important;
   font-size: 0.85rem !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .domain-modal__step code,
@@ -3210,6 +3229,19 @@ a {
 
 .landing:has(.home-step-flow__sticky) .landing-footer--minimal {
   padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+}
+
+.home-step-flow__intro {
+  margin-bottom: 1.25rem;
+}
+
+.home-step-flow__heading {
+  margin: 0 0 1rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--text);
 }
 
 .home-step-flow {
@@ -3875,6 +3907,27 @@ a {
     max-height: min(88dvh, 720px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding: 1.25rem !important;
+  }
+
+  .domain-modal__lede {
+    font-size: 0.85rem !important;
+  }
+
+  .domain-modal__step p,
+  .domain-modal__table td,
+  .domain-modal__table th {
+    font-size: 0.82rem;
+  }
+
+  .domain-modal__footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .domain-modal__footer .mic-btn {
+    width: 100%;
+    min-height: 44px;
   }
 
   .collab-intro--inline {
@@ -3885,6 +3938,42 @@ a {
 
   .collab-dock__inner {
     min-height: 44px;
+    padding: 0.85rem 1rem;
+  }
+
+  .collab-dock__title {
+    font-size: 0.88rem;
+  }
+
+  .collab-dock__sub {
+    font-size: 0.78rem;
+    overflow-wrap: anywhere;
+  }
+
+  .dash-minimal__domain-link {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .dash-minimal__welcome {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .pricing-tier__description,
+  .pricing-tier__headline,
+  .pricing-tier__note,
+  .pricing-tier__features li,
+  .pricing-tier__excludes li {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .home-faq__trigger-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .dash-mobile-nav__item {
@@ -4027,11 +4116,18 @@ a {
   }
 
   .home-step-flow__step-inner {
-    width: 5rem;
+    width: min(5.5rem, 28vw);
   }
 
   .home-step-flow__step-sub {
-    font-size: 0.6rem;
-    max-width: 5rem;
+    font-size: 0.62rem;
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
+
+  .home-step-flow__link {
+    overflow-wrap: anywhere;
+    word-break: break-all;
+    font-size: 0.82rem;
   }
 }

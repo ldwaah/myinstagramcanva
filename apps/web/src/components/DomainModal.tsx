@@ -39,58 +39,54 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
         <div className="domain-modal__header">
           <h2 id="domain-modal-title">Connect your own domain</h2>
           <p className="domain-modal__lede">
-            Use a domain you already own (for example <strong>www.yourbrand.com</strong>) so
-            visitors see your brand, not a subdomain. Setup takes a few minutes at your
-            registrar.
+            Point a domain you own (e.g. <strong>www.yourbrand.com</strong>) at our hosting.
+            Your site stays live at <code>{defaultHost}</code> until DNS is ready.
           </p>
         </div>
 
         <div className="domain-modal__body">
           <section className="domain-modal__section">
-            <h3 className="domain-modal__section-title">What you will need</h3>
+            <h3 className="domain-modal__section-title">What you need</h3>
             <ul className="domain-modal__checklist">
-              <li>Access to DNS settings at your domain registrar (GoDaddy, Namecheap, Cloudflare, etc.)</li>
-              <li>A paid site plan on My Instagram Canva</li>
-              <li>Your custom domain ready to point at our hosting</li>
+              <li>DNS access at your registrar</li>
+              <li>A paid site plan</li>
+              <li>Your custom domain ready to connect</li>
             </ul>
           </section>
 
           <section className="domain-modal__section">
-            <h3 className="domain-modal__section-title">Step-by-step</h3>
+            <h3 className="domain-modal__section-title">Steps</h3>
             <ol className="domain-modal__steps">
               <li className="domain-modal__step">
                 <span className="domain-modal__step-num">1</span>
                 <div>
-                  <strong>Choose your custom domain</strong>
+                  <strong>Pick your domain</strong>
                   <p>
-                    We recommend <code>www.yourdomain.com</code> (the <code>www</code> prefix
-                    works best with our setup). Your site stays live at{" "}
-                    <code>{defaultHost}</code> until DNS has propagated.
+                    We recommend <code>www.yourdomain.com</code>. Root domains often need a
+                    redirect to <code>www</code>.
                   </p>
                 </div>
               </li>
               <li className="domain-modal__step">
                 <span className="domain-modal__step-num">2</span>
                 <div>
-                  <strong>Add DNS records at your registrar</strong>
+                  <strong>Add DNS records</strong>
                   <p>
-                    Log in to your domain provider, open DNS or DNS management, and add the
-                    records below. Changes can take up to 48 hours to propagate worldwide,
-                    though it is often much quicker.
+                    Add the CNAME records below at your registrar. Propagation usually takes
+                    under an hour, but allow up to 48 hours.
                   </p>
                 </div>
               </li>
               <li className="domain-modal__step">
                 <span className="domain-modal__step-num">3</span>
                 <div>
-                  <strong>Connect the domain in your dashboard</strong>
+                  <strong>Connect in dashboard</strong>
                   <p>
-                    After saving your DNS records, go to{" "}
+                    Go to{" "}
                     <Link href="/dashboard/domains" onClick={onClose}>
                       Custom domains
                     </Link>{" "}
-                    in your dashboard and enter your domain. We will verify the records and
-                    attach your site.
+                    and enter your domain. We verify and attach your site.
                   </p>
                 </div>
               </li>
@@ -98,18 +94,17 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
           </section>
 
           <section className="domain-modal__section">
-            <h3 className="domain-modal__section-title">Example DNS records</h3>
+            <h3 className="domain-modal__section-title">DNS records</h3>
             <p className="domain-modal__hint">
-              Replace <code>yourdomain.com</code> with your actual domain. Use the CNAME
-              target shown below (our Netlify hosting endpoint).
+              Replace <code>yourdomain.com</code> with your domain.
             </p>
             <div className="domain-modal__table-wrap">
               <table className="domain-modal__table">
                 <thead>
                   <tr>
                     <th>Type</th>
-                    <th>Host / Name</th>
-                    <th>Value / Points to</th>
+                    <th>Host</th>
+                    <th>Value</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,37 +113,25 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
                     <td><code>www</code></td>
                     <td><code>{cnameTarget}</code></td>
                   </tr>
-                  <tr>
-                    <td>CNAME</td>
-                    <td><code>www.yourdomain.com</code></td>
-                    <td><code>{rootDomain}</code></td>
-                  </tr>
                 </tbody>
               </table>
             </div>
             <p className="domain-modal__note">
-              Some registrars only accept the host name (<code>www</code>) rather than the
-              full domain. If you need a root domain (<code>yourdomain.com</code> without{" "}
-              <code>www</code>), check whether your provider supports ALIAS, ANAME or a
-              redirect from root to <code>www</code>.
+              Some registrars only accept the host name (<code>www</code>), not the full domain.
             </p>
           </section>
 
           <section className="domain-modal__faq">
-            <h3 className="domain-modal__section-title">Common questions</h3>
+            <h3 className="domain-modal__section-title">Questions</h3>
             <dl>
               <dt>How long does DNS take?</dt>
-              <dd>Usually under an hour, but allow up to 48 hours for full propagation.</dd>
-              <dt>Do I need to buy the domain here?</dt>
-              <dd>
-                No. Purchase your domain anywhere you like, then point it at our hosting
-                using the records above.
-              </dd>
-              <dt>Still stuck?</dt>
+              <dd>Usually under an hour. Allow up to 48 hours.</dd>
+              <dt>Buy the domain here?</dt>
+              <dd>No. Buy anywhere, then point DNS at our hosting.</dd>
+              <dt>Need help?</dt>
               <dd>
                 Email{" "}
-                <a href="mailto:support@myinstagramcanva.com">support@myinstagramcanva.com</a>{" "}
-                with your domain name and registrar, and we will help.
+                <a href="mailto:support@myinstagramcanva.com">support@myinstagramcanva.com</a>
               </dd>
             </dl>
           </section>
@@ -160,7 +143,7 @@ export function DomainModal({ open, onClose, username }: DomainModalProps) {
             className="mic-btn mic-btn-primary"
             onClick={onClose}
           >
-            Connect a domain
+            Connect domain
           </Link>
           <button type="button" className="mic-btn mic-btn-ghost" onClick={onClose}>
             Close

@@ -357,11 +357,22 @@
 
 .hero-split__left .home-step-flow {
   margin-top: 0;
-  text-align: left;
+  text-align: center;
+}
+
+.hero-split__left .home-step-flow__intro {
+  text-align: center;
 }
 
 .hero-split__left .home-step-flow__steps {
-  justify-content: flex-start;
+  justify-content: center;
+}
+
+.hero-split__left .home-step-flow__panel {
+  text-align: left;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-split__right {
@@ -370,106 +381,282 @@
   align-items: center;
 }
 
-.hero-preview-card {
-  width: min(100%, 380px);
-  border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--line) 80%, #e1306c 20%);
-  background: color-mix(in srgb, var(--glass-bg) 90%, transparent);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28), var(--shadow-glow);
+/* Hero: social profile → website transformation */
+
+.hero-ig-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  width: min(100%, 480px);
+  margin: 0 auto;
+}
+
+.hero-ig-mock {
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+  background: color-mix(in srgb, var(--glass-bg) 92%, #111 8%);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32);
   overflow: hidden;
 }
 
-.hero-preview-card__chrome {
+.hero-ig-mock--profile {
+  width: min(46%, 168px);
+  flex-shrink: 0;
+  padding: 0.55rem 0.5rem 0.65rem;
+}
+
+.hero-ig-mock--site {
+  width: min(54%, 210px);
+  flex-shrink: 0;
+  padding: 0.65rem 0.6rem 0.75rem;
+}
+
+.hero-ig-mock__status {
   display: flex;
-  gap: 6px;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 60%, transparent);
-}
-
-.hero-preview-card__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--muted) 50%, transparent);
-}
-
-.hero-preview-card__body {
-  padding: 1.25rem;
-}
-
-.hero-preview-card__profile {
-  display: flex;
-  gap: 0.75rem;
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  padding: 0 0.15rem;
 }
 
-.hero-preview-card__avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--ig-gradient);
+.hero-ig-mock__time {
+  font-size: 0.45rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.hero-ig-mock__status-icons {
+  width: 2rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+}
+
+.hero-ig-mock__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  padding: 0 0.1rem;
+}
+
+.hero-ig-mock__handle {
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-ig-mock__menu {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.hero-ig-mock__header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.4rem;
+}
+
+.hero-ig-mock__avatar-wrap {
   flex-shrink: 0;
 }
 
-.hero-preview-card__profile-lines {
-  flex: 1;
-  display: grid;
-  gap: 0.45rem;
+.hero-ig-mock__avatar-ring {
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
 }
 
-.hero-preview-card__line {
-  display: block;
-  height: 10px;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--line) 70%, transparent);
+.hero-ig-mock__avatar {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  background: linear-gradient(145deg, #405de6, #5851db, #833ab4);
 }
 
-.hero-preview-card__line--title {
-  width: 72%;
-}
-
-.hero-preview-card__line--sub {
-  width: 48%;
-  height: 8px;
-}
-
-.hero-preview-card__stats {
+.hero-ig-mock__stats {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  flex: 1;
+  justify-content: space-around;
+  text-align: center;
 }
 
-.hero-preview-card__stats span {
-  flex: 1;
-  height: 28px;
-  border-radius: 8px;
+.hero-ig-mock__stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.hero-ig-mock__stats strong {
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-ig-mock__stats span {
+  font-size: 0.38rem;
+  color: var(--muted);
+}
+
+.hero-ig-mock__bio {
+  margin-bottom: 0.35rem;
+}
+
+.hero-ig-mock__name {
+  margin: 0;
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hero-ig-mock__tagline,
+.hero-ig-mock__link {
+  margin: 0.12rem 0 0;
+  font-size: 0.38rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.hero-ig-mock__link {
+  color: color-mix(in srgb, var(--accent) 80%, #6ea8fe);
+}
+
+.hero-ig-mock__highlights {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.hero-ig-mock__highlights span {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  background: color-mix(in srgb, var(--line) 45%, transparent);
+}
+
+.hero-ig-mock__tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+
+.hero-ig-mock__tabs span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+}
+
+.hero-ig-mock__tabs span.is-active {
+  background: var(--text);
+}
+
+.hero-ig-mock__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.hero-ig-mock__tile {
+  aspect-ratio: 1;
   background: color-mix(in srgb, var(--line) 55%, transparent);
 }
 
-.hero-preview-card__grid {
+.hero-ig-mock__tile--a { background: linear-gradient(135deg, #405de6, #5851db); }
+.hero-ig-mock__tile--b { background: linear-gradient(135deg, #833ab4, #c13584); }
+.hero-ig-mock__tile--c { background: linear-gradient(135deg, #fd1d1d, #f77737); }
+.hero-ig-mock__tile--d { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.hero-ig-mock__tile--e { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.hero-ig-mock__tile--f { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+.hero-ig-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.hero-ig-arrow__line {
+  width: 1px;
+  height: 1.25rem;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.hero-ig-arrow__head {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  margin-top: -0.2rem;
+}
+
+.hero-ig-mock__browser-dots {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0.45rem;
+}
+
+.hero-ig-mock__browser-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
+}
+
+.hero-ig-mock__site-hero {
+  height: 2.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.45rem;
+  background: linear-gradient(135deg, #405de6 0%, #833ab4 50%, #fd1d1d 100%);
+}
+
+.hero-ig-mock__site-lines {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.45rem;
+}
+
+.hero-ig-mock__site-line {
+  display: block;
+  height: 0.35rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--line) 65%, transparent);
+}
+
+.hero-ig-mock__site-line--lg { width: 88%; }
+.hero-ig-mock__site-line--sm { width: 55%; }
+
+.hero-ig-mock__site-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-bottom: 1rem;
+  gap: 3px;
+  margin-bottom: 0.45rem;
 }
 
-.hero-preview-card__tile {
+.hero-ig-mock__site-grid span {
   aspect-ratio: 1;
-  border-radius: 6px;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, #e1306c 25%, var(--line)),
-    color-mix(in srgb, #833ab4 20%, var(--line))
-  );
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--line) 55%, transparent);
 }
 
-.hero-preview-card__cta {
-  height: 36px;
+.hero-ig-mock__site-cta {
+  height: 0.55rem;
   border-radius: 999px;
   background: var(--ig-gradient);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* Examples */
@@ -517,45 +704,62 @@
   aspect-ratio: 4 / 3;
   border-radius: 12px;
   margin-bottom: 1rem;
-  padding: 0.75rem;
+  padding: 0;
   background: color-mix(in srgb, var(--bg) 50%, transparent);
   border: 1px solid var(--line);
+  overflow: hidden;
 }
 
-.home-example-card__preview-header {
-  height: 28%;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  background: var(--ig-gradient);
-  opacity: 0.7;
+.home-example-card__browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.home-example-card__preview-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  height: 62%;
+.home-example-card__browser-chrome {
+  display: flex;
+  gap: 5px;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  flex-shrink: 0;
 }
 
-.home-example-card__preview-grid span {
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--line) 65%, transparent);
+.home-example-card__browser-chrome span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
 }
 
-.home-example-card__preview--photo .home-example-card__preview-header {
-  background: linear-gradient(135deg, #405de6, #5851db);
+.home-example-card__browser-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.home-example-card__preview--coach .home-example-card__preview-header {
-  background: linear-gradient(135deg, #833ab4, #c13584);
+.home-example-card__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
 }
 
-.home-example-card__preview--athlete .home-example-card__preview-header {
-  background: linear-gradient(135deg, #fd1d1d, #f77737);
+.home-example-card__preview--photo .home-example-card__browser-chrome span:first-child {
+  background: #405de6;
 }
 
-.home-example-card__preview--creator .home-example-card__preview-header {
-  background: var(--ig-gradient);
+.home-example-card__preview--coach .home-example-card__browser-chrome span:first-child {
+  background: #833ab4;
+}
+
+.home-example-card__preview--athlete .home-example-card__browser-chrome span:first-child {
+  background: #fd1d1d;
+}
+
+.home-example-card__preview--creator .home-example-card__browser-chrome span:first-child {
+  background: #e1306c;
 }
 
 .home-example-card__title {
@@ -570,6 +774,8 @@
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .home-example-card__cta {
@@ -753,9 +959,8 @@
     order: -1;
   }
 
-  .hero-preview-card {
-    width: min(100%, 320px);
-    margin: 0 auto;
+  .hero-ig-scene {
+    width: min(100%, 360px);
   }
 }
 

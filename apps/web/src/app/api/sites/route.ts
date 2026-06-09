@@ -9,6 +9,7 @@ import {
   validateInstagramUsername,
 } from "@/lib/instagram-username";
 import { buildTenantSubdomain } from "@/lib/site-urls";
+import { isReservedUsername } from "@/lib/reserved-usernames";
 
 export const maxDuration = 60;
 
@@ -18,7 +19,6 @@ const schema = z.object({
   tagline: z.string().optional(),
 });
 
-const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
 
 function formatZodError(err: z.ZodError): string {
   return err.issues.map((e) => e.message).join(" ");
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    if (RESERVED.has(username)) {
+    if (isReservedUsername(username)) {
       return NextResponse.json({ error: "Username reserved" }, { status: 400 });
     }
 

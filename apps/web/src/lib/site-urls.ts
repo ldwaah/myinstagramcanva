@@ -1,6 +1,8 @@
 import { env } from "./env";
+import { RESERVED_USERNAMES } from "./reserved-usernames";
 
-const RESERVED = new Set(["www", "api", "admin", "dashboard", "app", "mail", "support"]);
+/** @deprecated use RESERVED_USERNAMES */
+const RESERVED = RESERVED_USERNAMES;
 
 /** Vercel *.vercel.app does not support nested tenant hosts like user.project.vercel.app */
 export function isVercelAppHost(host: string): boolean {

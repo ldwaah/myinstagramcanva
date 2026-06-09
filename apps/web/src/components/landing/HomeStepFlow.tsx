@@ -164,7 +164,9 @@ export function HomeStepFlow() {
 
   return (
     <div className="home-step-flow">
-      <div className="home-step-flow__steps" aria-label="Create your site in three steps">
+      <div className="home-step-flow__intro">
+        <h2 className="home-step-flow__heading">How it works</h2>
+        <div className="home-step-flow__steps" aria-label="Create your site in three steps">
         {STEPS.map((s, i) => (
           <div key={s.num} className="home-step-flow__step">
             {i > 0 && <span className="home-step-flow__line" aria-hidden />}
@@ -175,6 +177,7 @@ export function HomeStepFlow() {
             </div>
           </div>
         ))}
+        </div>
       </div>
 
       {step === 1 && (

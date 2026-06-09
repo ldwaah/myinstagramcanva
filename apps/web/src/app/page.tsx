@@ -3,9 +3,11 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HeroWebsitePreview } from "@/components/landing/HeroWebsitePreview";
+import { HomeExampleCard } from "@/components/landing/HomeExampleCard";
 import { HomeFaqAccordion } from "@/components/landing/HomeFaqAccordion";
 import { HomeStepFlow } from "@/components/landing/HomeStepFlow";
-import { HOME_EXAMPLES, TRIAL_COPY } from "@/lib/pricing";
+import { HOME_EXAMPLES } from "@/lib/example-sites";
+import { TRIAL_COPY } from "@/lib/pricing";
 import { buildHomeMetadata, buildReferralMetadata } from "@/lib/seo";
 
 type PageProps = {
@@ -55,21 +57,7 @@ export default function HomePage() {
           </p>
           <div className="home-examples__grid">
             {HOME_EXAMPLES.map((example) => (
-              <article key={example.title} className="home-example-card">
-                <div className={`home-example-card__preview home-example-card__preview--${example.accent}`}>
-                  <div className="home-example-card__preview-header" />
-                  <div className="home-example-card__preview-grid">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                </div>
-                <h3 className="home-example-card__title">{example.title}</h3>
-                <p className="home-example-card__use">{example.useCase}</p>
-                <Link href="/signup" className="home-example-card__cta">
-                  View example
-                </Link>
-              </article>
+              <HomeExampleCard key={example.slug} example={example} />
             ))}
           </div>
         </div>
