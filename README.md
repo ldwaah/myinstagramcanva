@@ -24,7 +24,7 @@ Open http://localhost:3000
 
 ## Test contact forms locally
 
-1. Sign up → create a site → **Dev: mock Tailored** on the dashboard (or buy Tailored via Stripe)
+1. Sign up → create a site → **Dev: mock Creator** on the dashboard (or buy Creator via Stripe)
 2. Wait for regeneration to finish, then open `/site/{username}`
 3. Scroll to Contact and submit the form — it POSTs to `/api/leads` on the same origin
 4. View leads in **Dashboard → Leads & CRM**
@@ -85,7 +85,7 @@ Create **two** repositories:
 8. Optional — also set from `.env.example`:
    - `STRIPE_*` — payment keys and price IDs
    - `OPENAI_API_KEY` — for AI generation
-   - `RESEND_API_KEY` — Tailored lead email alerts to site owners
+   - `RESEND_API_KEY` — Creator+ enquiry email alerts to site owners
    - `ENCRYPTION_KEY` — 32-byte hex for BYOK keys
 
 ## Deploy to Vercel (optional / fallback)

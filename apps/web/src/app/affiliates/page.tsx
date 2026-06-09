@@ -27,7 +27,7 @@ const steps = [
 ];
 
 const earnOn = [
-  "Starter, Tailored, Pro and Studio package purchases",
+  "Starter, Creator, Pro and Studio package purchases",
   "Sales made within 30 days of clicking your link",
   "Commission on qualifying purchases (rate set in your dashboard)",
 ];
