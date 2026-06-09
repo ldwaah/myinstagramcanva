@@ -3982,6 +3982,11 @@ a {
     padding: 1.5rem 1rem 4rem;
   }
 
+  .affiliate-cta__btn {
+    max-width: none;
+    min-height: 48px;
+  }
+
   .affiliate-section__title {
     font-size: 1.2rem;
   }
