@@ -19,4 +19,10 @@ if [[ "${RUN_DB_MIGRATE_ON_BUILD:-}" == "true" && -n "${DATABASE_URL:-}" ]]; the
 else
   echo "[netlify-ci-build] Skipping prisma migrate deploy (set RUN_DB_MIGRATE_ON_BUILD=true to enable)."
 fi
+if [[ "${RUN_SEED_EXAMPLE_SITES:-}" == "true" && -n "${DATABASE_URL:-}" ]]; then
+  echo "[netlify-ci-build] Seeding showcase example sites..."
+  TSX_TSCONFIG_PATH=apps/web/tsconfig.json npx tsx scripts/seed-example-sites.ts
+else
+  echo "[netlify-ci-build] Skipping example site seed (set RUN_SEED_EXAMPLE_SITES=true on Netlify to enable)."
+fi
 npm run build -w web
