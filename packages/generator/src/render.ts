@@ -184,11 +184,18 @@ function tenantCanonicalUrl(username: string, rootDomain: string): string {
   return `${protocol}://${username}.${rootDomain}`;
 }
 
+function tenantSubdomainsEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_TENANT_SUBDOMAINS_ENABLED === "true";
+}
+
 function sitePaths(content: SiteContentData, apiBase: string) {
   const appBase = apiBase.replace(/\/$/, "");
   const assetBase = `/site/${content.instagramHandle}/`;
   const root = deriveRootDomain(appBase);
-  const usePathCanonical = root.includes("localhost") || root.includes("vercel.app");
+  const usePathCanonical =
+    root.includes("localhost") ||
+    root.includes("vercel.app") ||
+    !tenantSubdomainsEnabled();
   const canonicalUrl = usePathCanonical
     ? `${appBase}${assetBase}`.replace(/\/$/, "")
     : tenantCanonicalUrl(content.instagramHandle, root);
