@@ -1,6 +1,6 @@
 # My Instagram Canva
 
-Turn Instagram profiles into hosted creator websites with an Instagram-inspired design.
+Bespoke Instagram-to-website service. We create premium websites from your Instagram content. 14-day free trial, one-off lifetime fees.
 
 ## Stack
 
@@ -29,19 +29,15 @@ Open http://localhost:3000
 3. Scroll to Contact and submit the form — it POSTs to `/api/leads` on the same origin
 4. View leads in **Dashboard → Leads & CRM**
 
-Starter (£27) does **not** include the embedded lead form.
+Launch does **not** include the embedded enquiry form.
 
 ## Pricing
 
-| Tier | Price | Includes |
+| Plan | Price | Includes |
 |------|-------|----------|
-| **Starter** | £27 | AI-generated site from Instagram, subdomain hosting |
-| **Creator** | £59 | Typeform enquiry form, email notifications, extra sections |
-| **Pro** | £149 | Done-for-you setup, custom domain, booking link or embed |
-| **Studio** | £499 | Full setup, lead capture journey, CRM and basic email automation |
-| AI Changer BYOK | £10/mo | Unlimited AI edits with your OpenAI key |
-| AI Changer Managed | £18/mo | 30 AI edits/month (platform key) |
-| AI edit top-up | £5 | 10 extra edits |
+| **Launch** | £50 one-off | Premium website from Instagram, subdomain hosting |
+| **Creator** | £100 one-off | Enquiry form, email notifications, extra sections |
+| **Bespoke** | £300 one-off | Fuller setup, custom domain, booking link, SEO basics |
 
 ## GitHub repos (recommended)
 

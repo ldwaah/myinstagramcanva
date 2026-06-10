@@ -28,19 +28,13 @@ export const env = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
   stripePublishable: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
   stripePrices: {
-    starter: process.env.STRIPE_PRICE_STARTER || "",
-    creator:
-      process.env.STRIPE_PRICE_CREATOR ||
-      process.env.STRIPE_PRICE_TAILORED ||
-      "",
-    pro: process.env.STRIPE_PRICE_PRO || "",
-    studio: process.env.STRIPE_PRICE_STUDIO || "",
+    launch: process.env.STRIPE_PRICE_LAUNCH || process.env.STRIPE_PRICE_STARTER || "",
+    creator: process.env.STRIPE_PRICE_CREATOR || "",
+    bespoke: process.env.STRIPE_PRICE_BESPOKE || process.env.STRIPE_PRICE_PRO || "",
     aiByok: process.env.STRIPE_PRICE_AI_BYOK || "",
     aiManaged: process.env.STRIPE_PRICE_AI_MANAGED || "",
     aiTopup: process.env.STRIPE_PRICE_AI_TOPUP || "",
-    hosting: process.env.STRIPE_PRICE_HOSTING || "",
   },
-  hostingMonthlyPence: Number(process.env.HOSTING_MONTHLY_PENCE || "999"),
   openaiKey: process.env.OPENAI_API_KEY || "",
   encryptionKey: process.env.ENCRYPTION_KEY ?? "",
   githubToken: process.env.GITHUB_TOKEN || "",
@@ -69,8 +63,7 @@ export const env = {
 };
 
 export const TIER_PRICES: Record<string, number> = {
-  STARTER: 2700,
-  CREATOR: 5900,
-  PRO: 14900,
-  STUDIO: 49900,
+  LAUNCH: 5000,
+  CREATOR: 10000,
+  BESPOKE: 30000,
 };

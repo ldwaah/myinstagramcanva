@@ -1,14 +1,12 @@
 import type { SiteTier } from "@mic/db";
 
-export const TRIAL_COPY = "14-day free trial. No card required.";
+export const CORE_OFFER =
+  "Send us your Instagram. We'll create your website. Use it free for 14 days. Pay once if you keep it.";
 
-export const PROTECTION_NOTE =
-  "Third-party tools, high-volume form responses, SMS, advanced automation, specialist integrations or additional accounts may require an upgraded plan or separate third-party subscription.";
+export const TRIAL_COPY =
+  "Your card is required to start your free trial. You will not be charged today. If you do not cancel before the trial ends, you will be charged the one-off lifetime fee for your selected plan.";
 
-export const CREATOR_FORM_NOTE =
-  "Includes up to 100 form responses per month. Higher response volumes may require an upgraded plan or separate form account.";
-
-export type PricingTierId = "starter" | "creator" | "pro" | "studio";
+export type PricingTierId = "launch" | "creator" | "bespoke";
 
 export type PricingTier = {
   id: PricingTierId;
@@ -19,147 +17,165 @@ export type PricingTier = {
   headline: string;
   description: string;
   includes: string[];
-  notIncluded?: string[];
-  protectionNote?: string;
   cta: string;
+  badge?: string;
   featured?: boolean;
 };
 
 export const PRICING_TIERS: PricingTier[] = [
   {
-    id: "starter",
-    tier: "STARTER",
-    name: "Starter",
-    price: "£27",
-    pricePence: 2700,
-    headline: "AI website from your Instagram.",
+    id: "launch",
+    tier: "LAUNCH",
+    name: "Launch",
+    price: "£50",
+    pricePence: 5000,
+    headline: "Premium Instagram website with social buttons.",
     description:
-      "For creators who want a quick, clean website generated from their Instagram.",
+      "A clean, professional website created from your Instagram content, style and brand.",
     includes: [
-      "AI-generated website from Instagram",
-      "Mobile responsive design",
-      "Instagram-style gallery",
-      "Bio/about section",
-      "Social links and buttons",
-      "Hosted website page",
-      "Basic template edits",
+      "Website created from your Instagram",
+      "Premium mobile-friendly design",
+      "Instagram-inspired layout",
+      "Profile, gallery and content sections",
+      "Social/contact buttons",
+      "Live myinstagramcanva.com subdomain",
+      "14-day free trial",
+      "No monthly hosting fee",
     ],
-    notIncluded: [
-      "Contact form",
-      "Booking form",
-      "Lead capture",
-      "CRM",
-      "Automation",
-      "Done-for-you setup",
-    ],
-    cta: "Start with AI",
+    cta: "Start Launch trial",
   },
   {
     id: "creator",
     tier: "CREATOR",
     name: "Creator",
-    price: "£59",
-    pricePence: 5900,
-    headline: "AI website plus a professional enquiry form.",
+    price: "£100",
+    pricePence: 10000,
+    headline: "Website plus enquiry form.",
     description:
-      "For creators and small businesses that want enquiries coming through their website.",
+      "A premium Instagram-inspired website with a contact form connected to your email.",
     includes: [
-      "Everything in Starter",
-      "Custom Typeform enquiry form",
-      "Form embedded on your website",
-      "Email notifications for enquiries",
-      "Extra website sections",
-      "Colour and font customisation",
-      "Remove basic branding",
+      "Everything in Launch",
+      "Enquiry/contact form",
+      "Form responses sent to your email",
+      "Stronger contact section",
+      "Extra sections where useful",
+      "Lead capture setup",
+      "14-day free trial",
+      "No monthly hosting fee",
     ],
-    protectionNote: CREATOR_FORM_NOTE,
-    cta: "Add enquiry form",
+    cta: "Start Creator trial",
+    badge: "Best for enquiries",
     featured: true,
   },
   {
-    id: "pro",
-    tier: "PRO",
-    name: "Pro",
-    price: "£149",
-    pricePence: 14900,
-    headline: "We create and polish your website for you.",
+    id: "bespoke",
+    tier: "BESPOKE",
+    name: "Bespoke",
+    price: "£300",
+    pricePence: 30000,
+    headline: "Fuller bespoke website setup.",
     description:
-      "For businesses that want a more professional website without building it themselves.",
+      "A more complete website built around your Instagram brand, content and business goals.",
     includes: [
       "Everything in Creator",
-      "Done-for-you website setup",
-      "Human design polish",
+      "Fuller website structure",
+      "Multiple sections/pages where appropriate",
+      "Stronger design direction",
       "Custom domain support",
-      "Booking link or booking embed",
+      "Booking link or embed if required",
       "SEO basics",
-      "Monthly edit allowance",
-      "Priority support",
+      "Optional GitHub/code access",
+      "AI-edit handover guidance",
+      "14-day free trial",
+      "No monthly hosting fee",
     ],
-    cta: "Get it built for me",
-  },
-  {
-    id: "studio",
-    tier: "STUDIO",
-    name: "Studio",
-    price: "£499",
-    pricePence: 49900,
-    headline: "Full website, lead capture and automation setup.",
-    description:
-      "For businesses that want their site, leads and automation handled properly.",
-    includes: [
-      "Everything in Pro",
-      "Full done-for-you setup",
-      "Landing or funnel page",
-      "Lead capture journey",
-      "CRM and contact list setup",
-      "Basic email automation setup",
-      "Monthly updates",
-      "Strategy and design support",
-      "Priority support",
-    ],
-    cta: "Build my full setup",
+    cta: "Start Bespoke trial",
+    badge: "Most complete",
   },
 ];
 
 export const TIER_DISPLAY_NAMES: Record<SiteTier, string> = {
-  STARTER: "Starter",
+  LAUNCH: "Launch",
   CREATOR: "Creator",
-  PRO: "Pro",
-  STUDIO: "Studio",
+  BESPOKE: "Bespoke",
 };
 
-export const PLAN_NAMES_LIST = "Starter, Creator, Pro and Studio";
+export const PLAN_NAMES_LIST = "Launch, Creator and Bespoke";
+
+export const HOW_IT_WORKS = [
+  {
+    step: 1,
+    title: "Send us your Instagram",
+    description: "Choose your plan and tell us where to find your content.",
+  },
+  {
+    step: 2,
+    title: "We create your website",
+    description:
+      "We use your Instagram content, style and brand to create a premium mobile-friendly website.",
+  },
+  {
+    step: 3,
+    title: "Use it free for 14 days",
+    description:
+      "Your website goes live on a myinstagramcanva.com subdomain so you can test it properly.",
+  },
+  {
+    step: 4,
+    title: "Keep it if you love it",
+    description:
+      "If you do not cancel before the trial ends, your selected one-off lifetime fee is charged and the site stays live.",
+  },
+] as const;
+
+export const WHY_CHOOSE_US = [
+  "Built from your existing Instagram content",
+  "No need to start from scratch",
+  "Premium design without agency prices",
+  "No monthly hosting fees",
+  "Preview before you commit",
+  "Optional code/GitHub access for future edits",
+] as const;
 
 export const HOME_FAQ = [
   {
-    question: "Do I need to connect my Instagram?",
+    question: "Is this an instant AI website generator?",
     answer:
-      "No. We build from your public Instagram profile using your handle. You do not need to connect an account to preview your site.",
+      "No. We create the website for you using your Instagram as the brief. AI may help us build faster, but every site is shaped and reviewed by us.",
   },
   {
-    question: "Can I edit the website?",
+    question: "Do I pay monthly?",
     answer:
-      "Yes. Every plan includes edits in the dashboard. Starter covers basic template changes; higher plans add more sections, styling and done-for-you polish.",
+      "No. Our main plans are one-off lifetime fees. There are no monthly hosting fees for the standard website.",
+  },
+  {
+    question: "Why do you need my card?",
+    answer:
+      "Your card starts the 14-day free live website trial. You are not charged today. If you do not cancel before the trial ends, you are charged the one-off fee for your selected plan.",
+  },
+  {
+    question: "What happens if I cancel during the trial?",
+    answer: "You are not charged and your website may be removed.",
   },
   {
     question: "Can I use my own domain?",
     answer:
-      "Custom domain support is included on Pro and Studio. Starter and Creator sites are hosted on your My Instagram Canva subdomain until you upgrade.",
+      "Custom domain support is included with Bespoke. For other plans, domain support may be offered separately.",
   },
   {
-    question: "What happens after the free trial?",
+    question: "Can I edit the website later?",
     answer:
-      "Your trial lasts 14 days with no card required. Choose a plan before it ends to keep your site live and unlock the features for that tier.",
+      "Basic changes can be requested from us. Code/GitHub access and AI-edit guidance may be available as an optional add-on or included with Bespoke.",
   },
   {
-    question: "Are forms included?",
+    question: "Are all websites the same quality?",
     answer:
-      "Starter does not include a contact or enquiry form. Creator adds a custom Typeform enquiry form embedded on your site, with email notifications.",
+      "Yes. Every website is designed to look premium. The difference between plans is the level of setup, features, forms and support.",
   },
   {
-    question: "Are automations included?",
+    question: "Do I need to give you my Instagram login?",
     answer:
-      "Basic email automation setup is part of Studio. Pro focuses on done-for-you website polish and booking. Creator covers enquiries only.",
+      "No. We only need your Instagram handle and any extra content you want us to use.",
   },
 ] as const;
 
@@ -177,7 +193,6 @@ export function isPricingTierId(value: string | null | undefined): value is Pric
   return Boolean(value && PRICING_TIERS.some((p) => p.id === value));
 }
 
-/** Accepts slug (`creator`) or enum (`CREATOR`) from query params. */
 export function parseTierParam(value: string | null | undefined): SiteTier | null {
   if (!value) return null;
   if (isPricingTierId(value)) return getPricingTierById(value).tier;
@@ -186,6 +201,6 @@ export function parseTierParam(value: string | null | undefined): SiteTier | nul
   return null;
 }
 
-export function signupHrefForTier(tierId: PricingTierId): string {
-  return `/signup?tier=${tierId}`;
+export function requestHrefForTier(tierId: PricingTierId): string {
+  return `/#request?plan=${tierId}`;
 }

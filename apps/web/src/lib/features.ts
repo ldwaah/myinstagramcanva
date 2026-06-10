@@ -10,8 +10,8 @@ export type FeatureKey =
   | "ai_collaborator"
   | "domains";
 
-const CREATOR_PLUS: (SiteTier | null | undefined)[] = ["CREATOR", "PRO", "STUDIO"];
-const PRO_PLUS: (SiteTier | null | undefined)[] = ["PRO", "STUDIO"];
+const CREATOR_PLUS: (SiteTier | null | undefined)[] = ["CREATOR", "BESPOKE"];
+const BESPOKE_ONLY: (SiteTier | null | undefined)[] = ["BESPOKE"];
 
 export function hasPaidTier(tier: SiteTier | string | null | undefined): boolean {
   return Boolean(tier);
@@ -28,17 +28,17 @@ export function canUseFeature(
     case "contact_form":
       return CREATOR_PLUS.includes(tier as SiteTier);
     case "crm":
-      return tier === "STUDIO";
+      return tier === "BESPOKE";
     case "calendar":
-      return PRO_PLUS.includes(tier as SiteTier);
+      return BESPOKE_ONLY.includes(tier as SiteTier);
     case "campaigns":
-      return tier === "STUDIO";
+      return tier === "BESPOKE";
     case "affiliates":
       return hasPaidTier(tier);
     case "ai_collaborator":
       return hasCollaboratorSub;
     case "domains":
-      return PRO_PLUS.includes(tier as SiteTier);
+      return BESPOKE_ONLY.includes(tier as SiteTier);
     default:
       return false;
   }
@@ -51,27 +51,27 @@ export const FEATURE_META: Record<
   website: { title: "Your website", description: "Live site with My Posts gallery.", upgradeLabel: "" },
   contact_form: {
     title: "Enquiry form",
-    description: "Embedded Typeform enquiry form on your site.",
+    description: "Embedded enquiry form on your site.",
     upgradeLabel: "Upgrade to Creator",
     minTier: "CREATOR",
   },
   crm: {
     title: "Leads and CRM",
     description: "View and manage form submissions and contact lists.",
-    upgradeLabel: "Upgrade to Studio",
-    minTier: "STUDIO",
+    upgradeLabel: "Upgrade to Bespoke",
+    minTier: "BESPOKE",
   },
   calendar: {
     title: "Booking link",
     description: "Booking link or embed on your website.",
-    upgradeLabel: "Upgrade to Pro",
-    minTier: "PRO",
+    upgradeLabel: "Upgrade to Bespoke",
+    minTier: "BESPOKE",
   },
   campaigns: {
     title: "Email automation",
     description: "Basic email automation for opted-in leads.",
-    upgradeLabel: "Upgrade to Studio",
-    minTier: "STUDIO",
+    upgradeLabel: "Upgrade to Bespoke",
+    minTier: "BESPOKE",
   },
   affiliates: {
     title: "Affiliate earnings",
@@ -86,7 +86,7 @@ export const FEATURE_META: Record<
   domains: {
     title: "Custom domain",
     description: "Connect your own domain name.",
-    upgradeLabel: "Upgrade to Pro",
-    minTier: "PRO",
+    upgradeLabel: "Upgrade to Bespoke",
+    minTier: "BESPOKE",
   },
 };

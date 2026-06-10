@@ -223,7 +223,7 @@ async function ensureExampleSite(userId: string, spec: ExampleSiteSpec): Promise
       where: { id: existing.id },
       data: {
         status: SiteStatus.LIVE,
-        tier: SiteTier.PRO,
+        tier: SiteTier.BESPOKE,
         niche: spec.niche,
         isPreview: false,
         previewToken: null,
@@ -239,7 +239,7 @@ async function ensureExampleSite(userId: string, spec: ExampleSiteSpec): Promise
       username: spec.username,
       subdomain,
       status: SiteStatus.LIVE,
-      tier: SiteTier.PRO,
+      tier: SiteTier.BESPOKE,
       niche: spec.niche,
       githubPath: `sites/${spec.username}`,
       isPreview: false,

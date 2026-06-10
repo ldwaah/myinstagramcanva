@@ -79,8 +79,7 @@ export function getFreeEditsForTier(tier: string | null | undefined) {
   switch (tier) {
     case "CREATOR":
       return 10;
-    case "PRO":
-    case "STUDIO":
+    case "BESPOKE":
       return 20;
     default:
       return 3;

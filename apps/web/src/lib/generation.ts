@@ -304,9 +304,9 @@ export async function runSiteGeneration(siteId: string, userId: string, options?
     }
 
     content.showContactForm =
-      site.tier === SiteTier.CREATOR || site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
-    content.showCalendar = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
-    content.showFunnel = site.tier === SiteTier.PRO || site.tier === SiteTier.STUDIO;
+      site.tier === SiteTier.CREATOR || site.tier === SiteTier.BESPOKE;
+    content.showCalendar = site.tier === SiteTier.BESPOKE;
+    content.showFunnel = site.tier === SiteTier.BESPOKE;
 
     const baseCss = await readTemplateFile("css/style.css");
     const css = injectThemeIntoCss(baseCss, content.theme, {

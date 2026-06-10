@@ -101,7 +101,7 @@ export async function POST(req: Request) {
     if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
 
     const tier = site.tier;
-    if (!tier || tier === "STARTER") {
+    if (!tier || tier === "LAUNCH") {
       return NextResponse.json(
         { error: "Lead capture requires Creator plan or higher" },
         { status: 403 }

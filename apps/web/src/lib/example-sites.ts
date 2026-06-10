@@ -3,17 +3,11 @@ import { getTenantPreviewUrl } from "./site-urls";
 
 export { EXAMPLE_SITE_SLUGS, type ExampleSiteSlug, isExampleSiteSlug };
 
-/**
- * Showcase tenant slugs for homepage "Built for real creators" cards.
- * Reserved in preview/signup so users cannot claim these usernames.
- * Regenerate bundles: npx tsx scripts/seed-example-sites.mjs
- */
 export type HomeExample = {
   slug: ExampleSiteSlug;
   title: string;
   useCase: string;
-  accent: "photo" | "coach" | "athlete" | "creator";
-  /** Remote fallback preview when local /public/examples/ asset is missing */
+  accent: "photo" | "coach" | "athlete" | "business";
   previewImage: string;
 };
 
@@ -41,9 +35,9 @@ export const HOME_EXAMPLES: HomeExample[] = [
   },
   {
     slug: "example-creator",
-    title: "Creator / Business",
+    title: "Small Business",
     useCase: "Turn your brand Instagram into a proper home for links, offers and leads.",
-    accent: "creator",
+    accent: "business",
     previewImage: "https://picsum.photos/seed/mic-ex-creator-1-preview/800/600",
   },
 ];

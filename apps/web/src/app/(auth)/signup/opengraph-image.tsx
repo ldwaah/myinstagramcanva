@@ -12,7 +12,7 @@ export default function Image() {
       <OgBrandCard
         eyebrow="You're invited"
         title="Start your free trial"
-        subtitle="Turn your Instagram into a professional website in minutes."
+        subtitle="We create your website from your Instagram. 14-day free trial."
       />
     ),
     { ...size },

@@ -132,7 +132,7 @@ export default function AffiliatesDashboardPage() {
               </MicButton>
             </div>
             <p className="affiliate-links__note">
-              30-day attribution · commission on Starter, Creator, Pro &amp; Studio purchases
+              30-day attribution · commission on Launch, Creator &amp; Bespoke purchases
             </p>
           </MicCard>
 

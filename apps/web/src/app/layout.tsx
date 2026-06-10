@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Suspense } from "react";
 import "./globals.css";
 import "./landing-premium.css";
-import { ReferralTracker } from "@/components/ReferralTracker";
 import { buildRootMetadata, buildViewport, organizationJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildRootMetadata();
@@ -19,12 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>
-        <Suspense fallback={null}>
-          <ReferralTracker />
-        </Suspense>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

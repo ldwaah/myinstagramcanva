@@ -303,10 +303,35 @@ enum SiteStatus {
 }
 
 enum SiteTier {
-  STARTER
+  LAUNCH
   CREATOR
-  PRO
-  STUDIO
+  BESPOKE
+}
+
+enum ServicePlan {
+  LAUNCH
+  CREATOR
+  BESPOKE
+}
+
+model WebsiteRequest {
+  id                 String       @id @default(cuid())
+  fullName           String
+  email              String
+  instagramHandle    String
+  brandName          String
+  preferredSubdomain String
+  plan               ServicePlan
+  mainGoal           String
+  contactPreference  String
+  notes              String?
+  contentPermission  Boolean
+  trialTermsAccepted Boolean
+  status             String       @default("pending")
+  createdAt          DateTime     @default(now())
+
+  @@index([email])
+  @@index([status])
 }
 
 enum Niche {

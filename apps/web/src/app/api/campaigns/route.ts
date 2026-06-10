@@ -22,8 +22,8 @@ export async function POST(req: Request) {
       where: { id: body.siteId, userId: session.id },
     });
     if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
-    if (site.tier !== "STUDIO") {
-      return NextResponse.json({ error: "Studio tier required" }, { status: 403 });
+    if (site.tier !== "BESPOKE") {
+      return NextResponse.json({ error: "Bespoke tier required" }, { status: 403 });
     }
 
     const campaign = await prisma.campaign.create({

@@ -11,7 +11,7 @@ export default function Image() {
   return new ImageResponse(
     (
       <OgBrandCard
-        title="Turn your Instagram into a website"
+        title="Turn your Instagram into a professional website"
         subtitle={SITE_TAGLINE}
       />
     ),

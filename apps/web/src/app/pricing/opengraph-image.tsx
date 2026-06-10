@@ -12,7 +12,7 @@ export default function Image() {
       <OgBrandCard
         eyebrow="Pricing"
         title="Simple, transparent plans"
-        subtitle="14-day free trial. No card required. Plans from £27/month."
+        subtitle="Launch £50, Creator £100, Bespoke £300 one-off. 14-day free trial."
       />
     ),
     { ...size },

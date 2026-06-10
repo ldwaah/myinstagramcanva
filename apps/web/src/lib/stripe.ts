@@ -15,10 +15,9 @@ export function getStripe() {
 
 export function tierToPriceId(tier: SiteTier): string | null {
   const map: Record<SiteTier, string> = {
-    STARTER: env.stripePrices.starter,
+    LAUNCH: env.stripePrices.launch,
     CREATOR: env.stripePrices.creator,
-    PRO: env.stripePrices.pro,
-    STUDIO: env.stripePrices.studio,
+    BESPOKE: env.stripePrices.bespoke,
   };
   return map[tier] || null;
 }
@@ -37,15 +36,66 @@ export async function createTierCheckout(
   const priceId = tierToPriceId(tier);
   const lineItems = priceId
     ? [{ price: priceId, quantity: 1 }]
-    : [{ price_data: { currency: "gbp", unit_amount: TIER_PRICES[tier], product_data: { name: `${tier} Site Package` } }, quantity: 1 }];
+    : [{
+        price_data: {
+          currency: "gbp",
+          unit_amount: TIER_PRICES[tier],
+          product_data: { name: `${tier} Website Package` },
+        },
+        quantity: 1,
+      }];
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     customer_email: email,
     line_items: lineItems,
+    payment_method_collection: "always",
     success_url: `${env.appUrl}/dashboard?success=1&siteId=${siteId}`,
     cancel_url: `${env.appUrl}/dashboard?canceled=1`,
     metadata: { userId, siteId, tier, type: "site_tier" },
+  });
+
+  return { url: session.url };
+}
+
+export async function createTrialCheckout(
+  tier: SiteTier,
+  email: string,
+  requestId: string
+) {
+  const stripe = getStripe();
+  if (!stripe) {
+    return { url: `${env.appUrl}/?request=submitted&plan=${tier.toLowerCase()}` };
+  }
+
+  const priceId = tierToPriceId(tier);
+  const lineItems = priceId
+    ? [{ price: priceId, quantity: 1 }]
+    : [{
+        price_data: {
+          currency: "gbp",
+          unit_amount: TIER_PRICES[tier],
+          product_data: { name: `${tier} Website (one-off after trial)` },
+        },
+        quantity: 1,
+      }];
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: email,
+    line_items: lineItems,
+    payment_intent_data: {
+      setup_future_usage: "off_session",
+    },
+    payment_method_collection: "always",
+    success_url: `${env.appUrl}/?request=success&plan=${tier.toLowerCase()}`,
+    cancel_url: `${env.appUrl}/#request`,
+    metadata: { requestId, tier, type: "website_trial" },
+    custom_text: {
+      submit: {
+        message: `You will not be charged today. Your card secures your ${TRIAL_DAYS}-day trial. The one-off fee is charged only if you keep the site after the trial.`,
+      },
+    },
   });
 
   return { url: session.url };
@@ -61,34 +111,7 @@ export async function createHostingSubscriptionCheckout(
     return { url: `${env.appUrl}/dashboard?goLive=success&siteId=${siteId}` };
   }
 
-  const priceId = env.stripePrices.hosting;
-  const lineItems = priceId
-    ? [{ price: priceId, quantity: 1 }]
-    : [{
-        price_data: {
-          currency: "gbp",
-          unit_amount: env.hostingMonthlyPence,
-          recurring: { interval: "month" as const },
-          product_data: { name: "My Instagram Canva Hosting" },
-        },
-        quantity: 1,
-      }];
-
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer_email: email,
-    line_items: lineItems,
-    payment_method_collection: "if_required",
-    subscription_data: {
-      trial_period_days: TRIAL_DAYS,
-      metadata: { userId, siteId, type: "hosting" },
-    },
-    success_url: `${env.appUrl}/dashboard?goLive=success&siteId=${siteId}`,
-    cancel_url: `${env.appUrl}/dashboard?goLive=canceled`,
-    metadata: { userId, siteId, type: "hosting" },
-  });
-
-  return { url: session.url };
+  return { url: `${env.appUrl}/dashboard?goLive=success&siteId=${siteId}` };
 }
 
 export async function createAiSubscriptionCheckout(

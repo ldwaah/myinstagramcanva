@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 import { env } from "./env";
 
-export const SITE_NAME = "My Instagram Canva";
-export const SITE_TAGLINE = "Turn your Instagram into a website in minutes";
+export const SITE_NAME = "MyInstagramCanva";
+export const SITE_TAGLINE = "Turn your Instagram into a professional website";
 export const SITE_DESCRIPTION =
-  "AI-powered websites built from your Instagram. Your colours, posts, and profile style. Mobile-ready, hosted for you.";
+  "Submit your Instagram handle and we will create a premium website inspired by your content, style and brand. 14-day free trial. Pay once if you keep it.";
 
 const DEFAULT_OG = "/og-default.png";
-const PRICING_OG = "/og-pricing.png";
-const AFFILIATES_OG = "/og-affiliates.png";
-const REFERRAL_OG = "/og-referral.png";
 
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 };
 
 export const ogImagePaths = {
   default: DEFAULT_OG,
-  pricing: PRICING_OG,
-  affiliates: AFFILIATES_OG,
-  referral: REFERRAL_OG,
 } as const;
 
 function absoluteUrl(path: string): string {
@@ -57,7 +51,7 @@ export function buildRootMetadata(overrides: Metadata = {}): Metadata {
       "creator website",
       "Instagram to website",
       "portfolio site",
-      "My Instagram Canva",
+      "MyInstagramCanva",
     ],
     authors: [{ name: SITE_NAME, url: env.appUrl }],
     creator: SITE_NAME,
@@ -117,93 +111,9 @@ export function buildHomeMetadata(): Metadata {
   });
 }
 
-export function buildPricingMetadata(): Metadata {
-  const title = "Pricing";
-  const description =
-    "Four clear plans from £27/month. AI-built websites from your Instagram with a 14-day free trial. No card required.";
-  const url = `${env.appUrl}/pricing`;
-  const images = ogImages(PRICING_OG, "My Instagram Canva pricing");
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      url,
-      siteName: SITE_NAME,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images,
-    },
-    twitter: {
-      ...twitterDefaults,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images: [images[0].url],
-    },
-  };
-}
-
-export function buildAffiliatesMetadata(): Metadata {
-  const title = "Affiliate Program";
-  const description =
-    "Earn on every referral. Share your link, get 30-day attribution, and earn commission on every sale.";
-  const url = `${env.appUrl}/affiliates`;
-  const images = ogImages(AFFILIATES_OG, "My Instagram Canva affiliate program");
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      url,
-      siteName: SITE_NAME,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images,
-    },
-    twitter: {
-      ...twitterDefaults,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images: [images[0].url],
-    },
-  };
-}
-
-export function buildReferralMetadata(code: string): Metadata {
-  const title = "Start your free trial";
-  const description = `You've been invited to try ${SITE_NAME}. Turn your Instagram into a professional website in minutes.`;
-  const url = `${env.appUrl}/signup?ref=${encodeURIComponent(code)}`;
-  const images = ogImages(REFERRAL_OG, `Join ${SITE_NAME} via referral`);
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "website",
-      url,
-      siteName: SITE_NAME,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images,
-    },
-    twitter: {
-      ...twitterDefaults,
-      title: `${title} · ${SITE_NAME}`,
-      description,
-      images: [images[0].url],
-    },
-    other: {
-      "referral:code": code,
-    },
-  };
-}
-
-export function buildSignupMetadata(ref?: string | null): Metadata {
-  if (ref) return buildReferralMetadata(ref);
-  const title = "Create your account";
-  const description = `Sign up for ${SITE_NAME}. 14-day free trial. No card required.`;
+export function buildSignupMetadata(): Metadata {
+  const title = "Request your website";
+  const description = `Submit your Instagram handle to ${SITE_NAME}. 14-day free trial. Card required, no charge today.`;
   const url = `${env.appUrl}/signup`;
   const images = ogImages(DEFAULT_OG, SITE_TAGLINE);
   return {
