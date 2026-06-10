@@ -19,6 +19,12 @@ if [[ "${RUN_DB_MIGRATE_ON_BUILD:-}" == "true" && -n "${DATABASE_URL:-}" ]]; the
 else
   echo "[netlify-ci-build] Skipping prisma migrate deploy (set RUN_DB_MIGRATE_ON_BUILD=true to enable)."
 fi
+if [[ "${RUN_APPLY_SCHEMA:-}" == "true" && -n "${DATABASE_URL:-}" ]]; then
+  echo "[netlify-ci-build] Applying idempotent DB schema patches..."
+  TSX_TSCONFIG_PATH=apps/web/tsconfig.json npx tsx scripts/apply-db-schema.ts
+else
+  echo "[netlify-ci-build] Skipping schema apply (set RUN_APPLY_SCHEMA=true on Netlify to enable)."
+fi
 if [[ "${RUN_SEED_EXAMPLE_SITES:-}" == "true" && -n "${DATABASE_URL:-}" ]]; then
   echo "[netlify-ci-build] Seeding showcase example sites..."
   TSX_TSCONFIG_PATH=apps/web/tsconfig.json npx tsx scripts/seed-example-sites.ts
