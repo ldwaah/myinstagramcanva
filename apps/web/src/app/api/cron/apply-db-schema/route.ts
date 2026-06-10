@@ -17,9 +17,9 @@ export async function POST(req: Request) {
   try {
     const result = await applyDbSchema();
     if (!result.ok) {
-      return NextResponse.json({ ok: false, ...result }, { status: 500 });
+      return NextResponse.json(result, { status: 500 });
     }
-    return NextResponse.json({ ok: true, ...result });
+    return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json(
       { ok: false, error: err instanceof Error ? err.message : "schema apply failed" },
